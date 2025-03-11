@@ -1,0 +1,75 @@
+{
+  "name": "@windborne/grapher",
+  "version": "1.0.0",
+  "description": "Graphing library",
+  "main": "bundle.js",
+  "publishConfig": {},
+  "scripts": {
+    "lint-base": "eslint ./src ./examples ./test",
+    "lint": "npm run lint-base -- --fix",
+    "dev": "webpack-dev-server --config webpack.dev.config.js",
+    "build": "rm -f *.wasm && webpack --config webpack.prod.config.js && touch src/rust/pkg/.npmignore",
+    "analyze-size": "webpack --config webpack.prod.config.js --json | webpack-bundle-size-analyzer",
+    "test": "mocha-webpack --webpack-config webpack.test.config.js --require test/setup.js --recursive --glob \"*.test.js\" test",
+    "coverage": "NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windborne/grapher.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/windborne/grapher/issues"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "instrument": false,
+    "sourceMap": false
+  },
+  "browserslist": [
+    "last 2 Chrome versions"
+  ],
+  "homepage": "https://github.com/windborne/grapher/readme.md",
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
+    "@wasm-tool/wasm-pack-plugin": "^1.2.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.0.6",
+    "chai": "^4.2.0",
+    "css-loader": "^6.8.1",
+    "eslint": "^6.7.2",
+    "eslint-plugin-react": "^7.17.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.6.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "jsdom": "^16.3.0",
+    "jsdom-global": "^3.0.2",
+    "kefir": "^3.8.6",
+    "mocha": "^7.2.0",
+    "mocha-webpack": "^2.0.0-beta.0",
+    "nyc": "^15.1.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "sass": "^1.68.0",
+    "sass-loader": "^13.3.2",
+    "sinon": "^9.0.2",
+    "sinon-chai": "^3.5.0",
+    "style-loader": "^3.3.3",
+    "util": "^0.12.5",
+    "webpack": "^5.9.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.2",
+    "webpack-glsl-loader": "^1.0.1",
+    "webpack-node-externals": "^2.5.0"
+  },
+  "peerDependencies": {
+    "react": ">= 16.8"
+  }
+}

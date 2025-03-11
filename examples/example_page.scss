@@ -1,0 +1,65 @@
+
+.example-page {
+  .list-header {
+    font-family: "Source Sans Pro", sans-serif;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .page-list {
+    display: flex;
+    flex-wrap: wrap;
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 15px;
+    justify-content: center;
+
+    .pages-section {
+      margin: 5px;
+      padding: 5px 10px;
+      background: black;
+      border-radius: 1px;
+
+      flex-shrink: 1;
+
+      .section-title {
+        text-align: center;
+      }
+
+      &, a {
+        color: white;
+      }
+
+      a:visited {
+        color: #BBB;
+      }
+
+      ul {
+        padding-inline-start: 5px;
+        list-style-type: none;
+      }
+    }
+  }
+
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: monospace;
+    font-size: 14px;
+
+    th {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 2px solid #ddd;
+      background-color: #f5f5f5;
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+  }
+}

@@ -1,0 +1,914 @@
+@mixin grapher(
+  $primary-graph-body-height: 400px,
+  $secondary-graph-body-height: 50px,
+
+  $background-color-1: #2a2a2b,
+  $background-color-2: #3e3e40,
+
+  $tooltip-line-color: #CCC,
+  $tooltip-background-color: rgba(0, 0, 0, 0.6),
+  $tooltip-text-color: #F0F0F0,
+  $vertical-line-color: #CCC,
+
+  $axis-line-color: silver,
+  $axis-line-width: 2px,
+  $axis-tick-color: #505053,
+  $axis-text-color: #E0E0E3,
+
+  $range-selection-text-color: silver,
+  $range-selection-button-color: #505053,
+  $range-selection-button-selected-color: black,
+  $range-selection-text-selected-color: silver,
+  $range-selection-text-color-faded: #AAA,
+  $range-selection-button-color-faded: #7A7A7A,
+  $range-selection-button-border: null,
+  $range-selection-selected-button-border: null,
+
+  $range-graph-selection-bar-size: 14px,
+  $range-graph-selection-range-color: rgba(255, 255, 255, 0.1),
+  $range-graph-selection-outline-color: #AAA,
+  $range-graph-selection-bar-color: #808083,
+  $range-graph-selection-bar-track-color: #303033,
+  $range-graph-selection-bar-rifles-color: #FFF,
+  $range-graph-handle-color: #AAA,
+  $range-graph-handle-fill-color: #666,
+  $range-graph-axis-text-color: #9f9f9f,
+
+  $annotation-background-color: rgba(255, 255, 255, 0.3),
+
+  $series-key-axis-container-color: #111,
+  $series-key-input-border-color: #505053,
+  $series-key-input-selected-border-color: #E0E0E3,
+  $series-key-input-text-color: #E0E0E3,
+  $series-key-background: transparent,
+  $scale-label-color: silver,
+  $series-key-shadow-color: silver,
+
+  $title-color: white,
+
+  $sidebar-background-color: #111,
+  $sidebar-text-color: #EEE,
+
+  $new-grapher-color: #DDD
+) {
+  $x-axis-height: 20px;
+  $padding: 10px;
+
+  $axis-z-index: 0;
+  $graph-body-z-index: 1;
+
+  position: relative;
+  background: linear-gradient(to bottom right, $background-color-1, $background-color-2);
+  padding: $padding;
+
+  font-family: sans-serif;
+  font-size: 12px;
+  line-height: normal;
+
+  *, :after, :before {
+    box-sizing: content-box;
+  }
+
+  .grapher-title {
+    text-align: center;
+    color: $title-color;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .grapher-primary-container-outer {
+    display: flex;
+
+    .grapher-sidebar {
+      background: linear-gradient($sidebar-background-color, transparent 75%, transparent 100%);
+      color: $sidebar-text-color;
+      padding: 50px 6px 5px 10px;
+      margin-left: -$padding;
+      margin-top: -$padding;
+      margin-bottom: -$padding;
+      overflow-y: auto;
+      flex-shrink: 0;
+
+      .series-toggle {
+        white-space: nowrap;
+
+        & + .series-toggle {
+          margin-top: 3px;
+        }
+
+        label {
+          display: inline-block;
+          position: relative;
+          user-select: none;
+        }
+
+        input[type='checkbox'] {
+          opacity: 0;
+          cursor: pointer;
+          height: 0;
+          width: 0;
+          margin-right: 11px;
+        }
+
+        input:not(:checked) ~ .checkmark {
+          background-color: transparent !important;
+        }
+
+        input:checked ~ .checkmark:after {
+          display: block;
+        }
+
+        .checkmark {
+          position: absolute;
+          top: 1px;
+          left: 0;
+          height: 7px;
+          width: 7px;
+          background-color: #eee;
+          border: 2px solid;
+          border-radius: 1px;
+        }
+
+        .checkmark:after {
+          content: "";
+          position: absolute;
+          display: none;
+
+          left: 0.5px;
+          top: -1.5px;
+          width: 3px;
+          height: 6px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+        }
+      }
+    }
+
+    .grapher-primary-container-body {
+      width: 100%;
+      padding-left: 2px;
+    }
+  }
+
+  .series-key {
+    text-align: center;
+    margin-bottom: -14px;
+    position: relative;
+
+    .scale-label {
+      display: inline-block;
+      background: $series-key-axis-container-color;
+      color: $scale-label-color;
+      transform: rotate(-90deg);
+      width: 24px;
+      margin-left: -5px;
+      vertical-align: top;
+      margin-top: 4px;
+      padding-bottom: 2px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .series-key-axis-container {
+      display: inline-block;
+      border: 1px solid $series-key-axis-container-color;
+
+      min-width: 18px;
+      min-height: 24px;
+      vertical-align: top;
+
+      white-space: nowrap;
+
+      & + .series-key-axis-container {
+        margin-left: 4px;
+      }
+
+      &.series-key-axis-container-showing-label {
+        .scale-label {
+          width: 46px;
+          margin-top: 15px;
+          margin-left: -15px;
+          margin-right: -12px;
+        }
+
+        .series-key-axis-label-container {
+          display: block;
+        }
+
+        .label-input-toggler {
+          path {
+            fill: $series-key-input-selected-border-color;
+          }
+        }
+      }
+
+      .series-key-axis-container-body {
+        display: inline-block;
+
+        & > div {
+          white-space: initial;
+        }
+      }
+
+      .series-key-axis-label-container {
+        display: none;
+      }
+
+      .label-input-toggler {
+        width: 16px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: top;
+        margin: 4px 2px;
+
+        path {
+          fill: $series-key-axis-container-color;
+        }
+
+        &:hover {
+          path {
+            fill: $series-key-input-selected-border-color;
+          }
+        }
+      }
+    }
+
+    .series-key-item {
+      border: 1px solid currentColor;
+      padding: 2px;
+      margin: 2px;
+      display: inline-block;
+      cursor: pointer;
+      user-select: none;
+      background: $series-key-background;
+
+      & + .series-key-item {
+        margin-left: 4px;
+      }
+
+      &.series-key-item-highlighted {
+        box-shadow: 0 0 4px $series-key-shadow-color;
+      }
+    }
+  }
+
+  .range-selection {
+    color: $range-selection-text-color;
+    user-select: none;
+
+    &.range-not-dates {
+      color: $range-selection-text-color-faded;
+    }
+
+    .range-buttons {
+      text-align: right;
+
+      .options-bar {
+        display: inline-block;
+      }
+
+      .option-tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+
+        .option-tooltip-text {
+          visibility: hidden;
+          color: $range-selection-text-selected-color;
+          background: $range-selection-button-selected-color;
+          text-align: center;
+          padding: 5px 5px;
+          border-radius: 6px;
+          position: absolute;
+          z-index: 1;
+          border: 1px solid black;
+
+          width: 120px;
+          margin-left: -65px;
+          top: calc(100% + 7px);
+          left: 50%;
+        }
+
+        &:hover .option-tooltip-text {
+          visibility: visible;
+        }
+
+        .option-tooltip-text::after {
+          content: " ";
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: transparent transparent black transparent;
+        }
+      }
+
+      .range-button {
+        display: inline-block;
+        cursor: pointer;
+        padding: 4px 8px;
+        @if ($range-selection-button-border == null) {
+          margin-left: 6px;
+        } @else {
+          margin-left: 4px;
+        }
+
+        border-radius: 2px;
+        background: $range-selection-button-color;
+        border: $range-selection-button-border;
+
+        &.range-button-selected {
+          color: $range-selection-text-selected-color;
+          background: $range-selection-button-selected-color;
+          border: $range-selection-selected-button-border;
+        }
+
+        &.range-button-disabled, &.range-button-selected.range-button-disabled {
+          cursor: not-allowed;
+          color: $range-selection-text-color-faded;
+          background: $range-selection-button-color-faded;
+        }
+
+        .icon-container {
+          position: relative;
+          width: 0;
+
+          &.icon-container-narrow {
+            svg {
+              left: -3px;
+            }
+          }
+
+          &.icon-container-square {
+            width: 5px;
+
+            svg {
+              left: -5px;
+            }
+          }
+
+          &.icon-container-448 {
+            width: 3px;
+
+            svg {
+              left: -5px;
+            }
+          }
+
+          &:before {
+            content: 'A';
+            opacity: 0;
+          }
+
+          svg {
+            height: 15px;
+            position: absolute;
+            top: -1px;
+            left: -4px;
+          }
+        }
+      }
+
+      .range-selection-history + .range-selection-history {
+        margin-right: 8px;
+        margin-left: 4px;
+      }
+
+      .percentile-button {
+        & > div {
+          display: inline-block;
+        }
+
+        input {
+          background: transparent;
+          border: 1px solid $series-key-input-border-color;
+          margin: 2px 8px 2px 0;
+          color: $series-key-input-text-color;
+          padding: 1px 2px;
+          width: 20px;
+          font-size: 11px;
+          -moz-appearance: textfield;
+
+          &:focus {
+            outline: none;
+            border-color: $series-key-input-selected-border-color;
+          }
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+        }
+
+        .icon-container.icon-container-narrow {
+          svg {
+            height: 12px;
+            top: 1px;
+            left: -5px;
+          }
+        }
+      }
+
+      .showing-options-button {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .grapher-main-row {
+    display: flex;
+
+    .central-container {
+      width: 100%;
+    }
+  }
+
+  .range-graph-container {
+    display: flex;
+  }
+
+  .graph-body {
+    width: 100%;
+    height: $primary-graph-body-height;
+    position: relative;
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .grapher-tooltip, .grapher-draggable-points, .grapher-vertical-lines {
+      position: absolute;
+      top: 0;
+
+      svg {
+        position: absolute;
+        overflow: visible;
+      }
+    }
+
+    .grapher-vertical-lines {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .grapher-tooltip {
+      .tooltip-item {
+        path {
+          fill: $tooltip-background-color;
+        }
+
+        text {
+          fill: $tooltip-text-color;
+          dominant-baseline: hanging;
+          text-anchor: start;
+        }
+
+        &.tooltip-item-fixed {
+          path {
+            fill: rgba($tooltip-background-color, 1);
+          }
+        }
+      }
+
+      .line {
+        position: absolute;
+        height: 400px;
+        border-left: 1px solid $tooltip-line-color;
+      }
+    }
+
+    .grapher-context-menu {
+      position: absolute;
+      top: 0;
+      left: 0;
+      .menu-item {
+
+        .menu-text {
+          user-select: all;
+          position: absolute;
+          top: 0;
+          background: $tooltip-background-color;
+          border: 1px solid $annotation-background-color;
+          color: $tooltip-text-color;
+          padding: 2px 4px;
+          max-width: max-content;
+          width: 200px;
+        }
+      }
+    }
+
+    .grapher-draggable-points {
+      circle {
+        cursor: pointer;
+      }
+    }
+
+    .grapher-vertical-lines {
+      line {
+        stroke: $vertical-line-color;
+      }
+
+      polygon {
+        fill: $vertical-line-color;
+      }
+    }
+
+    .grapher-annotations {
+      position: absolute;
+      top: 0;
+      pointer-events: none;
+      user-select: none;
+
+      .grapher-annotation {
+        position: absolute;
+
+        .annotation-marker {
+          display: inline-block;
+          height: $primary-graph-body-height;
+          background: $annotation-background-color;
+        }
+
+        .annotation-text {
+          position: absolute;
+          top: 0;
+          background: $tooltip-background-color;
+          border: 1px solid $annotation-background-color;
+          color: $tooltip-text-color;
+          padding: 2px 4px;
+          max-width: max-content;
+          width: 200px;
+        }
+      }
+    }
+
+    .bounds-selection {
+      position: absolute;
+      background: $range-graph-selection-range-color;
+    }
+  }
+
+  .axis {
+    overflow: visible;
+    user-select: none;
+
+    &.x-axis {
+      width: 1px;
+      height: $x-axis-height;
+      display: block;
+
+      .axis-item {
+        text {
+          text-anchor: middle;
+        }
+
+        &.axis-item-first {
+          text {
+            text-anchor: start;
+          }
+        }
+
+        &.axis-item-last {
+          text {
+            text-anchor: end;
+          }
+        }
+      }
+    }
+
+    &.y-axis {
+      height: $primary-graph-body-height;
+
+      .axis-item text {
+        text-anchor: end;
+        alignment-baseline: middle;
+      }
+
+      .y-axis-label {
+        text-anchor: middle;
+        fill: $axis-text-color;
+
+        &.y-axis-big-label {
+          font-size: 18px;
+        }
+      }
+
+      .series-color-box {
+        cursor: pointer;
+      }
+
+      &.y-axis-right {
+        .axis-item text {
+          text-anchor: start;
+        }
+      }
+    }
+
+    .axis-line {
+      stroke: $axis-line-color;
+      stroke-width: $axis-line-width;
+    }
+
+    .axis-line-shadow {
+      stroke: $axis-tick-color;
+      stroke-width: 1px;
+    }
+
+    .axis-item {
+      path {
+        stroke: $axis-tick-color;
+        stroke-width: 1px;
+      }
+
+      text {
+        fill: $axis-text-color;
+        font-size: 8px;
+      }
+
+      &.axis-item-major {
+        .axis-tick {
+          stroke-width: 2px;
+        }
+      }
+
+      &.axis-item-big-labels {
+        text {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .range-selection-graph {
+    width: 100%;
+    padding-bottom: $range-graph-selection-bar-size;
+
+    .graph-body-secondary {
+      height: $secondary-graph-body-height;
+
+      svg {
+        position: absolute;
+        left: 0;
+        height: $secondary-graph-body-height;
+        width: 100%;
+        overflow: visible;
+
+        .target-selection {
+          fill: $range-graph-selection-range-color;
+          cursor: ew-resize;
+        }
+
+        .selection-bar {
+          fill: $range-graph-selection-bar-color;
+          cursor: ew-resize;
+        }
+
+        .selection-bar-track {
+          fill: $range-graph-selection-bar-track-color;
+        }
+
+        .selection-bar-rifles {
+          fill: none;
+          stroke-width: 1;
+          stroke: $range-graph-selection-bar-rifles-color;
+        }
+
+        .selection-bar-handle {
+          stroke: $range-graph-handle-color;
+          stroke-width: 1;
+          fill: $range-graph-handle-fill-color;
+          cursor: ew-resize;
+        }
+
+        .target-selection-outline {
+          stroke: $range-graph-selection-outline-color;
+          fill: none;
+        }
+
+        .axis-item {
+          text {
+            fill: $range-graph-axis-text-color;
+            text-anchor: start;
+            font-size: 8px;
+            user-select: none;
+            dominant-baseline: text-after-edge;
+          }
+
+          path {
+            stroke: $axis-tick-color;
+            stroke-width: 1px;
+          }
+        }
+      }
+    }
+  }
+
+  input, textarea {
+    background: transparent;
+    border: 1px solid $series-key-input-border-color;
+    margin: 2px 0;
+    color: $series-key-input-text-color;
+    padding: 1px 2px;
+    text-align: center;
+
+    &:focus {
+      outline: none;
+      border-color: $series-key-input-selected-border-color;
+    }
+  }
+
+  &.grapher-dragging-y {
+    .y-axis {
+      border: 2px dashed silver;
+      margin: -2px;
+      flex-shrink: 0;
+
+      & + .y-axis {
+        border-left: none;
+      }
+    }
+  }
+
+  &.grapher-fullscreen {
+    height: calc(100vh - 2*#{$padding});
+  }
+
+  &.grapher-fixed-height {
+    .grapher-primary-container-outer {
+      height: 100%;
+
+      .grapher-primary-container-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .grapher-main-row {
+          flex-grow: 1;
+
+          .central-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            > .graph-body {
+              flex-grow: 1;
+              height: unset;
+            }
+          }
+
+          .axis.y-axis {
+            height: calc(100% - #{2*$x-axis-height});
+          }
+        }
+      }
+    }
+  }
+
+  &.new-grapher {
+    height: auto;
+    border: 2px dashed silver;
+    text-align: center;
+    color: $new-grapher-color;
+  }
+}
+
+@mixin grapher-theme-night (
+  $primary-graph-body-height: 400px,
+  $secondary-graph-body-height: 50px,
+) {
+  @include grapher(
+                  $primary-graph-body-height,
+                  $secondary-graph-body-height
+  );
+}
+
+@mixin grapher-theme-day (
+  $primary-graph-body-height: 400px,
+  $secondary-graph-body-height: 50px,
+) {
+  @include grapher(
+                  $primary-graph-body-height,
+                  $secondary-graph-body-height,
+
+          $background-color-1: #FFF,
+          $background-color-2: #FFF,
+
+          $tooltip-line-color: invert(#CCC),
+          $tooltip-background-color: invert(rgba(0, 0, 0, 0.6)),
+          $tooltip-text-color: invert(#F0F0F0),
+          $vertical-line-color: invert(#CCC),
+
+          $axis-line-color: #656565,
+          $axis-tick-color: #BFBFBF,
+          $axis-text-color: invert(#E0E0E3),
+
+          $range-selection-text-color: #444,
+          $range-selection-button-color: white,
+          $range-selection-button-selected-color: white,
+          $range-selection-text-selected-color: black,
+          $range-selection-text-color-faded: #888,
+          $range-selection-button-color-faded: #EEE,
+          $range-selection-button-border: 1px dotted silver,
+          $range-selection-selected-button-border: 1px solid black,
+
+          $range-graph-selection-range-color: rgba(0, 0, 0, 0.02),
+          $range-graph-selection-outline-color: #333,
+          $range-graph-selection-bar-color: #B0B0B7,
+          $range-graph-selection-bar-track-color: #EEE,
+          $range-graph-selection-bar-rifles-color: #333,
+          $range-graph-handle-color: #333,
+          $range-graph-handle-fill-color: #B0B0B7,
+
+          $annotation-background-color: rgba(0, 0, 0, 0.3),
+
+          $series-key-axis-container-color: #B0B0B7,
+          $series-key-input-border-color: #E0E0E3,
+          $series-key-input-selected-border-color: #505053,
+          $series-key-input-text-color: #222,
+          $series-key-background: null,
+          $series-key-shadow-color: black,
+          $scale-label-color: black,
+
+          $title-color: black,
+
+          $sidebar-background-color: #EEE,
+          $sidebar-text-color: #111,
+
+          $new-grapher-color: #222
+  );
+}
+
+@mixin grapher-theme-export (
+  $primary-graph-body-height: 400px,
+  $secondary-graph-body-height: 50px,
+) {
+  @include grapher(
+                  $primary-graph-body-height,
+                  $secondary-graph-body-height,
+
+          $background-color-1: #FFF,
+          $background-color-2: #FFF,
+
+          $tooltip-line-color: invert(#CCC),
+          $tooltip-background-color: invert(rgba(0, 0, 0, 0.6)),
+          $tooltip-text-color: invert(#F0F0F0),
+          $vertical-line-color: invert(#CCC),
+
+          $axis-line-color: black,
+          $axis-line-width: 1px,
+          $axis-tick-color: #BFBFBF,
+          $axis-text-color: black,
+
+          $range-selection-text-color: #444,
+          $range-selection-button-color: white,
+          $range-selection-button-selected-color: white,
+          $range-selection-text-selected-color: black,
+          $range-selection-text-color-faded: #888,
+          $range-selection-button-color-faded: #EEE,
+          $range-selection-button-border: 1px dotted silver,
+          $range-selection-selected-button-border: 1px solid black,
+
+          $range-graph-selection-range-color: rgba(0, 0, 0, 0.02),
+          $range-graph-selection-outline-color: #333,
+          $range-graph-selection-bar-color: #B0B0B7,
+          $range-graph-selection-bar-track-color: #EEE,
+          $range-graph-selection-bar-rifles-color: #333,
+          $range-graph-handle-color: #333,
+          $range-graph-handle-fill-color: #B0B0B7,
+
+          $annotation-background-color: rgba(0, 0, 0, 0.3),
+
+          $series-key-axis-container-color: #B0B0B7,
+          $series-key-input-border-color: #E0E0E3,
+          $series-key-input-selected-border-color: #505053,
+          $series-key-input-text-color: #222,
+          $series-key-background: null,
+          $series-key-shadow-color: black,
+          $scale-label-color: black,
+
+          $title-color: black,
+
+          $sidebar-background-color: #EEE,
+          $sidebar-text-color: #111,
+
+          $new-grapher-color: #222
+  );
+}
+
+.grapher-night {
+  @include grapher-theme-night();
+}
+
+.grapher-day {
+  @include grapher-theme-day();
+}
+
+.grapher-export {
+  @include grapher-theme-export();
+}
