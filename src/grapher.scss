@@ -446,6 +446,7 @@
     .grapher-tooltip, .grapher-draggable-points, .grapher-vertical-lines {
       position: absolute;
       top: 0;
+      left: 0;
 
       svg {
         position: absolute;
@@ -481,6 +482,10 @@
         position: absolute;
         height: 400px;
         border-left: 1px solid $tooltip-line-color;
+      }
+
+      .custom-tooltip-container {
+        position: absolute;
       }
     }
 

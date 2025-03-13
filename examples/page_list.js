@@ -64,7 +64,8 @@ module.exports = [
             'specified_height_graph',
             'hidden_series_graph',
             'dates_timezone_graph',
-            'marked_dates_graph'
+            'marked_dates_graph',
+            'custom_tooltips_graph'
         ]
     },
     {

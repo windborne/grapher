@@ -107,76 +107,120 @@ export default class Tooltip extends React.PureComponent {
             formatXOptions
         };
 
+        const preparedTooltips = this.props.tooltips.map((tooltip, i) => {
+            const { x, y, color, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
+
+            const axisLabel = (series.name || series.yKey || index).toString();
+            const width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
+
+            let fixedPosition = this.props.elementWidth < (width + 2*caretSize + 2*caretPadding);
+
+            let multiplier = 1;
+            if (pixelX >= this.props.elementWidth - (width + 2*caretSize + caretPadding)) {
+                multiplier = -1;
+            }
+
+            if (pixelX < width + 2*caretSize + caretPadding && multiplier === -1) {
+                fixedPosition = true;
+            }
+
+            if (y === null) {
+                fixedPosition = true;
+            }
+
+            if (this.props.alwaysFixedPosition) {
+                fixedPosition = true;
+            }
+
+            let textLeft = caretSize + caretPadding;
+            if (multiplier < 0) {
+                textLeft = -width - textLeft;
+            } else {
+                textLeft += 6;
+            }
+
+            if (!isFinite(pixelX)) {
+                return null;
+            }
+
+            const transform = `translate(${pixelX},${pixelY})`;
+
+            const commonLabelProps = {
+                fullYPrecision: fullYPrecision || this.props.maxPrecision,
+                x,
+                y,
+                axisLabel,
+                xLabel,
+                yLabel,
+                ...passThroughProps
+            };
+
+            let yTranslation = 0;
+            let baseLeft;
+
+            if (fixedPosition) {
+                textLeft = 6;
+
+                baseLeft = this.props.elementWidth / 2 - width / 2;
+
+                if (width > this.props.elementWidth && !this.props.floating) {
+                    baseLeft -= Y_AXIS_WIDTH * this.props.axisCount / 2;
+                }
+
+                yTranslation = 18;
+
+                if (this.props.floating) {
+                    if (this.props.floatPosition === 'bottom') {
+                        yTranslation = this.props.elementHeight + halfHeight + 4;
+                    } else {
+                        yTranslation = -height;
+                    }
+
+                    if (this.props.floatDelta) {
+                        yTranslation += this.props.floatDelta;
+                    }
+                }
+            }
+
+            return {
+                ...tooltip,
+                label: axisLabel,
+                axisLabel,
+                width,
+                fixedPosition,
+                multiplier,
+                textLeft,
+                transform,
+                commonLabelProps,
+                textTop,
+                height,
+                caretSize,
+                halfHeight,
+                caretPadding,
+                yTranslation,
+                baseLeft
+            };
+        });
+
+        const CustomTooltipComponent = this.props.customTooltip;
+
         return (
             <div className="grapher-tooltip">
                 <svg>
                     {
-                        this.props.tooltips.map(({ x, y, color, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision }, i) => {
-                            const axisLabel = (series.name || series.yKey || index).toString();
-                            const width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
+                        preparedTooltips.map((tooltip, i) => {
+                            const { color, fixedPosition, width, transform, baseLeft, commonLabelProps, yTranslation, multiplier, textLeft, textTop } = tooltip;
 
-                            let fixedPosition = this.props.elementWidth < (width + 2*caretSize + 2*caretPadding);
-
-                            let multiplier = 1;
-                            if (pixelX >= this.props.elementWidth - (width + 2*caretSize + caretPadding)) {
-                                multiplier = -1;
+                            if (this.props.customTooltip) {
+                                return (
+                                    <g key={i} transform={transform} className="tooltip-item">
+                                        <circle r={4} fill={color}/>
+                                    </g>
+                                )
                             }
-
-                            if (pixelX < width + 2*caretSize + caretPadding && multiplier === -1) {
-                                fixedPosition = true;
-                            }
-
-                            if (y === null) {
-                                fixedPosition = true;
-                            }
-
-                            let textLeft = caretSize + caretPadding;
-                            if (multiplier < 0) {
-                                textLeft = -width - textLeft;
-                            } else {
-                                textLeft += 6;
-                            }
-
-                            if (!isFinite(pixelX)) {
-                                return null;
-                            }
-
-                            const transform = `translate(${pixelX},${pixelY})`;
-
-                            const commonLabelProps = {
-                                fullYPrecision: fullYPrecision || this.props.maxPrecision,
-                                x,
-                                y,
-                                axisLabel,
-                                xLabel,
-                                yLabel,
-                                ...passThroughProps
-                            };
 
                             // display in a fixed position if not wide enough
-                            if (fixedPosition || this.props.alwaysFixedPosition) {
-                                textLeft = 6;
-
-                                let baseLeft = this.props.elementWidth/2 - width/2;
-
-                                if (width > this.props.elementWidth && !this.props.floating) {
-                                    baseLeft -= Y_AXIS_WIDTH*this.props.axisCount/2;
-                                }
-
-                                let yTranslation = 18;
-
-                                if (this.props.floating) {
-                                    if (this.props.floatPosition === 'bottom') {
-                                        yTranslation = this.props.elementHeight + halfHeight + 4;
-                                    } else {
-                                        yTranslation = -height;
-                                    }
-
-                                    if (this.props.floatDelta) {
-                                        yTranslation += this.props.floatDelta;
-                                    }
-                                }
-
+                            if (fixedPosition) {
                                 return (
                                     <g key={i} className="tooltip-item tooltip-item-fixed">
                                         <circle r={4} fill={color} transform={transform} />
@@ -208,6 +252,19 @@ export default class Tooltip extends React.PureComponent {
                         })
                     }
                 </svg>
+
+                {
+                    this.props.customTooltip &&
+                    preparedTooltips.map((tooltip, i) =>
+                        <div
+                            key={i}
+                            className="custom-tooltip-container"
+                            style={{top: tooltip.pixelY, left: tooltip.pixelX}}
+                        >
+                            <CustomTooltipComponent {...tooltip} />
+                        </div>
+                    )
+                }
             </div>
         );
     }
