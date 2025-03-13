@@ -208,7 +208,7 @@ export default class GraphBodyRenderer extends Eventable {
             let first = true;
             let disabled = false;
 
-            this._resizeObserver = new window.ResizeObserver(async () => {
+            this._resizeObserver = new window.ResizeObserver( () => {
                 if (first) { // always fires once at the beginning
                     first = false;
                     return;
@@ -219,8 +219,9 @@ export default class GraphBodyRenderer extends Eventable {
                 }
 
                 disabled = true;
-                await this.resize();
-                disabled = false; // eslint-disable-line require-atomic-updates
+                this.resize().then(() => {
+                    disabled = false;
+                });
             });
 
             this._resizeObserver.observe(this._canvas.parentNode);
