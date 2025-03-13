@@ -104,7 +104,8 @@ const TooltipOptionsRaw = {
     floatPosition: PropTypes.oneOf(['top', 'bottom']),
     floatDelta: PropTypes.number,
     savingDisabled: PropTypes.bool,
-    customTooltip: PropTypes.func
+    customTooltip: PropTypes.func,
+    combineTooltips: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
 };
 
 const TooltipOptions = PropTypes.shape(TooltipOptionsRaw);

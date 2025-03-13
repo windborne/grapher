@@ -202,7 +202,8 @@ Configures tooltip appearance and behavior with properties including:
 - `floatPosition`: Placement of floating tooltip ('top' or 'bottom')
 - `floatDelta`: Pixel offset for floating tooltip positioning
 - `savingDisabled`: Prevents tooltip settings from being saved
-- `customTooltip`: A react component to use as a custom tooltip. See [examples/custom_tooltips_graph.js](examples/custom_tooltips_graph.js) for an example.
+- `customTooltip`: A react component to use as a custom tooltip. See [examples/custom_tooltips_graph.js](examples/custom_tooltips_graph.js) for an example. If used in conjunction with `combineTooltips`, see [examples/combined_tooltips_graph.js](examples/combined_tooltips_graph.js) 
+- `combineTooltips`: If true, combines multiple tooltips into one when multiple series are shown. Can alternatively be set to a threshold in pixels for how close values need to be in order to be combined.
 
 **customBoundsSelectors**
 Array of custom range selector objects with properties:

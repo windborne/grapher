@@ -73,7 +73,8 @@ TooltipLabel.propTypes = {
 export default class Tooltip extends React.PureComponent {
 
     render() {
-        let height = 12*3 + 6;
+        const textPadding = 3;
+        let height = 12*3 + 2*textPadding;
 
         if (!this.props.includeSeriesLabel) {
             height -= 12;
@@ -91,7 +92,7 @@ export default class Tooltip extends React.PureComponent {
         const halfHeight = height/2;
         const caretPadding = 4;
 
-        const textTop = -halfHeight + 3;
+        const textTop = -halfHeight + textPadding;
 
         const formatXOptions = {
             clockStyle: this.props.clockStyle,
@@ -107,8 +108,8 @@ export default class Tooltip extends React.PureComponent {
             formatXOptions
         };
 
-        const preparedTooltips = this.props.tooltips.map((tooltip, i) => {
-            const { x, y, color, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
+        const preparedTooltips = this.props.tooltips.map((tooltip) => {
+            const { x, y, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
 
             const axisLabel = (series.name || series.yKey || index).toString();
             const width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
@@ -185,6 +186,7 @@ export default class Tooltip extends React.PureComponent {
             return {
                 ...tooltip,
                 label: axisLabel,
+                indexInAxis: series.axis.series.indexOf(series),
                 axisLabel,
                 width,
                 fixedPosition,
@@ -204,6 +206,69 @@ export default class Tooltip extends React.PureComponent {
 
         const CustomTooltipComponent = this.props.customTooltip;
 
+        let groupedTooltips;
+        if (this.props.combineTooltips) {
+            let combinationThreshold = 50; // in px how close tooltips should be to combine
+            if (typeof this.props.combineTooltips === 'number') {
+                combinationThreshold = this.props.combineTooltips;
+            }
+
+            groupedTooltips = [];
+
+            for (let tooltip of preparedTooltips) {
+                let added = false;
+                for (let group of groupedTooltips) {
+                    if (Math.abs(group.pixelX - tooltip.pixelX) <= combinationThreshold) {
+                        group.tooltips.push(tooltip);
+                        if (tooltip.pixelX < group.pixelX) {
+                            group.pixelX = tooltip.pixelX;
+                            group.multiplier = tooltip.multiplier;
+                        }
+
+                        if (tooltip.pixelY < group.pixelY) {
+                            group.pixelY = tooltip.pixelY;
+                        }
+
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added) {
+                    groupedTooltips.push({
+                        pixelX: tooltip.pixelX,
+                        pixelY: tooltip.pixelY,
+                        multiplier: tooltip.multiplier,
+                        tooltips: [tooltip]
+                    });
+                }
+            }
+
+            for (let group of groupedTooltips) {
+                let totalHeight = 0;
+                let maxWidth = 0;
+
+                // sort by indexInAxis
+                group.tooltips.sort((a, b) => a.indexInAxis - b.indexInAxis);
+
+                for (let i = 0; i < group.tooltips.length; i++) {
+                    group.tooltips[i].textTop = totalHeight;
+                    totalHeight += group.tooltips[i].height;
+                    maxWidth = Math.max(maxWidth, group.tooltips[i].width);
+                }
+
+                for (let i = 0; i < group.tooltips.length; i++) {
+                    group.tooltips[i].textTop -= totalHeight/2;
+                    group.tooltips[i].textTop += textPadding;
+                }
+
+                group.height = totalHeight;
+                group.halfHeight = totalHeight / 2;
+                group.caretSize = caretSize;
+                group.width = maxWidth;
+            }
+        }
+
         return (
             <div className="grapher-tooltip">
                 <svg>
@@ -211,12 +276,12 @@ export default class Tooltip extends React.PureComponent {
                         preparedTooltips.map((tooltip, i) => {
                             const { color, fixedPosition, width, transform, baseLeft, commonLabelProps, yTranslation, multiplier, textLeft, textTop } = tooltip;
 
-                            if (this.props.customTooltip) {
+                            if (this.props.customTooltip || groupedTooltips) {
                                 return (
                                     <g key={i} transform={transform} className="tooltip-item">
                                         <circle r={4} fill={color}/>
                                     </g>
-                                )
+                                );
                             }
 
                             // display in a fixed position if not wide enough
@@ -251,11 +316,31 @@ export default class Tooltip extends React.PureComponent {
                             );
                         })
                     }
+
+                    {
+                        !this.props.customTooltip && groupedTooltips &&
+                        groupedTooltips.map(({ tooltips, pixelX, pixelY, halfHeight, multiplier, color, width }, i) =>
+                            <g key={i} transform={`translate(${pixelX},${pixelY})`} className="tooltip-item">
+                                <path stroke={color} d={`M${multiplier*caretPadding},0 L${multiplier*caretSize*2},-${caretSize} V-${halfHeight} h${multiplier*width} V${halfHeight} h${multiplier*-width} V${caretSize} L${multiplier*caretPadding},0`} />
+
+                                {
+                                    tooltips.map((tooltip, j) =>
+                                        <TooltipLabel
+                                            key={j}
+                                            textTop={tooltip.textTop}
+                                            textLeft={tooltip.textLeft}
+                                            {...tooltip.commonLabelProps}
+                                        />
+                                    )
+                                }
+                            </g>
+                        )
+                    }
                 </svg>
 
                 {
                     this.props.customTooltip &&
-                    preparedTooltips.map((tooltip, i) =>
+                    (groupedTooltips || preparedTooltips).map((tooltip, i) =>
                         <div
                             key={i}
                             className="custom-tooltip-container"

@@ -4,8 +4,16 @@ import renderPage from './render_page';
 import ExamplePage from './example_page';
 
 const series = [
-    { data: [], name: 'Series 1' },
-    { data: [], name: 'Series 2' }
+    {
+        name: 'Series 1',
+        data: [],
+        defaultAlwaysTooltipped: true
+    },
+    {
+        name: 'Series 2',
+        data: [],
+        defaultAlwaysTooltipped: true
+    }
 ];
 
 for (let i = 0; i < 10000; i++) {
@@ -21,7 +29,7 @@ for (let i = 0; i < 10000; i++) {
 }
 
 /* eslint-disable react/prop-types */
-function CustomTooltip({x, y, label}) {
+function CustomTooltip({tooltips}) {
     const style = {
         backgroundColor: 'white',
         border: '1px solid black',
@@ -34,9 +42,15 @@ function CustomTooltip({x, y, label}) {
 
     return (
         <div style={style}>
-            <b>{label}</b> <br/>
-            x: {x.toLocaleString()}<br/>
-            y: {y.toFixed(2)}<br/>
+            {
+                tooltips.map(({label, x, y}, i) =>
+                    <div key={i}>
+                        <b>{label}</b> <br/>
+                        x: {x.toLocaleString()}<br/>
+                        y: {y.toFixed(2)}<br/>
+                    </div>
+                )
+            }
         </div>
     );
 }
@@ -44,11 +58,12 @@ function CustomTooltip({x, y, label}) {
 
 
 const tooltipOptions = {
-    customTooltip: CustomTooltip
+    customTooltip: CustomTooltip,
+    combineTooltips: true
 };
 
 renderPage(
-    <ExamplePage page="custom_tooltips_graph">
+    <ExamplePage page="combined_tooltips_graph">
         <Grapher
             series={series}
             defaultBoundsCalculator="lastHour"
