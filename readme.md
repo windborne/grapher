@@ -56,7 +56,7 @@ Refer to the Grapher PropTypes for complete type information.
 
 **series** (required)
 This sets the data for the graph and is the only property that is truly required.
-See "Passing in Data" section for more details.
+See "Series" section for more details.
 
 **webgl**
 If true, will render with WebGL rather than a 2D context.
@@ -66,6 +66,47 @@ This is more performant, but uses more resources.
 If true, will wait until the WASM extensions are ready before it renders.
 This can be useful when your app has expensive initialization.
 
+### Series Format
+The `series` prop requires an array of objects, where each object represents a data series with the following properties:
+
+- **data** (required): The actual data points (see Data Formats below)
+- **type**: Data type or 'infer' to automatically detect
+- **xKey**: Property name for x-values when using object data
+- **yKey**: Property name for y-values when using object data
+- **xUnixDates**: Whether x-values are Unix timestamps (boolean)
+- **color**: Series color (string or number)
+- **name**: Series name for display in legend
+- **xLabel**: Label for x-axis
+- **yLabel**: Label for y-axis
+- **rendering**: Visual representation ('line', 'bar', or 'area', defaults to 'line')
+- **ignoreDiscontinuities**: Whether to connect points across gaps (boolean)
+- **dashed**: Whether to use dashed lines (boolean)
+- **dashPattern**: Array defining dash pattern (array of numbers)
+- **width**: Line width (number)
+- **axis**: Axis specification for the series (string or object)
+- **rangeSelectorWidth**: Width of the range selector for this series (number)
+- **expandYWith**: Values to include when calculating y-axis range (array of numbers)
+- **defaultAlwaysTooltipped**: Whether to always show tooltip for this series (boolean)
+- **square**: Whether to render the series with square points (boolean)
+- **shiftXBy**: Value to shift x-coordinates by (number)
+- **graph**: Affects which graph this series belongs to in multigrapher (number)
+- **background**: Background configuration (object)
+- **hideFromKey**: Whether to hide this series from the legend (boolean)
+- **showIndividualPoints**: Whether to show individual data points (boolean)
+- **negativeColor**: Color for negative values
+- **gradient**: Gradient configuration, only applies to area rendering (array)
+- **zeroLineWidth**: Width of the zero line, only applies to bar and area rendering (number)
+- **zeroLineColor**: Color of the zero line, only applies to bar and area rendering (string)
+- **pointRadius**: Radius of points, only applies to area rendering (number)
+
+#### Series Data Formats
+Grapher supports multiple data formats within a series:
+
+1. **Array of y-values**: Simple array where index is used as x-value
+2. **Array of [x,y] tuples**: Each point defined as [x, y] pair
+3. **Array of objects**: Objects with properties for x and y values (as per the xKey and yKey properties)
+4. **Observable**: Object with an observe method, which may emit tuples or objects
+5. **Generator function**: Function that generates an array data points as a function of zoom
 
 ### Event Handlers
 
@@ -252,38 +293,6 @@ Array of vertical line objects to display on the graph with properties:
 - `markTop`: Whether to add a marker at the top of the line
 - `style`: Optional styling object for the line
 - `markerStyle`: Optional styling object for the marker
-
-## Passing in Data
-
-Grapher accepts several formats for the `series` prop:
-
-### Series Format
-The `series` prop requires an array of objects, where each object represents a data series with the following properties:
-
-- **data** (required): The actual data points (see Data Formats below)
-- **type**: Data type or 'infer' to automatically detect
-- **xKey**: Property name for x-values when using object data
-- **yKey**: Property name for y-values when using object data
-- **xUnixDates**: Whether x-values are Unix timestamps
-- **color**: Series color (string or number)
-- **name**: Series name for display in legend
-- **xLabel**: Label for x-axis
-- **yLabel**: Label for y-axis
-- **rendering**: Visual representation ('line', 'bar', or 'area')
-- **ignoreDiscontinuities**: Whether to connect points across gaps
-- **dashed**: Whether to use dashed lines
-- **dashPattern**: Array defining dash pattern
-- **width**: Line width
-- **axis**: Axis specification for the series
-
-### Data Formats
-Grapher supports multiple data formats within a series:
-
-1. **Array of y-values**: Simple array where index is used as x-value
-2. **Array of [x,y] tuples**: Each point defined as [x, y] pair
-3. **Array of objects**: Objects with properties for x and y values (as per the xKey and yKey properties)
-4. **Observable**: Object with an observe method, which may emit tuples or objects
-5. **Generator function**: Function that generates an array data points
 
 ## Developing
 Other than an `npm install`, you'll need to install rust and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/).
