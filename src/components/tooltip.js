@@ -186,7 +186,7 @@ export default class Tooltip extends React.PureComponent {
             return {
                 ...tooltip,
                 label: axisLabel,
-                indexInAxis: series.axis.series.indexOf(series),
+                indexInAxis: series?.axis?.series?.indexOf(series),
                 axisLabel,
                 width,
                 fixedPosition,
