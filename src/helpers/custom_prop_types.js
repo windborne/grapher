@@ -142,6 +142,8 @@ const VerticalLine = PropTypes.shape({
     text: PropTypes.string,
     textTop: PropTypes.number,
     textStyle: PropTypes.object,
+    minPixelX: PropTypes.number,
+    maxPixelX: PropTypes.number,
     onRangeGraph: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.object // anything that can be passed into the overall vertical line

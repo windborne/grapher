@@ -1,5 +1,5 @@
 
-# Grapher
+# WindBorne Grapher
 Powerful, performant graphing.
 
 Grapher is designed primarily for internal infrastructure with lots of data and lots of axes. 
@@ -300,6 +300,8 @@ Array of vertical line objects to display on the graph with properties:
 - `text`: Optional text to display alongside the line
 - `textTop`: Optional value to specify the vertical position of the text
 - `textStyle`: Optional styling object for the text
+- `minPixelX`: Optional number. If the x position of the line in pixels is less than this value, the line will be hidden
+- `maxPixelX`: Optional number. If the x position of the line in pixels is greater than this value, the line will be hidden
 - `onRangeGraph`: If true, will show the line on the range graph as well. This may also be an object with any of the above options to adjust the styling
 - `onRangeGraphOnly`: If true, the vertical line will only appear on the range graph and not the primary graph
 

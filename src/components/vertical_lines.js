@@ -42,7 +42,6 @@ function VerticalLines({ stateController, verticalLines, isRangeGraph, bounds, e
                             };
                         }
 
-
                         const xT = (line.x - bounds.minX)/(bounds.maxX - bounds.minX);
 
                         if (xT < 0 || xT > 1) {
@@ -50,6 +49,13 @@ function VerticalLines({ stateController, verticalLines, isRangeGraph, bounds, e
                         }
 
                         const pixelX = xT * (elementWidth || sizing.elementWidth);
+                        if (typeof line.minPixelX === 'number' && pixelX < line.minPixelX) {
+                            return null;
+                        }
+
+                        if (typeof line.maxPixelX === 'number' && pixelX > line.maxPixelX) {
+                            return null;
+                        }
 
                         const lineStyle = {
                             stroke: line.color,
