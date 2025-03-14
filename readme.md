@@ -98,6 +98,7 @@ The `series` prop requires an array of objects, where each object represents a d
 - **zeroLineWidth**: Width of the zero line, only applies to bar and area rendering (number)
 - **zeroLineColor**: Color of the zero line, only applies to bar and area rendering (string)
 - **pointRadius**: Radius of points, only applies to area rendering (number)
+- **tooltipWidth**: Expected width of the tooltip (number). Will make the tooltip switch sides when this width plus the tooltip left position is greater than the graph width.
 
 #### Series Data Formats
 Grapher supports multiple data formats within a series:

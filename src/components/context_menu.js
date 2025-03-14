@@ -41,7 +41,7 @@ export default class ContextMenu extends React.PureComponent {
 
         const style = { left: x, top: y, width: '150px'};
         
-        if (!showing || !value || value.toLocaleString() === 'Invalid Date') {
+        if (!showing || !value || value.toLocaleString() === 'Invalid Date' || isNaN(x) || isNaN(y)) {
             return null;
         }
 
@@ -61,9 +61,9 @@ export default class ContextMenu extends React.PureComponent {
 
 ContextMenu.propTypes = {
     contextMenu: PropTypes.shape({
-        x: PropTypes.number.isRequired,
-        y: PropTypes.number.isRequired,
-        showing: PropTypes.bool.isRequired,
+        x: PropTypes.number,
+        y: PropTypes.number,
+        showing: PropTypes.bool,
         value: PropTypes.oneOfType([
             PropTypes.instanceOf(Date),
             PropTypes.number,

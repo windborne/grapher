@@ -25,6 +25,10 @@ function getYLabelContent({ yLabel, y, fullYPrecision}) {
         }
     }
 
+    if (typeof yLabel === 'object') {
+        return formatY(y);
+    }
+
     return yLabel || formatY(y);
 }
 
@@ -112,7 +116,10 @@ export default class Tooltip extends React.PureComponent {
             const { x, y, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
 
             const axisLabel = (series.name || series.yKey || index).toString();
-            const width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
+            let width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
+            if (series.tooltipWidth) {
+                width = series.tooltipWidth;
+            }
 
             let fixedPosition = this.props.elementWidth < (width + 2*caretSize + 2*caretPadding);
 
@@ -220,7 +227,7 @@ export default class Tooltip extends React.PureComponent {
                 for (let group of groupedTooltips) {
                     if (Math.abs(group.pixelX - tooltip.pixelX) <= combinationThreshold) {
                         group.tooltips.push(tooltip);
-                        if (tooltip.pixelX < group.pixelX) {
+                        if (tooltip.pixelX > group.pixelX) {
                             group.pixelX = tooltip.pixelX;
                             group.multiplier = tooltip.multiplier;
                         }
@@ -375,7 +382,7 @@ Tooltip.propTypes = {
         pixelY: PropTypes.number,
         color: PropTypes.string,
         xLabel: PropTypes.string,
-        yLabel: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        yLabel: PropTypes.any,
         fullYPrecision: PropTypes.bool
     })),
     axisCount: PropTypes.number.isRequired,

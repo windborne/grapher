@@ -70,7 +70,8 @@ const SingleSeries = PropTypes.shape({
     gradient: PropTypes.array, // only applies to area
     zeroLineWidth: PropTypes.number, // only applies to bar and area
     zeroLineColor: PropTypes.string,  // only applies to bar and area
-    pointRadius: PropTypes.number // only applies to area
+    pointRadius: PropTypes.number, // only applies to area
+    tooltipWidth: PropTypes.number
 });
 
 const Series = PropTypes.arrayOf(SingleSeries);
