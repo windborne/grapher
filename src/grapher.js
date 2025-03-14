@@ -268,6 +268,7 @@ function Grapher(props) {
                                         checkIntersection={props.checkIntersection}
                                         markDates={props.markRangeGraphDates}
                                         timeZone={props.timeZone}
+                                        verticalLines={props.verticalLines}
                                     />
                                 </div>
                             }

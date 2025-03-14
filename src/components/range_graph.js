@@ -4,6 +4,8 @@ import GraphBodyRenderer from '../renderer/graph_body_renderer';
 import StateController from '../state/state_controller';
 import placeGrid from '../helpers/place_grid';
 import {formatX} from '../helpers/format';
+import VerticalLines from './vertical_lines';
+import CustomPropTypes from '../helpers/custom_prop_types';
 
 export default class RangeGraph extends React.PureComponent {
 
@@ -330,6 +332,18 @@ export default class RangeGraph extends React.PureComponent {
                             />
                         </g>
                     </svg>
+
+                    {
+                        this.props.verticalLines &&
+                        <VerticalLines
+                            stateController={this.props.stateController}
+                            verticalLines={this.props.verticalLines}
+                            isRangeGraph={true}
+                            bounds={globalBounds}
+                            elementHeight={elementHeight}
+                            elementWidth={elementWidth}
+                        />
+                    }
                 </div>
             </div>
         );
@@ -348,5 +362,6 @@ RangeGraph.propTypes = {
     draggingY: PropTypes.bool,
     checkIntersection: PropTypes.bool,
     markDates: PropTypes.bool,
-    timeZone: PropTypes.string
+    timeZone: PropTypes.string,
+    verticalLines: CustomPropTypes.VerticalLines
 };

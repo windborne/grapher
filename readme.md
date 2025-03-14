@@ -296,6 +296,12 @@ Array of vertical line objects to display on the graph with properties:
 - `markTop`: Whether to add a marker at the top of the line
 - `style`: Optional styling object for the line
 - `markerStyle`: Optional styling object for the marker
+- `lineTop`: Optional value to specify the top position of the line
+- `text`: Optional text to display alongside the line
+- `textTop`: Optional value to specify the vertical position of the text
+- `textStyle`: Optional styling object for the text
+- `onRangeGraph`: If true, will show the line on the range graph as well. This may also be an object with any of the above options to adjust the styling
+- `onRangeGraphOnly`: If true, the vertical line will only appear on the range graph and not the primary graph
 
 ## Developing
 Other than an `npm install`, you'll need to install rust and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/).

@@ -134,10 +134,19 @@ const DraggablePoints = PropTypes.arrayOf(DraggablePoint);
 const VerticalLine = PropTypes.shape({
     x: PropTypes.number.isRequired,
     color: PropTypes.string,
+    lineTop: PropTypes.number,
     width: PropTypes.number,
     markTop: PropTypes.bool,
     style: PropTypes.object,
-    markerStyle: PropTypes.object
+    markerStyle: PropTypes.object,
+    text: PropTypes.string,
+    textTop: PropTypes.number,
+    textStyle: PropTypes.object,
+    onRangeGraph: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.object // anything that can be passed into the overall vertical line
+    ]),
+    onRangeGraphOnly: PropTypes.bool
 });
 const VerticalLines = PropTypes.arrayOf(VerticalLine);
 

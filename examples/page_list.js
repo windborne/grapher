@@ -66,7 +66,8 @@ module.exports = [
             'dates_timezone_graph',
             'marked_dates_graph',
             'custom_tooltips_graph',
-            'combined_tooltips_graph'
+            'combined_tooltips_graph',
+            'mark_now_graph'
         ]
     },
     {
