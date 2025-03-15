@@ -449,9 +449,10 @@
       left: 0;
       right: 0;
 
-      svg {
+      > svg {
         position: absolute;
         overflow: visible;
+        left: 0;
       }
     }
 
