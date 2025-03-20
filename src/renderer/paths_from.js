@@ -49,7 +49,7 @@ export default function pathsFrom(dataInRenderSpace, {splitAtY}={}) {
 
         if (typeof splitAtY === 'number' && i > 0) {
             const prevY = yValues[i-1];
-            const signFlipped = !(nullMask[i-1] & 0b001) && (prevY < splitAtY && y >= splitAtY) || (prevY > splitAtY && y <= splitAtY);
+            const signFlipped = !(nullMask[i-1] & 0b001) && (prevY < splitAtY && y >= splitAtY) || (prevY > splitAtY && y <= splitAtY) || (prevY === splitAtY && y !== splitAtY);
 
             if (signFlipped) {
                 if (!previouslyDiscontinuous) {
