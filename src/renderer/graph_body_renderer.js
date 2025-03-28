@@ -129,6 +129,10 @@ export default class GraphBodyRenderer extends Eventable {
                 zeroWidth: singleSeries.zeroLineWidth,
                 zeroColor: singleSeries.zeroLineColor
             };
+
+            if (!commonCPUParams.hasNegatives && singleSeries.expandYWith) {
+                commonCPUParams.hasNegatives = singleSeries.expandYWith.some((y) => y < 0);
+            }
         }
 
         if (singleSeries.rendering === 'bar') {
