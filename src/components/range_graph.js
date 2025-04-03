@@ -233,6 +233,7 @@ export default class RangeGraph extends React.PureComponent {
                 dates: selectionBounds.dates,
                 formatter: formatX,
                 expectedLabelSize: 30,
+                labelPadding: 5,
                 formatOptions: {
                     justMonthAndDay: true,
                     unitOverride: 'day',

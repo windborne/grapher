@@ -860,7 +860,7 @@ export default class StateController extends Eventable {
                 continue;
             }
 
-            const shadowColor = {
+            const shadowColor = singleSeries.shadowColor || {
                 day: 'white',
                 export: 'transparent',
                 night: 'black'

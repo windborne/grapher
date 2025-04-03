@@ -227,7 +227,7 @@ function placeDatesGrid({ min, max, precision, expectedLabelSize, labelPadding, 
 
         const tick = placeTick(currentDate, {...placementParams, justTime, justDate});
 
-        if (ticks.length && tick.pixelValue - ticks[ticks.length - 1].pixelValue < expectedLabelSize + labelPadding) {
+        if (ticks.length && (tick.pixelValue - ticks[ticks.length - 1].pixelValue) < (expectedLabelSize + (labelPadding || 0))) {
             continue;
         }
 
