@@ -647,6 +647,15 @@ export default class StateController extends Eventable {
             }
 
             singleSeries.selectedBounds = calculateDataBounds(singleSeries.inSelectedSpace.data, { percentile: this._percentile, percentileAsymmetry: this._percentileAsymmetry });
+            if (singleSeries.hasAreaBottom) {
+                singleSeries.selectedBoundsAreaTop = singleSeries.selectedBounds;
+                singleSeries.selectedBoundsAreaBottom = calculateDataBounds(singleSeries.inSelectedSpaceAreaBottom.data, { percentile: this._percentile, percentileAsymmetry: this._percentileAsymmetry });
+
+                singleSeries.selectedBounds = mergeBounds([
+                    singleSeries.selectedBoundsAreaTop,
+                    singleSeries.selectedBoundsAreaBottom
+                ]);
+            }
         }
 
         this._recalculateAxisBounds();
@@ -732,6 +741,15 @@ export default class StateController extends Eventable {
                 // this is significantly slower, but it's too complex to diff the old bounds and new bounds or diff percentiles
                 // besides, it not being a subset hopefully means its a lower volume of data
                 singleSeries.selectedBounds = calculateDataBounds(singleSeries.inSelectedSpace.data, { percentile: this._percentile, percentileAsymmetry: this._percentileAsymmetry});
+                if (singleSeries.hasAreaBottom) {
+                    singleSeries.selectedBoundsAreaTop = singleSeries.selectedBounds;
+                    singleSeries.selectedBoundsAreaBottom = calculateDataBounds(singleSeries.inSelectedSpaceAreaBottom.data, { percentile: this._percentile, percentileAsymmetry: this._percentileAsymmetry });
+
+                    singleSeries.selectedBounds = mergeBounds([
+                        singleSeries.selectedBoundsAreaTop,
+                        singleSeries.selectedBoundsAreaBottom
+                    ]);
+                }
                 continue;
             }
 
@@ -806,13 +824,24 @@ export default class StateController extends Eventable {
             }
 
             singleSeries.inSelectedSpace = dataSpaceToSelectedSpace({
-                data: singleSeries.inDataSpace,
+                data: singleSeries.hasAreaBottom ? singleSeries.inDataSpace.filter((_, i) => i % 2 === 1) : singleSeries.inDataSpace,
                 swap: disableSwap ? null : singleSeries.inSelectedSpace,
                 minX: this._selection.minX,
                 maxX: this._selection.maxX,
                 ignoreDiscontinuities: singleSeries.ignoreDiscontinuities,
                 square: singleSeries.square
             });
+
+            if (singleSeries.hasAreaBottom) {
+                singleSeries.inSelectedSpaceAreaBottom = dataSpaceToSelectedSpace({
+                    data:singleSeries.inDataSpace.filter((_, i) => i % 2 === 0),
+                    swap: disableSwap ? null : singleSeries.inSelectedSpaceAreaBottom,
+                    minX: this._selection.minX,
+                    maxX: this._selection.maxX,
+                    ignoreDiscontinuities: singleSeries.ignoreDiscontinuities,
+                    square: singleSeries.square
+                });
+            }
         }
     }
 
@@ -847,7 +876,8 @@ export default class StateController extends Eventable {
                 shadowColor,
                 shadowBlur,
                 defaultLineWidth: this._defaultLineWidth,
-                globalBounds: this._globalBounds
+                globalBounds: this._globalBounds,
+                inRenderSpaceAreaBottom: singleSeries.inRenderSpacePrimaryAreaBottom
             });
 
             if (this.rangeGraphRenderer && this.rangeGraphRenderer.sizing) {
@@ -856,7 +886,8 @@ export default class StateController extends Eventable {
                     shadowBlur: 0,
                     width: 1,
                     bounds: this._globalBounds,
-                    globalBounds: this._globalBounds
+                    globalBounds: this._globalBounds,
+                    inRenderSpaceAreaBottom: singleSeries.inRenderSpaceRangeGraphAreaBottom
                 });
             }
         }
@@ -886,18 +917,20 @@ export default class StateController extends Eventable {
         const renderWidth = Math.ceil(this.primaryRenderer.sizing.renderWidth/DPI_INCREASE);
         const renderHeight = Math.ceil(this.primaryRenderer.sizing.renderHeight);
 
-        singleSeries.inCondensedSelectedSpacePrimary = condenseDataSpace({
-            data: singleSeries.inSelectedSpace.data,
-            swap: singleSeries.inCondensedSelectedSpacePrimary,
+        const toCondensedSelectedSpaceParams = {
             minX: currentBounds.minX,
             maxX: currentBounds.maxX,
             renderWidth,
             dataChanged
+        }
+
+        singleSeries.inCondensedSelectedSpacePrimary = condenseDataSpace({
+            data: singleSeries.inSelectedSpace.data,
+            swap: singleSeries.inCondensedSelectedSpacePrimary,
+            ...toCondensedSelectedSpaceParams
         });
 
-        singleSeries.inRenderSpacePrimary = selectedSpaceToRenderSpace({
-            data: singleSeries.inCondensedSelectedSpacePrimary.data,
-            swap: singleSeries.inRenderSpacePrimary,
+        const toRenderSpaceParams = {
             minX: currentBounds.minX,
             maxX: currentBounds.maxX,
             minY: currentBounds.minY,
@@ -906,6 +939,12 @@ export default class StateController extends Eventable {
             renderHeight,
             scale,
             dataChanged
+        };
+
+        singleSeries.inRenderSpacePrimary = selectedSpaceToRenderSpace({
+            data: singleSeries.inCondensedSelectedSpacePrimary.data,
+            swap: singleSeries.inRenderSpacePrimary,
+            ...toRenderSpaceParams
         });
 
         singleSeries.inBackgroundSpacePrimary = selectedSpaceToBackgroundSpace({
@@ -915,6 +954,28 @@ export default class StateController extends Eventable {
             minX: currentBounds.minX,
             maxX: currentBounds.maxX
         });
+
+        if (singleSeries.hasAreaBottom) {
+            singleSeries.inCondensedSelectedSpacePrimaryAreaBottom = condenseDataSpace({
+                data: singleSeries.inSelectedSpaceAreaBottom.data,
+                swap: singleSeries.inCondensedSelectedSpacePrimaryAreaBottom,
+                ...toCondensedSelectedSpaceParams
+            });
+
+            singleSeries.inRenderSpacePrimaryAreaBottom = selectedSpaceToRenderSpace({
+                data: singleSeries.inCondensedSelectedSpacePrimaryAreaBottom.data,
+                swap: singleSeries.inRenderSpacePrimaryAreaBottom,
+                ...toRenderSpaceParams
+            });
+
+            singleSeries.inBackgroundSpacePrimaryAreaBottom = selectedSpaceToBackgroundSpace({
+                data: singleSeries.inCondensedSelectedSpacePrimaryAreaBottom.data,
+                background: singleSeries.background,
+                swap: singleSeries.inBackgroundSpacePrimaryAreaBottom,
+                minX: currentBounds.minX,
+                maxX: currentBounds.maxX
+            });
+        }
     }
 
     _calculateRangeGraphSizeDependents(singleSeries, { dataChanged=false } = {}) {
@@ -942,27 +1003,32 @@ export default class StateController extends Eventable {
         const renderWidth = Math.ceil(this.rangeGraphRenderer.sizing.renderWidth/DPI_INCREASE);
         const renderHeight = Math.ceil(this.rangeGraphRenderer.sizing.renderHeight);
 
-        singleSeries.inSelectedSpaceRangeGraph = dataSpaceToSelectedSpace({
-            data: singleSeries.inDataSpace,
-            swap: singleSeries.inSelectedSpaceRangeGraph,
+        const toSelectedSpaceParams = {
             minX: globalBounds.minX,
             maxX: globalBounds.maxX,
             ignoreDiscontinuities: singleSeries.ignoreDiscontinuities,
             square: singleSeries.square
+        }
+
+        singleSeries.inSelectedSpaceRangeGraph = dataSpaceToSelectedSpace({
+            data: singleSeries.hasAreaBottom ? singleSeries.inDataSpace.filter((_, i) => i % 2 === 1) : singleSeries.inDataSpace,
+            swap: singleSeries.inSelectedSpaceRangeGraph,
+            ...toSelectedSpaceParams
         });
 
-        singleSeries.inCondensedSelectedSpaceRangeGraph = condenseDataSpace({
-            data: singleSeries.inSelectedSpaceRangeGraph.data,
-            swap: singleSeries.inCondensedSelectedSpaceRangeGraph,
+        const toCondensedSelectedSpaceParams = {
             minX: globalBounds.minX,
             maxX: globalBounds.maxX,
             renderWidth,
             dataChanged
+        };
+
+        singleSeries.inCondensedSelectedSpaceRangeGraph = condenseDataSpace({
+            data: singleSeries.inSelectedSpaceRangeGraph.data,
+            swap: singleSeries.inCondensedSelectedSpaceRangeGraph
         });
 
-        singleSeries.inRenderSpaceRangeGraph = selectedSpaceToRenderSpace({
-            data: singleSeries.inCondensedSelectedSpaceRangeGraph.data,
-            swap: singleSeries.inRenderSpaceRangeGraph,
+        const toRenderSpaceParams = {
             minX: globalBounds.minX,
             maxX: globalBounds.maxX,
             minY: globalBounds.minY,
@@ -971,7 +1037,33 @@ export default class StateController extends Eventable {
             renderHeight,
             scale,
             dataChanged
+        }
+
+        singleSeries.inRenderSpaceRangeGraph = selectedSpaceToRenderSpace({
+            data: singleSeries.inCondensedSelectedSpaceRangeGraph.data,
+            swap: singleSeries.inRenderSpaceRangeGraph,
+            ...toRenderSpaceParams
         });
+
+        if (singleSeries.hasAreaBottom) {
+            singleSeries.inSelectedSpaceRangeGraphAreaBottom = dataSpaceToSelectedSpace({
+                data: singleSeries.inDataSpace.filter((_, i) => i % 2 === 0), // take the odd points for area bottom
+                swap: singleSeries.inSelectedSpaceRangeGraphAreaBottom,
+                ...toSelectedSpaceParams
+            });
+
+            singleSeries.inCondensedSelectedSpaceRangeGraphAreaBottom = condenseDataSpace({
+                data: singleSeries.inSelectedSpaceRangeGraphAreaBottom.data,
+                swap: singleSeries.inCondensedSelectedSpaceRangeGraphAreaBottom,
+                ...toCondensedSelectedSpaceParams
+            });
+
+            singleSeries.inRenderSpaceRangeGraphAreaBottom = selectedSpaceToRenderSpace({
+                data: singleSeries.inCondensedSelectedSpaceRangeGraphAreaBottom.data,
+                swap: singleSeries.inRenderSpaceRangeGraphAreaBottom,
+                ...toRenderSpaceParams
+            });
+        }
     }
 
     _createAxis({ side }) {

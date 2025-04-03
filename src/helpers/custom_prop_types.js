@@ -71,7 +71,8 @@ const SingleSeries = PropTypes.shape({
     zeroLineWidth: PropTypes.number, // only applies to bar and area
     zeroLineColor: PropTypes.string,  // only applies to bar and area
     pointRadius: PropTypes.number, // only applies to area
-    tooltipWidth: PropTypes.number
+    tooltipWidth: PropTypes.number,
+    hasAreaBottom: PropTypes.bool
 });
 
 const Series = PropTypes.arrayOf(SingleSeries);

@@ -77,7 +77,7 @@ export default class GraphBodyRenderer extends Eventable {
         }
     }
 
-    render(singleSeries, inRenderSpace, { highlighted, showIndividualPoints, shadowColor, shadowBlur, width, defaultLineWidth, bounds, globalBounds }) {
+    render(singleSeries, inRenderSpace, { highlighted, showIndividualPoints, shadowColor, shadowBlur, width, defaultLineWidth, bounds, globalBounds, inRenderSpaceAreaBottom }) {
         const getIndividualPoints = (useDataSpace) => {
             if (!bounds) {
                 bounds = singleSeries.axis.currentBounds;
@@ -127,7 +127,7 @@ export default class GraphBodyRenderer extends Eventable {
                 hasNegatives: !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0),
                 negativeColor: singleSeries.negativeColor,
                 zeroWidth: singleSeries.zeroLineWidth,
-                zeroColor: singleSeries.zeroLineColor
+                zeroColor: singleSeries.zeroLineColor,
             };
 
             if (!commonCPUParams.hasNegatives && singleSeries.expandYWith) {
@@ -155,7 +155,8 @@ export default class GraphBodyRenderer extends Eventable {
                 highlighted,
                 width: width || singleSeries.width || defaultLineWidth,
                 shadowColor,
-                shadowBlur
+                shadowBlur,
+                inRenderSpaceAreaBottom
             });
             return;
         }

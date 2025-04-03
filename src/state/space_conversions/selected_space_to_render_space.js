@@ -67,6 +67,18 @@ function selectedSpaceToRenderSpaceInPlace({ data, renderWidth, renderHeight, mi
             y = yBefore;
         }
 
+        // // two x's with the same value; common in area charts
+        // // to avoid this from having gotten skipped over, save in either min or max as appropriate
+        // if (i > 0 && data[i - 1][0] === data[i][0]) {
+        //     // 0: minY a
+        //     // 1: original a
+        //     // 2: minY b
+        //     // 3: original b
+        //
+        //     const [xBeforeOffset, yBeforeOffset] = data[i - 1];
+        //     const [xAfter, yAfter] = data[i + 1];
+        // }
+
         yValues[pixelX] = y === null ? 0 : renderHeight*(1 - ((scale === 'log' ? Math.log10(y) : y) - minY)/(maxY - minY));
         nullMask[pixelX] = ((y === null) << 0) | ((minSeenY === null) << 1) | ((maxSeenY === null) << 2);
 
@@ -104,6 +116,8 @@ export default function selectedSpaceToRenderSpace({ data, swap, renderWidth, re
     minY = scaledBounds.minY;
     maxY = scaledBounds.maxY;
 
+    const everyOther = true;
+    const startI = 0;
     const inParams = { data, renderWidth, renderHeight, minX, maxX, minY, maxY, scale };
 
     let dataF64, dataNullMask;

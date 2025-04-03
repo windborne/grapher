@@ -143,7 +143,8 @@ module.exports = [
         pages: [
             'simple_area_chart',
             'negative_area_chart',
-            'gradient_area_chart'
+            'gradient_area_chart',
+            'dynamic_bottom_area_chart'
         ]
     }
 ];

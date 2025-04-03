@@ -99,6 +99,7 @@ The `series` prop requires an array of objects, where each object represents a d
 - **zeroLineColor**: Color of the zero line, only applies to bar and area rendering (string)
 - **pointRadius**: Radius of points, only applies to area rendering (number)
 - **tooltipWidth**: Expected width of the tooltip (number). Will make the tooltip switch sides when this width plus the tooltip left position is greater than the graph width.
+- **hasAreaBottom**: read the bottom of the area from data. By default, the bottom of an area will just be zero; this allows changing that via passing in `[[x1, bottom], [x1, top], [x2, bottom], [x2, top]]` to data (see [examples/dynamic_bottom_area_chart.js](examples/dynamic_bottom_area_chart.js)).
 
 #### Series Data Formats
 Grapher supports multiple data formats within a series:

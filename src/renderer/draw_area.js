@@ -19,13 +19,14 @@ import {DPI_INCREASE} from './size_canvas';
  * @param {Number} [options.zeroWidth]               - width of the zero line
  * @param {Boolean} [options.showIndividualPoints]   - draw circles at each point
  * @param {String} [options.negativeColor]           - color of the area below zero
- * @param {Number} [options.width]                  - line width
+ * @param {Number} [options.width]                   - line width
+ * @param {Object} [options.inRenderSpaceAreaBottom] - if provided, will use this as the area bottom instead of zero/sizing.renderHeight
  * @private
  */
 export default function drawArea(individualPoints, dataInRenderSpace, {
     color, context, sizing, zero, hasNegatives, gradient,
     zeroColor, zeroWidth, showIndividualPoints, negativeColor, pointRadius, width, highlighted,
-    shadowColor='black', shadowBlur=5
+    shadowColor='black', shadowBlur=5, inRenderSpaceAreaBottom
 }) {
     context.fillStyle = color;
     context.shadowColor = shadowColor;
@@ -60,24 +61,39 @@ export default function drawArea(individualPoints, dataInRenderSpace, {
     const areaBottom = hasNegatives ? zero : sizing.renderHeight;
 
     const areaPaths = pathsFrom(dataInRenderSpace);
+    const areaBottomPaths = inRenderSpaceAreaBottom && pathsFrom(inRenderSpaceAreaBottom);
+
     const linePaths = pathsFrom(dataInRenderSpace, {
         splitAtY: zero
     });
 
-    for (let path of areaPaths) {
+    for (let pathI = 0; pathI < areaPaths.length; pathI++) {
+        const path = areaPaths[pathI];
+        const areaBottomPath = areaBottomPaths && areaBottomPaths[pathI];
         context.beginPath();
 
         const [firstX, _startY] = path[0];
         const [lastX, _lastY] = path[path.length - 1];
 
-        context.moveTo(firstX, areaBottom);
+        if (!areaBottomPaths) {
+            context.moveTo(firstX, areaBottom);
+        }
 
         for (let i = 0; i < path.length; i++) {
             const [x, y] = path[i];
             context.lineTo(x, y);
         }
 
-        context.lineTo(lastX, areaBottom);
+        if (areaBottomPath && areaBottomPath.length) {
+            for (let i = areaBottomPath.length - 1; i >= 0; i--) {
+                const [x, y] = areaBottomPath[i];
+                context.lineTo(x, y);
+            }
+
+            context.lineTo(...path[0]);
+        } else {
+            context.lineTo(lastX, areaBottom);
+        }
 
         context.fill();
     }
