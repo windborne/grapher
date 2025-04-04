@@ -257,6 +257,7 @@ function Grapher(props) {
                                 clockStyle={props.clockStyle}
                                 timeZone={props.timeZone}
                                 integersOnly={props.xAxisIntegersOnly}
+                                formatXAxisLabel={props.formatXAxisLabel}
                             />
 
                             {
@@ -336,6 +337,7 @@ Grapher.propTypes = {
     showAxisColors: PropTypes.bool,
     bigLabels: PropTypes.bool,
     xTickUnit: PropTypes.oneOf(['year']),
+    formatXAxisLabel: PropTypes.func,
     xAxisIntegersOnly: PropTypes.bool,
     clockStyle: PropTypes.oneOf(['12h', '24h']),
     timeZone: PropTypes.string, // local, utc, or a full timezone string

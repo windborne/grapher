@@ -185,6 +185,9 @@ Specifies the unit for x-axis ticks. Currently supports 'year'.
 **xAxisIntegersOnly**
 If true, only displays integer values on the x-axis.
 
+**formatXAxisLabel**
+A custom function to format the x-axis labels. This function should take a single argument (the raw x-value) and return a string to display as the label.
+
 **clockStyle**
 Format for displaying time, either '12h' or '24h'.
 

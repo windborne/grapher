@@ -7,7 +7,7 @@ import StateController from '../state/state_controller';
 
 export default React.memo(XAxis);
 
-function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, clockStyle, timeZone, integersOnly }) {
+function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, clockStyle, timeZone, integersOnly, formatXAxisLabel }) {
     if (!showAxes && !showGrid) {
         return null;
     }
@@ -37,7 +37,8 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
         clockStyle,
         timeZone,
         integersOnly,
-        inverseEnumMap
+        inverseEnumMap,
+        formatter: formatXAxisLabel
     };
 
     const minLabel = formatX(minX, {...formatOptions, dates, precision }).toString();
@@ -56,7 +57,7 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
         totalSize: elementWidth,
         precision,
         dates,
-        formatter: formatX,
+        formatter: formatXAxisLabel || formatX,
         expectedLabelSize: expectedLabelWidth,
         labelPadding,
         formatOptions
@@ -120,5 +121,6 @@ XAxis.propTypes = {
     xTickUnit: PropTypes.oneOf(['year']),
     clockStyle: PropTypes.oneOf(['12h', '24h']),
     timeZone: PropTypes.string,
-    integersOnly: PropTypes.bool
+    integersOnly: PropTypes.bool,
+    formatXAxisLabel: PropTypes.func
 };
