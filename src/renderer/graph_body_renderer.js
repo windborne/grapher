@@ -110,12 +110,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
 
             if (!singleSeries.rangeKey) {
-                return null;
+                return [];
             }
 
             const inferredType = inferType(singleSeries, { useSimpleData: true });
             if (inferredType !== 'objects') {
-                return null;
+                return [];
             }
 
             return (singleSeries.simpleData || singleSeries.data).map((object) => {
