@@ -7,6 +7,7 @@ import drawBackground from './draw_background.js';
 import BackgroundProgram from './background_program.js';
 import drawBars from './draw_bars';
 import drawArea from './draw_area';
+import inferType from '../state/infer_type';
 
 export default class GraphBodyRenderer extends Eventable {
 
@@ -103,6 +104,42 @@ export default class GraphBodyRenderer extends Eventable {
             return individualPoints;
         };
 
+        const getRanges = () => {
+            if (!bounds) {
+                bounds = singleSeries.axis.currentBounds;
+            }
+
+            if (!singleSeries.rangeKey) {
+                return null;
+            }
+
+            const inferredType = inferType(singleSeries, { useSimpleData: true });
+            if (inferredType !== 'objects') {
+                return null;
+            }
+
+            return (singleSeries.simpleData || singleSeries.data).map((object) => {
+                const range = object[singleSeries.rangeKey];
+
+                if (!range) {
+                    return null;
+                }
+
+                const min = range.min;
+                const max = range.max;
+                const x = object[singleSeries.xKey];
+
+                return {
+                    x,
+                    range,
+
+                    pixelX: (x - bounds.minX) / (bounds.maxX - bounds.minX) * this._sizing.renderWidth,
+                    pixelMinY: typeof min === 'number' ? (1.0 - (min - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight : null,
+                    pixelMaxY: typeof max === 'number' ? (1.0 - (max - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight : null
+                };
+            });
+        };
+
         const cpuRendering = singleSeries.rendering === 'bar' || singleSeries.rendering === 'area';
         let commonCPUParams;
 
@@ -127,7 +164,7 @@ export default class GraphBodyRenderer extends Eventable {
                 hasNegatives: !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0),
                 negativeColor: singleSeries.negativeColor,
                 zeroWidth: singleSeries.zeroLineWidth,
-                zeroColor: singleSeries.zeroLineColor,
+                zeroColor: singleSeries.zeroLineColor
             };
 
             if (!commonCPUParams.hasNegatives && singleSeries.expandYWith) {
@@ -171,7 +208,8 @@ export default class GraphBodyRenderer extends Eventable {
             dashPattern: singleSeries.dashPattern,
             highlighted,
             showIndividualPoints: typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints,
-            getIndividualPoints
+            getIndividualPoints,
+            getRanges: singleSeries.rangeKey ? getRanges : null
         };
 
         if (this._webgl) {

@@ -922,7 +922,7 @@ export default class StateController extends Eventable {
             maxX: currentBounds.maxX,
             renderWidth,
             dataChanged
-        }
+        };
 
         singleSeries.inCondensedSelectedSpacePrimary = condenseDataSpace({
             data: singleSeries.inSelectedSpace.data,
@@ -1008,7 +1008,7 @@ export default class StateController extends Eventable {
             maxX: globalBounds.maxX,
             ignoreDiscontinuities: singleSeries.ignoreDiscontinuities,
             square: singleSeries.square
-        }
+        };
 
         singleSeries.inSelectedSpaceRangeGraph = dataSpaceToSelectedSpace({
             data: singleSeries.hasAreaBottom ? singleSeries.inDataSpace.filter((_, i) => i % 2 === 1) : singleSeries.inDataSpace,
@@ -1037,7 +1037,7 @@ export default class StateController extends Eventable {
             renderHeight,
             scale,
             dataChanged
-        }
+        };
 
         singleSeries.inRenderSpaceRangeGraph = selectedSpaceToRenderSpace({
             data: singleSeries.inCondensedSelectedSpaceRangeGraph.data,

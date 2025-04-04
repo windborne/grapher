@@ -116,8 +116,6 @@ export default function selectedSpaceToRenderSpace({ data, swap, renderWidth, re
     minY = scaledBounds.minY;
     maxY = scaledBounds.maxY;
 
-    const everyOther = true;
-    const startI = 0;
     const inParams = { data, renderWidth, renderHeight, minX, maxX, minY, maxY, scale };
 
     let dataF64, dataNullMask;

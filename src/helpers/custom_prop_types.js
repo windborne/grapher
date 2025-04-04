@@ -73,7 +73,8 @@ const SingleSeries = PropTypes.shape({
     pointRadius: PropTypes.number, // only applies to area
     tooltipWidth: PropTypes.number,
     hasAreaBottom: PropTypes.bool,
-    shadowColor: PropTypes.string
+    shadowColor: PropTypes.string,
+    rangeKey: PropTypes.string
 });
 
 const Series = PropTypes.arrayOf(SingleSeries);

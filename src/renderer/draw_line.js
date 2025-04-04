@@ -17,10 +17,11 @@ import pathsFrom from './paths_from';
  * @param {Boolean} [options.highlighted]           - whether the line is highlighted or not
  * @param {Boolean} [options.showIndividualPoints]  - draw circles at each point
  * @param {Function} [options.getIndividualPoints]  - points to draw circles at. Only called when needed.
+ * @param {Function} [options.getRanges]            - ranges to draw. Only called when needed
  * @private
  */
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, getIndividualPoints
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, getIndividualPoints, getRanges
 }) {
     if (highlighted) {
         width += 2;
@@ -54,6 +55,49 @@ export default function drawLine(dataInRenderSpace, {
         }
 
         context.stroke();
+    }
+
+    if (getRanges) {
+        const ranges = getRanges();
+
+        context.lineWidth = width; // ensure the same width
+        context.strokeStyle = color;
+        context.setLineDash([]);
+        const horizontalBarWidth = 8 * DPI_INCREASE;
+
+        for (let range of ranges) {
+            if (!range) {
+                continue;
+            }
+
+            const { pixelX, pixelMinY, pixelMaxY } = range;
+
+            // bar on bottom
+            if (pixelMinY !== null) {
+                context.beginPath();
+                context.moveTo(pixelX - (horizontalBarWidth / 2), pixelMinY);
+                context.lineTo(pixelX + (horizontalBarWidth / 2), pixelMinY);
+                context.stroke();
+            }
+
+            // bar on top
+            if (pixelMaxY !== null) {
+                context.beginPath();
+                context.moveTo(pixelX - (horizontalBarWidth / 2), pixelMaxY);
+                context.lineTo(pixelX + (horizontalBarWidth / 2), pixelMaxY);
+                context.stroke();
+            }
+
+            if (pixelMinY === null || pixelMaxY === null) {
+                continue;
+            }
+
+            // draw a vertical line for the range
+            context.beginPath();
+            context.moveTo(pixelX, pixelMinY);
+            context.lineTo(pixelX, pixelMaxY);
+            context.stroke();
+        }
     }
 
     if (showIndividualPoints) {
