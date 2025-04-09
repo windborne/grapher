@@ -115,6 +115,10 @@ export default class Tooltip extends React.PureComponent {
         const preparedTooltips = this.props.tooltips.map((tooltip) => {
             const { x, y, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
 
+            if (typeof pixelX !== 'number') {
+                return null;
+            }
+
             const axisLabel = (series.name || series.yKey || index).toString();
             let width = Math.max(axisLabel.length, (xLabel || formatX(x, formatXOptions)).length + 4, getYLabelContent({ yLabel, y, fullYPrecision}).length + 4) * 7.5;
             if (series.tooltipWidth) {
@@ -209,7 +213,7 @@ export default class Tooltip extends React.PureComponent {
                 yTranslation,
                 baseLeft
             };
-        });
+        }).filter(Boolean);
 
         const CustomTooltipComponent = this.props.customTooltip;
 
