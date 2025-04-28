@@ -7,6 +7,8 @@ export default class Annotations extends React.PureComponent {
         const { bodyHeight, annotationState } = this.props;
         const { annotations, elementWidth } = annotationState;
 
+        console.log('annotations in grapher', annotations);
+
         return (
             <div className="grapher-annotations">
                 {
