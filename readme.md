@@ -97,7 +97,7 @@ The `series` prop requires an array of objects, where each object represents a d
 - **gradient**: Gradient configuration, only applies to area rendering (array)
 - **zeroLineWidth**: Width of the zero line, only applies to bar and area rendering (number)
 - **zeroLineColor**: Color of the zero line, only applies to bar and area rendering (string)
-- **zeroLineY**: Y-coordinate of the zero line, only applies to bar and area rendering (number). Defaults to zero.
+- **zeroLineY**: Y-coordinate of the zero line, only applies to bar and area rendering (number or "bottom"). Defaults to zero; may also be the string "bottom".
 - **pointRadius**: Radius of points, only applies to area rendering (number)
 - **tooltipWidth**: Expected width of the tooltip (number). Will make the tooltip switch sides when this width plus the tooltip left position is greater than the graph width.
 - **hasAreaBottom**: read the bottom of the area from data (boolean). By default, the bottom of an area will just be zero; this allows changing that via passing in `[[x1, bottom], [x1, top], [x2, bottom], [x2, top]]` to data (see [examples/dynamic_bottom_area_chart.js](examples/dynamic_bottom_area_chart.js)).

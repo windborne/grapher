@@ -156,11 +156,15 @@ export default class GraphBodyRenderer extends Eventable {
                 bounds = singleSeries.axis.currentBounds;
             }
 
+            const zero = singleSeries.zeroLineY === 'bottom' ?
+                this._sizing.renderHeight :
+                (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+
             commonCPUParams = {
                 context: this._context2d,
                 color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
                 sizing: this._sizing,
-                zero: (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight,
+                zero,
                 hasNegatives: !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0),
                 negativeColor: singleSeries.negativeColor,
                 zeroWidth: singleSeries.zeroLineWidth,

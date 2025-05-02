@@ -14,7 +14,7 @@ const series = [
             [4, 0.5]
         ],
         rendering: 'bar',
-        zeroLineY: -0.1
+        zeroLineY: 'bottom'
     }
 ];
 
