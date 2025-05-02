@@ -135,7 +135,8 @@ module.exports = [
             'multiple_bar_chart',
             'labeled_bar_chart',
             'negative_bar_chart',
-            'uneven_bar_chart'
+            'uneven_bar_chart',
+            'zeros_bar_chart'
         ]
     },
     {

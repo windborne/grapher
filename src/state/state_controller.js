@@ -625,7 +625,7 @@ export default class StateController extends Eventable {
             singleSeries.simpleDataSliceStart = simpleData.length;
             singleSeries.dataBounds = calculateDataBounds(singleSeries.inDataSpace);
             if (singleSeries.rendering === 'bar') {
-                singleSeries.dataBounds = expandBounds(singleSeries.dataBounds, { extendXForNBars: singleSeries.inDataSpace.length });
+                singleSeries.dataBounds = expandBounds(singleSeries.dataBounds, { extendXForNBars: singleSeries.inDataSpace.length, expandYWith: singleSeries.expandYWith });
             }
 
             dataBoundsList.push(singleSeries.dataBounds);
@@ -712,7 +712,7 @@ export default class StateController extends Eventable {
 
             let newDataBounds = calculateDataBounds(newDataInDataSpace);
             if (singleSeries.rendering === 'bar') {
-                newDataBounds = expandBounds(newDataBounds, { extendXForNBars: singleSeries.inDataSpace.length });
+                newDataBounds = expandBounds(newDataBounds, { extendXForNBars: singleSeries.inDataSpace.length, expandYWith: singleSeries.expandYWith });
             }
 
             singleSeries.dataBounds = mergeBounds([singleSeries.dataBounds, newDataBounds]);

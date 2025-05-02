@@ -160,7 +160,7 @@ export default class GraphBodyRenderer extends Eventable {
                 context: this._context2d,
                 color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
                 sizing: this._sizing,
-                zero: (1.0 - (0 - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight,
+                zero: (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight,
                 hasNegatives: !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0),
                 negativeColor: singleSeries.negativeColor,
                 zeroWidth: singleSeries.zeroLineWidth,
