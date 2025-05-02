@@ -97,7 +97,7 @@ module.exports = {
         new WasmPackPlugin({
             crateDirectory: path.resolve(__dirname, 'src', 'rust'),
             outDir: path.resolve(__dirname, 'src', 'rust', 'pkg'),
-            extraArgs: '--no-typescript',
+            extraArgs: '--no-typescript --target web',
             forceMode: 'production'
         }),
         ...pages.map((page) => new HtmlWebpackPlugin({

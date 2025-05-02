@@ -1,8 +1,6 @@
 import scaleBounds from '../../renderer/scale_bounds';
-let RustAPI;
-import('../../rust/pkg/index.js').then((module) => {
-    RustAPI = module;
-});
+import RustAPI from '../rust_api';
+
 
 function selectedSpaceToRenderSpaceInPlace({ data, renderWidth, renderHeight, minX, maxX, minY, maxY, scale }, { nullMask, yValues, minYValues, maxYValues }) {
     let i = 0;
@@ -120,7 +118,7 @@ export default function selectedSpaceToRenderSpace({ data, swap, renderWidth, re
 
     let dataF64, dataNullMask;
 
-    if (RustAPI) {
+    if (RustAPI()) {
         let copyIndexStart = 0;
 
         const hasSwap = swap && swap.dataNullMask && swap.dataF64;
@@ -154,7 +152,7 @@ export default function selectedSpaceToRenderSpace({ data, swap, renderWidth, re
                 dataNullMask[i] = 0;
             }
         }
-        RustAPI.selected_space_to_render_space(data.length, dataF64, dataNullMask, inParams, nullMask, yValues, minYValues, maxYValues);
+        RustAPI().selected_space_to_render_space(data.length, dataF64, dataNullMask, inParams, nullMask, yValues, minYValues, maxYValues);
     } else {
         selectedSpaceToRenderSpaceInPlace(inParams, { nullMask, yValues, minYValues, maxYValues });
     }

@@ -18,10 +18,7 @@ import {averageLoopTimes} from './average_loop_times';
 import condenseDataSpace from './space_conversions/condense_data_space.js';
 import calculateAnnotationsState from './calculate_annotations_state.js';
 import {selectedSpaceToBackgroundSpace} from './space_conversions/selected_space_to_background_space.js';
-let RustAPI;
-const RustAPIPromise = import('../rust/pkg/index.js').then((module) => {
-    RustAPI = module;
-});
+import RustAPI, {RustAPIPromise} from './rust_api';
 
 export default class StateController extends Eventable {
 
