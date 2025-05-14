@@ -1,9 +1,6 @@
 import pathsFrom from './paths_from';
 import {DPI_INCREASE} from './size_canvas';
-let RustAPI;
-import('../rust/pkg/index.js').then((module) => {
-    RustAPI = module;
-});
+import RustAPI from '../state/rust_api';
 
 /**
  *
@@ -106,12 +103,12 @@ export default function extractVertices(dataInRenderSpace, { dashed, dashPattern
         return extractVerticesFromPaths(dataInRenderSpace.paths, { dashed, dashPattern});
     }
 
-    if (!RustAPI) {
+    if (!RustAPI()) {
         const paths = pathsFrom(dataInRenderSpace);
         return extractVerticesFromPaths(paths, { dashed, dashPattern});
     }
 
-    const pointNumber = RustAPI.get_point_number(
+    const pointNumber = RustAPI().get_point_number(
         dataInRenderSpace.nullMask, dataInRenderSpace.yValues, dataInRenderSpace.minYValues, dataInRenderSpace.maxYValues,
         dashed, dashPattern[0], dashPattern[1]
     );
@@ -121,7 +118,7 @@ export default function extractVertices(dataInRenderSpace, { dashed, dashPattern
     let vertices = new Float32Array(pointNumber*4);
     let indices = new Uint32Array(pointNumber*6);
 
-    RustAPI.extract_vertices(
+    RustAPI().extract_vertices(
         DPI_INCREASE,
         dataInRenderSpace.nullMask, dataInRenderSpace.yValues, dataInRenderSpace.minYValues, dataInRenderSpace.maxYValues,
         positions, prevPositions, vertices, indices,

@@ -19,6 +19,7 @@ module.exports = {
         react: 'react'
     },
     experiments: {
+        asyncWebAssembly: true,
         syncWebAssembly: true
     },
     resolve: {

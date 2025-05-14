@@ -63,6 +63,7 @@ module.exports = {
         hot: true
     },
     experiments: {
+        asyncWebAssembly: true,
         syncWebAssembly: true
     },
     module: {
