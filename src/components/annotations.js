@@ -14,7 +14,7 @@ export default class Annotations extends React.PureComponent {
                 {
                     validAnnotations.map(({ pixelStartX, pixelWidth, content, isRange, lineOnly }, i) => {
                         const annotationStyle = {
-                            left: pixelStartX,
+                            left: pixelStartX
                         };
 
                         if (isRange) {
@@ -38,7 +38,7 @@ export default class Annotations extends React.PureComponent {
                                     textStyle.left = -approxTextWidth - 5;
                                     textStyle.textAlign = 'right';
                                 } else {
-                                    textStyle.left = pointMarkerWidth + 5
+                                    textStyle.left = pointMarkerWidth + 5;
                                 }
                             }
 
