@@ -171,8 +171,6 @@ function Grapher(props) {
         bigLabels
     };
 
-    console.log('annotations in grapher.js', props.annotations);
-
     return (
         <div className={classNames.join(' ')} style={styles} data-grapher-id={props.id}>
             {
