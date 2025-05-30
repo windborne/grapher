@@ -116,10 +116,12 @@ const TooltipOptionsRaw = {
 const TooltipOptions = PropTypes.shape(TooltipOptionsRaw);
 
 const Annotation = PropTypes.shape({
-    x: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
-    xEnd: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
+    x: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
+    startX: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
+    endX: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
     series: PropTypes.arrayOf(PropTypes.string),
-    content: PropTypes.string.isRequired
+    content: PropTypes.string,
+    lineOnly: PropTypes.bool
 });
 const Annotations = PropTypes.arrayOf(Annotation);
 

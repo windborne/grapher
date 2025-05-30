@@ -17,10 +17,11 @@ import {
 import Annotations from './annotations.js';
 import DraggablePoints from './draggable_points.js';
 import VerticalLines from './vertical_lines.js';
+import binarySearch from '../helpers/binary_search';
 
 export default React.memo(GraphBody);
 
-function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled, showTooltips, tooltipOptions, checkIntersection, draggablePoints, onPointDrag, onDraggablePointsDoubleClick, verticalLines, clockStyle, timeZone }) {
+function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled, showTooltips, tooltipOptions, checkIntersection, draggablePoints, onPointDrag, onDraggablePointsDoubleClick, verticalLines, clockStyle, timeZone, onPointClick }) {
     const canvasEl = useCallback((el) => {
         if (stateController.primaryRenderer) {
             stateController.primaryRenderer.dispose();
@@ -194,6 +195,34 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
         if (!window.getSelection || window.getSelection().type !== 'Range') {
             stateController.toggleTooltipSaved();
         }
+
+        if (onPointClick) {
+            const seriesToNearestPoint = {};
+
+            const series = stateController.series;
+            for (let i = 0; i < series.length; i++) {
+                const singleSeries = series[i];
+
+                const sizing = stateController.sizing;
+                const bounds = singleSeries.axis.currentBounds;
+                // const trueX = event.clientX/sizing.elementWidth * (bounds.maxX - bounds.minX) + bounds.minX;
+                const trueX = stateController.tooltipState.mouseX/sizing.elementWidth * (bounds.maxX - bounds.minX) + bounds.minX;
+
+                let data = singleSeries.inDataSpace;
+                if (singleSeries.ignoreDiscontinuities) {
+                    data = data.filter((tuple) => typeof tuple[1] === 'number');
+                }
+        
+                const closestIndex = binarySearch(data, trueX, { returnIndex: true });
+                const closestPoint = data[closestIndex];
+
+                seriesToNearestPoint[singleSeries.name] = closestPoint[0];
+            }
+
+
+
+            onPointClick(event, seriesToNearestPoint);
+        }
     };
     const onDoubleClick = () => {
         stateController.clearSavedTooltips();
@@ -242,7 +271,7 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
             {
                 showAnnotations &&
                 <Annotations
-                    bodyHeight={bodyHeight}
+                    bodyHeight={bodyHeight || stateController?.primaryRenderer?.boundingRect?.height}
                     annotationState={annotationState}
                 />
             }
@@ -287,6 +316,7 @@ GraphBody.propTypes = {
     draggablePoints: CustomPropTypes.DraggablePoints,
     onPointDrag: PropTypes.func,
     onDraggablePointsDoubleClick: PropTypes.func,
+    onPointClick: PropTypes.func,
     clockStyle: PropTypes.oneOf(['12h', '24h']),
     timeZone: PropTypes.string
 };

@@ -243,6 +243,7 @@ function Grapher(props) {
                                 draggablePoints={props.draggablePoints}
                                 onPointDrag={props.onPointDrag}
                                 onDraggablePointsDoubleClick={props.onDraggablePointsDoubleClick}
+                                onPointClick={props.onPointClick}
                                 verticalLines={props.verticalLines}
                                 clockStyle={props.clockStyle}
                                 timeZone={props.timeZone}
@@ -363,7 +364,8 @@ Grapher.propTypes = {
     draggablePoints: CustomPropTypes.DraggablePoints,
     onPointDrag: PropTypes.func,
     onDraggablePointsDoubleClick: PropTypes.func,
-    verticalLines: CustomPropTypes.VerticalLines
+    verticalLines: CustomPropTypes.VerticalLines,
+    onPointClick: PropTypes.func
 };
 
 export const AVAILABLE_COLORS = LINE_COLORS;

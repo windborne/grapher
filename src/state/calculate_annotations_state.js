@@ -10,6 +10,15 @@ export default function calculateAnnotationsState({ annotations, series, sizing,
 
     const { elementWidth } = sizing;
     const { minX, maxX } = selection;
+    const xRange = maxX - minX;
+
+    // Avoid division by zero if minX === maxX
+    if (xRange === 0) {
+        return {
+            annotations: [],
+            elementWidth
+        };
+    }
 
     const renderableAnnotations = annotations.filter((annotation) => {
         if (!annotation.series) {
@@ -24,33 +33,66 @@ export default function calculateAnnotationsState({ annotations, series, sizing,
 
         return false;
     }).map((annotation) => {
-        let xAsNumber = annotation.x;
-        if (typeof xAsNumber === 'string') {
-            xAsNumber = new Date(xAsNumber).valueOf();
-        } else if (xAsNumber instanceof Date) {
-            xAsNumber = xAsNumber.valueOf();
+        const isRange = annotation.startX !== undefined && annotation.endX !== undefined;
+        const isPoint = annotation.x !== undefined;
+
+        let xStartValue = annotation.startX;
+        let xEndValue = annotation.endX;
+
+        if (!isRange && isPoint) {
+            xStartValue = annotation.x;
+            xEndValue = annotation.x;
+        } else if (!isRange && !isPoint) {
+            return null;
         }
 
-        let xEndAsNumber = annotation.xEnd || xAsNumber;
-        if (typeof xEndAsNumber === 'string') {
-            xEndAsNumber = new Date(xEndAsNumber).valueOf();
-        } else if (xEndAsNumber instanceof Date) {
-            xEndAsNumber = xEndAsNumber.valueOf();
+        const convertToNumber = (val) => {
+            if (typeof val === 'string') return new Date(val).valueOf();
+            if (val instanceof Date) return val.valueOf();
+            return val;
+        };
+
+        let startX = convertToNumber(xStartValue);
+        let endX = convertToNumber(xEndValue);
+
+        if (startX > endX) {
+            [startX, endX] = [endX, startX];
         }
 
-        const xStart = Math.min(xAsNumber, xEndAsNumber);
-        const xEnd = Math.max(xAsNumber, xEndAsNumber);
+        let pixelStartX = (startX - minX) / xRange * elementWidth;
+        let pixelEndX = (endX - minX) / xRange * elementWidth;
 
-        const pixelX = (xStart - minX)/(maxX - minX) * elementWidth;
-        const pixelEnd = (xEnd - minX)/(maxX - minX) * elementWidth;
-        const width = Math.max(pixelEnd - pixelX, 1);
+        // Clamp values to be within the element width
+        pixelStartX = Math.max(0, Math.min(elementWidth, pixelStartX));
+        pixelEndX = Math.max(0, Math.min(elementWidth, pixelEndX));
+
+        let pixelWidth = pixelEndX - pixelStartX;
+        if (pixelWidth < 1 && pixelEndX > 0 && pixelStartX < elementWidth) {
+             if (!isRange && isPoint) {
+                 pixelWidth = 1;
+                 pixelStartX -= 0.5;
+             } else if (isRange) {
+                 pixelWidth = 1;
+             } else {
+                 pixelWidth = 0;
+             }
+        }
+        
+        pixelStartX = Math.max(0, Math.min(elementWidth - pixelWidth, pixelStartX));
+
+
+        if (pixelWidth <= 0) {
+            return null;
+        }
+
 
         return {
             ...annotation,
-            pixelX,
-            width
+            isRange,
+            pixelStartX,
+            pixelWidth
         };
-    });
+    }).filter(annotation => annotation !== null);
 
     return {
         annotations: renderableAnnotations,
