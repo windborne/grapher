@@ -237,8 +237,6 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
         });
     };
 
-    console.log('annotationState in graph_body.js', annotationState);
-
     return (
         <div className="graph-body graph-body-primary"
              onMouseMove={onMouseMove}
@@ -273,7 +271,7 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
             {
                 showAnnotations &&
                 <Annotations
-                    bodyHeight={bodyHeight}
+                    bodyHeight={bodyHeight || stateController?.primaryRenderer?.boundingRect?.height}
                     annotationState={annotationState}
                 />
             }

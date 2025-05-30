@@ -448,6 +448,7 @@
       top: 0;
       left: 0;
       right: 0;
+      z-index: 20;
 
       > svg {
         position: absolute;
@@ -532,25 +533,36 @@
       top: 0;
       pointer-events: none;
       user-select: none;
+      z-index: 10;
 
       .grapher-annotation {
         position: absolute;
 
         .annotation-marker {
           display: inline-block;
-          height: $primary-graph-body-height;
           background: $annotation-background-color;
+        }
+
+        &.grapher-annotation-range {
+          .annotation-range-marker {
+            display: inline-block;
+            background-color: rgba(128, 128, 128, 0.2);
+            background-image: repeating-linear-gradient(53deg, #626266, #626266 1px, rgba(255, 255, 255, 0.1) 1px, rgba(255, 255, 255, 0.1) 4px);
+            background-size: 40px 40px;
+            border-right: 1px solid white;
+            border-left: 1px solid white;
+          }
         }
 
         .annotation-text {
           position: absolute;
-          top: 0;
           background: $tooltip-background-color;
           border: 1px solid $annotation-background-color;
           color: $tooltip-text-color;
           padding: 2px 4px;
-          max-width: max-content;
-          width: 200px;
+          white-space: nowrap;
+          font-size: 10px;
+          z-index: 10;
         }
       }
     }

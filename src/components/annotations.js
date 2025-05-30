@@ -7,58 +7,72 @@ export default class Annotations extends React.PureComponent {
         const { bodyHeight, annotationState } = this.props;
         const { annotations, elementWidth } = annotationState;
 
-        console.log('annotations in grapher', annotations);
+        const validAnnotations = annotations.filter(a => a.pixelStartX !== undefined && a.pixelWidth !== undefined);
 
         return (
             <div className="grapher-annotations">
                 {
-                    annotations.map(({ pixelX, width, content, lineOnly }, i) => {
-                        if (lineOnly) {
+                    validAnnotations.map(({ pixelStartX, pixelWidth, content, isRange, lineOnly }, i) => {
+                        const annotationStyle = {
+                            left: pixelStartX,
+                        };
+
+                        if (isRange) {
                             return (
-                                <div key={i} className="grapher-annotation" style={{ left: pixelX }}>
+                                <div key={`range-${i}`} className="grapher-annotation grapher-annotation-range" style={annotationStyle}>
                                     <div
-                                        className="annotation-marker"
-                                        style={{ width: width, height: bodyHeight }}
+                                        className="annotation-range-marker"
+                                        style={{ width: pixelWidth, height: bodyHeight }}
                                     />
                                 </div>
                             );
-                        }
-
-                        const textStyle = {
-                            top: 21*i
-                        };
-
-                        if (elementWidth - pixelX < content.length*5.5) {
-                            textStyle.left = pixelX - elementWidth;
                         } else {
-                            textStyle.left = 0;
-                        }
+                            const pointMarkerWidth = lineOnly ? pixelWidth : Math.max(pixelWidth, 1);
 
-                        return (
-                            <div key={i} className="grapher-annotation" style={{ left: pixelX }}>
-                                <div
-                                    className="annotation-marker"
-                                    style={{ width: width, height: bodyHeight }}
-                                />
+                            const textStyle = {};
+                            if (content) {
+                                textStyle.top = 21 * i;
+                                textStyle.position = 'absolute';
+                                const approxTextWidth = (content || '').length * 5.5;
+                                if (elementWidth > 0 && elementWidth - pixelStartX < approxTextWidth + 10) {
+                                    textStyle.left = -approxTextWidth - 5;
+                                    textStyle.textAlign = 'right';
+                                } else {
+                                    textStyle.left = pointMarkerWidth + 5
+                                }
+                            }
 
-                                <div className="annotation-text" style={textStyle}>
-                                    {content}
+                            return (
+                                <div key={`point-${i}`} className="grapher-annotation grapher-annotation-point" style={annotationStyle}>
+                                    <div
+                                        className="annotation-marker"
+                                        style={{ width: pointMarkerWidth, height: bodyHeight }}
+                                    />
+                                    {content && !lineOnly &&
+                                        <div className="annotation-text" style={textStyle}>
+                                            {content}
+                                        </div>
+                                    }
                                 </div>
-                            </div>
-                        );
+                            );
+                        }
                     })
                 }
             </div>
         );
     }
-
 }
 
 Annotations.propTypes = {
     annotationState: PropTypes.shape({
-        annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+        annotations: PropTypes.arrayOf(PropTypes.shape({
+            pixelStartX: PropTypes.number,
+            pixelWidth: PropTypes.number,
+            content: PropTypes.string,
+            isRange: PropTypes.bool,
+            lineOnly: PropTypes.bool
+        })).isRequired,
         elementWidth: PropTypes.number.isRequired
     }),
-    bodyHeight: PropTypes.number,
-    lineOnly: PropTypes.bool
+    bodyHeight: PropTypes.number
 };
