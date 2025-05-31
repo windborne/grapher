@@ -331,7 +331,7 @@ export default class GraphBodyRenderer extends Eventable {
      * @return {DOMRect}
      */
     get boundingRect() {
-        return this._sizing.boundingRect;
+        return this._sizing?.boundingRect;
     }
 
     get sizing() {
