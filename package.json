@@ -1,16 +1,37 @@
 {
   "name": "@windborne/grapher",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Graphing library",
-  "main": "bundle.js",
+  "main": "src/index.js",
+  "module": "dist/bundle.esm.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/bundle.esm.js",
+      "require": "./dist/bundle.cjs",
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./src": {
+      "import": "./src/index.mjs",
+      "default": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "*.md",
+    "package.json"
+  ],
   "publishConfig": {},
   "scripts": {
     "lint-base": "eslint ./src ./examples ./test",
     "lint": "npm run lint-base -- --fix",
-    "dev": "webpack-dev-server --config webpack.dev.config.js",
-    "build": "rm -f *.wasm && webpack --config webpack.prod.config.js && touch src/rust/pkg/.npmignore",
-    "analyze-size": "webpack --config webpack.prod.config.js --json | webpack-bundle-size-analyzer",
-    "test": "mocha-webpack --webpack-config webpack.test.config.js --require test/setup.js --recursive --glob \"*.test.js\" test",
+    "dev": "webpack-dev-server --config webpack.dev.config.cjs",
+    "build": "rm -rf dist && mkdir -p dist && rm -f *.wasm && webpack --config webpack.prod.config.cjs && touch src/rust/pkg/.npmignore",
+    "analyze-size": "webpack --config webpack.prod.config.cjs --json | webpack-bundle-size-analyzer",
+    "test": "mocha-webpack --webpack-config webpack.test.config.cjs --require test/setup.js --recursive --glob \"*.test.js\" test",
     "coverage": "NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm run test"
   },
   "repository": {
