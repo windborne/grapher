@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Grapher from "@windborne/grapher";
+import Grapher from '@windborne/grapher.jsx';
 
 const rootEl = document.createElement('div');
 document.body.appendChild(rootEl);

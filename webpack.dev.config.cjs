@@ -7,12 +7,12 @@ const pages = require('./examples/page_list')
     .flat();
 
 const entry = {
-    'grapher': './src/grapher.js',
+    'grapher': './src/grapher.jsx',
     // 'example_page': './examples/render_page.js',
 };
 
 for (let page of pages) {
-    entry[page] = `./examples/${page}.js`;
+    entry[page] = `./examples/${page}.jsx`;
 }
 
 module.exports = {
@@ -74,7 +74,7 @@ module.exports = {
                 use:['style-loader', 'css-loader', 'sass-loader']
             },
             {
-                test: /\.js$/,
+                test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components|build)/,
                 use: {
                     loader: 'babel-loader',

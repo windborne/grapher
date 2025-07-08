@@ -33,7 +33,7 @@ module.exports = {
                 use:['style-loader', 'css-loader', 'sass-loader']
             },
             {
-                test: /\.js$/,
+                test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components|build)/,
                 use: {
                     loader: 'babel-loader',
