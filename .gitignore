@@ -8,3 +8,4 @@ bundle.js.map
 src/rust/target
 .nyc_output
 coverage
+dist
