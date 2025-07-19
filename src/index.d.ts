@@ -41,8 +41,26 @@ export interface MultiGrapherProps extends GrapherProps {
   onMultiseriesChange?: (series: any[]) => void;
 }
 
+export interface RangeSelectionProps {
+  stateController: any;
+  customBoundsSelectors?: any[];
+  customBoundsSelectorsOnly?: boolean;
+  sidebarEnabled?: boolean;
+}
+
+export interface SyncPoolOptions {
+  syncBounds?: boolean;
+  syncTooltips?: boolean;
+  syncDragState?: boolean;
+}
+
 declare const Grapher: React.ComponentType<GrapherProps>;
 declare const MultiGrapher: React.ComponentType<MultiGrapherProps>;
+declare const RangeSelection: React.ComponentType<RangeSelectionProps>;
+declare const SyncPool: any;
 
-export { Grapher, MultiGrapher };
+export const AVAILABLE_COLORS: string[];
+export const BUILT_IN_BOUND_CALCULATORS: Record<string, (globalBounds?: any) => any>;
+
+export { Grapher, MultiGrapher, RangeSelection, SyncPool };
 export default Grapher; 

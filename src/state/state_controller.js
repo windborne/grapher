@@ -793,7 +793,7 @@ export default class StateController extends Eventable {
                 }
 
                 if (singleSeries.rendering === 'bar') {
-                    expandYWith.push(singleSeries.dataBounds.minY, singleSeries.dataBounds.maxY);
+                    expandYWith.push(singleSeries.selectedBounds.minY, singleSeries.selectedBounds.maxY);
                 }
             }
 
