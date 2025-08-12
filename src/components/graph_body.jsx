@@ -159,12 +159,52 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
             });
         };
 
+        const getTouch = (event) => event.touches?.[0] || event.changedTouches?.[0];
+
+        const onGlobalTouchStart = (event) => {
+            if (!showTooltips) {
+                return;
+            }
+            const touch = getTouch(event);
+            if (!touch) return;
+            stateController.setTooltipMousePosition({
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            if (event.cancelable) event.preventDefault();
+        };
+
+        const onGlobalTouchMove = (event) => {
+            if (!showTooltips) {
+                return;
+            }
+            const touch = getTouch(event);
+            if (!touch) return;
+            stateController.setTooltipMousePosition({
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            if (event.cancelable) event.preventDefault();
+        };
+
+        const onGlobalTouchEnd = () => {
+            stateController.showOnlySavedTooltips();
+        };
+
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('mousemove', onGlobalMouseMove, { passive: true });
+        window.addEventListener('touchstart', onGlobalTouchStart, { passive: false });
+        window.addEventListener('touchmove', onGlobalTouchMove, { passive: false });
+        window.addEventListener('touchend', onGlobalTouchEnd, { passive: true });
+        window.addEventListener('touchcancel', onGlobalTouchEnd, { passive: true });
 
         return () => {
             window.removeEventListener('scroll', onScroll);
             window.removeEventListener('mousemove', onGlobalMouseMove);
+            window.removeEventListener('touchstart', onGlobalTouchStart);
+            window.removeEventListener('touchmove', onGlobalTouchMove);
+            window.removeEventListener('touchend', onGlobalTouchEnd);
+            window.removeEventListener('touchcancel', onGlobalTouchEnd);
         };
     }, []);
 

@@ -32,6 +32,16 @@ export default class RangeGraph extends React.PureComponent {
         this.startRightDrag = this.startRightDrag.bind(this);
     }
 
+    getClientX(event) {
+        if (event && event.touches && event.touches[0]) {
+            return event.touches[0].clientX;
+        }
+        if (event && event.changedTouches && event.changedTouches[0]) {
+            return event.changedTouches[0].clientX;
+        }
+        return event.clientX;
+    }
+
     componentDidMount() {
         this._renderer = new GraphBodyRenderer({
             stateController: this.props.stateController,
@@ -75,11 +85,16 @@ export default class RangeGraph extends React.PureComponent {
             return;
         }
 
+        // Prevent scrolling during touch-drag
+        if (event && event.touches && event.preventDefault) {
+            event.preventDefault();
+        }
+
         let boundCalculator;
         const leftX = this.el.getBoundingClientRect().left;
 
         this.setState(({selectionBounds, globalBounds, elementWidth}) => {
-            const pixelX = event.clientX - leftX;
+            const pixelX = this.getClientX(event) - leftX;
             let percentage = pixelX/elementWidth;
 
             percentage = Math.max(percentage, 0);
@@ -175,12 +190,18 @@ export default class RangeGraph extends React.PureComponent {
     addListeners() {
         window.addEventListener('mousemove', this.onMouseMove);
         window.addEventListener('mouseup', this.stopDragging);
+        window.addEventListener('touchmove', this.onMouseMove, { passive: false });
+        window.addEventListener('touchend', this.stopDragging);
+        window.addEventListener('touchcancel', this.stopDragging);
     }
 
     stopDragging() {
         this._dragType = null;
         window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('mouseup', this.stopDragging);
+        window.removeEventListener('touchmove', this.onMouseMove);
+        window.removeEventListener('touchend', this.stopDragging);
+        window.removeEventListener('touchcancel', this.stopDragging);
     }
 
     startScroll(event) {
@@ -189,7 +210,7 @@ export default class RangeGraph extends React.PureComponent {
         const {selectionBounds, globalBounds, elementWidth} = this.state;
         const leftX = this.el.getBoundingClientRect().left;
 
-        const pixelStartX = event.clientX - leftX;
+        const pixelStartX = this.getClientX(event) - leftX;
         const pixelMinX = (selectionBounds.minX - globalBounds.minX)/(globalBounds.maxX - globalBounds.minX) * elementWidth || 0;
         const pixelMaxX = (selectionBounds.maxX - globalBounds.minX)/(globalBounds.maxX - globalBounds.minX) * elementWidth || 0;
 
@@ -197,12 +218,12 @@ export default class RangeGraph extends React.PureComponent {
         this.addListeners();
     }
 
-    startLeftDrag() {
+    startLeftDrag(event) {
         this._dragType = 'left';
         this.addListeners();
     }
 
-    startRightDrag() {
+    startRightDrag(event) {
         this._dragType = 'right';
         this.addListeners();
     }
@@ -246,7 +267,7 @@ export default class RangeGraph extends React.PureComponent {
 
         return (
             <div className="range-selection-graph">
-                <div className="graph-body graph-body-secondary">
+                <div className="graph-body graph-body-secondary" style={{ touchAction: 'none' }}>
                     <canvas ref={(el) => this.el = el} />
 
                     <svg>
@@ -286,6 +307,7 @@ export default class RangeGraph extends React.PureComponent {
                                 height={barSize}
                                 className="selection-bar"
                                 onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
                             />
 
                             <path
@@ -293,6 +315,7 @@ export default class RangeGraph extends React.PureComponent {
                                 className="selection-bar-rifles"
                                 transform={`translate(${pixelMinX + (pixelMaxX - pixelMinX)/2},${elementHeight})`}
                                 onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
                             />
                         </g>
 
@@ -304,6 +327,7 @@ export default class RangeGraph extends React.PureComponent {
                                 height={elementHeight}
                                 className="target-selection"
                                 onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
                             />
 
                             <rect
@@ -316,20 +340,42 @@ export default class RangeGraph extends React.PureComponent {
                         </g>
 
                         <g>
+                            <rect
+                                x={pixelMinX - 15}
+                                y={(elementHeight - 30)/2}
+                                width={30}
+                                height={30}
+                                fill="transparent"
+                                className="selection-bar-handle-hit"
+                                onMouseDown={this.startLeftDrag}
+                                onTouchStart={this.startLeftDrag}
+                            />
                             <path
                                 d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
                                 className="selection-bar-handle"
                                 transform={`translate(${pixelMinX},${(elementHeight - 15)/2})`}
                                 onMouseDown={this.startLeftDrag}
+                                onTouchStart={this.startLeftDrag}
                             />
                         </g>
 
                         <g>
+                            <rect
+                                x={pixelMaxX - 15}
+                                y={(elementHeight - 30)/2}
+                                width={30}
+                                height={30}
+                                fill="transparent"
+                                className="selection-bar-handle-hit"
+                                onMouseDown={this.startRightDrag}
+                                onTouchStart={this.startRightDrag}
+                            />
                             <path
                                 d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
                                 className="selection-bar-handle"
                                 transform={`translate(${pixelMaxX},${(elementHeight - 15)/2})`}
                                 onMouseDown={this.startRightDrag}
+                                onTouchStart={this.startRightDrag}
                             />
                         </g>
                     </svg>
