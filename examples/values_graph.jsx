@@ -5,18 +5,7 @@ import ExamplePage from './example_page.jsx';
 
 const series = [
     {
-        data: [
-            [new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), 10],
-            [new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), 15],
-            [new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), 8],
-            [new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), 12],
-            [new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), 18],
-            [new Date(Date.now()), 20],
-            [new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), 22],
-            [new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), 25]
-        ],
-        cutoffTime: 'now',
-        color: '#3498db'
+        data: [0, 1, 4, 10, 0]
     }
 ];
 
@@ -24,9 +13,6 @@ renderPage(
     <ExamplePage page="values_graph">
         <Grapher
             series={series}
-            showIndividualPoints={true}
-            webgl={false}
-            title="Line Chart with Cutoff at 'Now'"
         />
     </ExamplePage>
 );
