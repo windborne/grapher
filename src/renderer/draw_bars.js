@@ -23,6 +23,11 @@ import {drawZeroLine} from './draw_zero_line';
 export default function drawBars(individualPoints, {
     color, context, sizing, indexInAxis, axisSeriesCount, zero, hasNegatives, negativeColor, zeroColor, zeroWidth, closestSpacing, bounds
 }) {
+    if (!context) {
+        console.error('Canvas context is null in drawBars');
+        return;
+    }
+    
     context.strokeStyle = color;
     context.fillStyle = color;
 

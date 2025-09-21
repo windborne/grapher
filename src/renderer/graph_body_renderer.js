@@ -20,6 +20,13 @@ export default class GraphBodyRenderer extends Eventable {
         this._checkIntersection = checkIntersection;
         this._canvas = canvasElement;
         this._webgl = webgl;
+        
+        if (!this._canvas) {
+            console.error('Canvas element is null in GraphBodyRenderer constructor');
+            this._initialized = false;
+            return;
+        }
+        
         if (webgl) {
             this._context = this._canvas.getContext('webgl');
             if (this._context) {
@@ -33,8 +40,14 @@ export default class GraphBodyRenderer extends Eventable {
         }
 
         if (!this._webgl) {
-            this._context = this._canvas.getContext( '2d');
+            this._context = this._canvas.getContext('2d');
             this._context2d = this._context;
+        }
+
+        if (!this._context) {
+            console.error('Failed to get canvas context in GraphBodyRenderer');
+            this._initialized = false;
+            return;
         }
 
         this._initialized = this._initializeCanvas();
@@ -89,6 +102,11 @@ export default class GraphBodyRenderer extends Eventable {
     }
 
     render(singleSeries, inRenderSpace, { highlighted, showIndividualPoints, shadowColor, shadowBlur, width, defaultLineWidth, bounds, globalBounds, inRenderSpaceAreaBottom }) {
+        if (!this._initialized || !this._context || !this._canvas) {
+            console.warn('GraphBodyRenderer: Cannot render - not initialized, missing context, or missing canvas');
+            return;
+        }
+        
         const getIndividualPoints = (useDataSpace) => {
             if (!bounds) {
                 bounds = singleSeries.axis.currentBounds;
@@ -154,8 +172,20 @@ export default class GraphBodyRenderer extends Eventable {
         let commonCPUParams;
 
         if (cpuRendering) {
-            // we can currently only render bars with the CPU
-            this._context2d = this._context2d || this._canvas.getContext('2d');
+            if (this._webgl) {
+                console.warn(`CPU rendering (${singleSeries.rendering}) is not supported with webgl={true}. Use webgl={false} or switch to 'line' rendering.`);
+                return;
+            }
+            
+            //we still need a canvas context for cpu stuff
+            if (!this._context2d) {
+                this._context2d = this._canvas.getContext('2d', { willReadFrequently: false });
+            }
+            
+            if (!this._context2d) {
+                console.error('Failed to get 2D context for CPU rendering');
+                return;
+            }
 
             if (this._webgl) {
                 // make sure we don't have any webgl stuff in the way before we get back to CPU rendering
@@ -224,6 +254,11 @@ export default class GraphBodyRenderer extends Eventable {
             
             if (!this._shadowProgram._program) {
                 console.error('ShadowProgram has no valid WebGL program');
+                return;
+            }
+            
+            if (!inRenderSpace) {
+                console.error('inRenderSpace is null for shadow rendering');
                 return;
             }
             
@@ -310,6 +345,11 @@ export default class GraphBodyRenderer extends Eventable {
             getIndividualPoints,
             getRanges: singleSeries.rangeKey ? getRanges : null
         };
+
+        if (!inRenderSpace) {
+            console.error('inRenderSpace is null for line rendering');
+            return;
+        }
 
         if (this._webgl) {
             this._lineProgram.draw(inRenderSpace, drawParams);

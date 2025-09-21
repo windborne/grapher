@@ -99,7 +99,7 @@ export function extractVerticesFromPaths(paths, { dashed, dashPattern }) {
  * @return {{prevPositions: Float32Array, indices: Uint32Array, vertices: Float32Array, positions: Float32Array}}
  */
 export default function extractVertices(dataInRenderSpace, { dashed, dashPattern }) {
-    if (dataInRenderSpace.paths) {
+    if (dataInRenderSpace && dataInRenderSpace.paths) {
         return extractVerticesFromPaths(dataInRenderSpace.paths, { dashed, dashPattern});
     }
 

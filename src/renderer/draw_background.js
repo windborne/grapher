@@ -5,6 +5,11 @@
  * @param {CanvasRenderingContext2D} context
  */
 export default function drawBackground({ data }, { context }) {
+    if (!context) {
+        console.error('Canvas context is null in drawBackground');
+        return;
+    }
+    
     const width = context.canvas.width;
     const height = context.canvas.height;
 

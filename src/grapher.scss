@@ -2,17 +2,17 @@
   $primary-graph-body-height: 400px,
   $secondary-graph-body-height: 50px,
 
-  $background-color-1: #2a2a2b,
-  $background-color-2: #3e3e40,
+  $background-color-1: #131313,
+  $background-color-2: #1e1e1e,
 
   $tooltip-line-color: #CCC,
   $tooltip-background-color: rgba(0, 0, 0, 0.6),
   $tooltip-text-color: #F0F0F0,
   $vertical-line-color: #CCC,
 
-  $axis-line-color: silver,
-  $axis-line-width: 2px,
-  $axis-tick-color: #505053,
+  $axis-line-color: rgb(192, 192, 192, 0.3),
+  $axis-line-width: 1px,
+  $axis-tick-color: rgb(192, 192, 192, 0.3),
   $axis-text-color: #E0E0E3,
 
   $range-selection-text-color: silver,
@@ -24,7 +24,7 @@
   $range-selection-button-border: null,
   $range-selection-selected-button-border: null,
 
-  $range-graph-selection-bar-size: 14px,
+  $range-graph-selection-background-color: rgba(0, 0, 0, 0.3),
   $range-graph-selection-range-color: rgba(255, 255, 255, 0.1),
   $range-graph-selection-outline-color: #AAA,
   $range-graph-selection-bar-color: #808083,
@@ -33,6 +33,8 @@
   $range-graph-handle-color: #AAA,
   $range-graph-handle-fill-color: #666,
   $range-graph-axis-text-color: #9f9f9f,
+  $range-graph-tick-highlighted-color: #FFF,
+  $range-graph-text-highlighted-color: #FFF,
 
   $annotation-background-color: rgba(255, 255, 255, 0.3),
 
@@ -52,6 +54,7 @@
   $new-grapher-color: #DDD
 ) {
   $x-axis-height: 20px;
+  $x-axis-dual-height: 30px;
   $padding: 10px;
 
   $axis-z-index: 0;
@@ -431,6 +434,7 @@
 
   .range-graph-container {
     display: flex;
+    margin-top: 10px;
   }
 
   .graph-body {
@@ -580,25 +584,11 @@
     &.x-axis {
       width: 1px;
       height: $x-axis-height;
-      display: block;
-
-      .axis-item {
-        text {
-          text-anchor: middle;
-        }
-
-        &.axis-item-first {
-          text {
-            text-anchor: start;
-          }
-        }
-
-        &.axis-item-last {
-          text {
-            text-anchor: end;
-          }
-        }
+      
+      &.x-axis-dual {
+        height: $x-axis-dual-height;
       }
+      display: block;
     }
 
     &.y-axis {
@@ -606,7 +596,6 @@
 
       .axis-item text {
         text-anchor: end;
-        alignment-baseline: middle;
       }
 
       .y-axis-label {
@@ -634,11 +623,6 @@
       stroke-width: $axis-line-width;
     }
 
-    .axis-line-shadow {
-      stroke: $axis-tick-color;
-      stroke-width: 1px;
-    }
-
     .axis-item {
       path {
         stroke: $axis-tick-color;
@@ -652,7 +636,7 @@
 
       &.axis-item-major {
         .axis-tick {
-          stroke-width: 2px;
+          stroke-width: 1px;
         }
       }
 
@@ -666,7 +650,7 @@
 
   .range-selection-graph {
     width: 100%;
-    padding-bottom: $range-graph-selection-bar-size;
+    background-color: $range-graph-selection-background-color;
 
     .graph-body-secondary {
       height: $secondary-graph-body-height;
@@ -683,31 +667,30 @@
           cursor: ew-resize;
         }
 
-        .selection-bar {
-          fill: $range-graph-selection-bar-color;
-          cursor: ew-resize;
-        }
-
-        .selection-bar-track {
-          fill: $range-graph-selection-bar-track-color;
-        }
-
-        .selection-bar-rifles {
-          fill: none;
-          stroke-width: 1;
-          stroke: $range-graph-selection-bar-rifles-color;
-        }
-
-        .selection-bar-handle {
-          stroke: $range-graph-handle-color;
-          stroke-width: 1;
-          fill: $range-graph-handle-fill-color;
-          cursor: ew-resize;
-        }
 
         .target-selection-outline {
           stroke: $range-graph-selection-outline-color;
           fill: none;
+        }
+
+        .selection-handle {
+          .selection-handle-hit {
+            cursor: ew-resize;
+          }
+
+          .selection-handle-line {
+            stroke: $range-graph-handle-color;
+            stroke-width: 1;
+            transition: stroke-width 0.15s ease;
+          }
+
+          &:hover .selection-handle-line {
+            stroke-width: 3;
+          }
+
+          &.selection-handle-dragging .selection-handle-line {
+            stroke-width: 3;
+          }
         }
 
         .axis-item {
@@ -720,8 +703,18 @@
           }
 
           path {
-            stroke: $axis-tick-color;
+            stroke: $range-graph-axis-text-color;
             stroke-width: 1px;
+          }
+          
+          &.axis-item-highlighted {
+            path {
+              stroke: $range-graph-tick-highlighted-color;
+            }
+            
+            text {
+              fill: $range-graph-text-highlighted-color;
+            }
           }
         }
       }
@@ -843,6 +836,9 @@
           $range-graph-selection-bar-rifles-color: #333,
           $range-graph-handle-color: #333,
           $range-graph-handle-fill-color: #B0B0B7,
+          $range-graph-axis-text-color: #555,
+          $range-graph-tick-highlighted-color: #000,
+          $range-graph-text-highlighted-color: #000,
 
           $annotation-background-color: rgba(0, 0, 0, 0.3),
 
@@ -900,6 +896,9 @@
           $range-graph-selection-bar-rifles-color: #333,
           $range-graph-handle-color: #333,
           $range-graph-handle-fill-color: #B0B0B7,
+          $range-graph-axis-text-color: #333,
+          $range-graph-tick-highlighted-color: #000,
+          $range-graph-text-highlighted-color: #000,
 
           $annotation-background-color: rgba(0, 0, 0, 0.3),
 

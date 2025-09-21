@@ -67,16 +67,6 @@ const series = [
 
 renderPage(
     <ExamplePage page="multi_shadow_chart">
-        <style>
-        {`
-            .grapher .axis-item path {
-                stroke: rgba(30, 30, 30, 0.5) !important;
-            }
-            .grapher .axis-line {
-                stroke: rgba(60, 60, 60, 0.5) !important;
-            }
-        `}
-        </style>
         <Grapher
             series={series}
             showGrid={true}

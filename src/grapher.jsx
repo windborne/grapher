@@ -156,11 +156,12 @@ function Grapher(props) {
     const showingSidebar = useShowingSidebar(stateController);
 
     const showAxisColors = typeof props.showAxisColors === 'boolean' ? props.showAxisColors : (theme !== 'export');
-    const showGrid = typeof props.showGrid === 'boolean' ? props.showGrid : (theme !== 'export');
+    const showGrid = typeof props.showGrid === 'boolean' ? props.showGrid : false;
+    const showAxes = typeof props.showAxes === 'boolean' ? props.showAxes : false;
 
     const commonYAxisProps = {
         stateController,
-        showAxes: props.showAxes,
+        showAxes,
         showGrid,
         showSeriesKey: props.showSeriesKey,
         bodyHeight: props.bodyHeight,
@@ -251,7 +252,7 @@ function Grapher(props) {
 
                             <XAxis
                                 showGrid={showGrid}
-                                showAxes={props.showAxes}
+                                showAxes={showAxes}
                                 stateController={stateController}
                                 bigLabels={bigLabels}
                                 xTickUnit={props.xTickUnit}

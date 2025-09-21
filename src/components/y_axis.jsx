@@ -114,6 +114,8 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
                 axis.series.map((singleSeries, i) => {
                     const height = elementHeight/axis.series.length;
 
+                    console.log('showSeriesKey', showSeriesKey);
+
                     return (
                         <rect
                             x={side === 'left' ? 0 : 2}
@@ -133,11 +135,6 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
             {
                 showAxes &&
                 <path d={`M${side === 'left' ? Y_AXIS_WIDTH-1 : 1},3 V${elementHeight}`} className="axis-line" />
-            }
-
-            {
-                showAxes &&
-                <path d={`M${side === 'left' ? Y_AXIS_WIDTH-2 : 0},3 V${elementHeight + 1}`} className="axis-line-shadow" />
             }
 
             {

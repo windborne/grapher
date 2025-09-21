@@ -28,6 +28,11 @@ export default function drawArea(individualPoints, dataInRenderSpace, {
     zeroColor, zeroWidth, showIndividualPoints, negativeColor, pointRadius, width, highlighted,
     shadowColor='black', shadowBlur=5, inRenderSpaceAreaBottom
 }) {
+    if (!context) {
+        console.error('Canvas context is null in drawArea');
+        return;
+    }
+    
     context.fillStyle = color;
     context.shadowColor = shadowColor;
     context.shadowBlur = shadowBlur;
