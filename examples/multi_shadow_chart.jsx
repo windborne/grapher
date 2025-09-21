@@ -25,6 +25,7 @@ const series = [
             [0.3, 'rgba(0, 160, 128, 0.1)'],   
             [0.6, 'rgba(0, 0, 0, 0)']          
         ],
+        defaultAlwaysTooltipped: true,
     },
     {
         data: generateData(5, Math.PI/6, 0.7), 
@@ -36,6 +37,7 @@ const series = [
             [0.3, 'rgba(0, 99, 160, 0.1)'],   
             [0.6, 'rgba(0, 0, 0, 0)']          
         ],
+        defaultAlwaysTooltipped: true,
     },
     {
         data: generateData(6, Math.PI/4, 0.6),
@@ -47,6 +49,7 @@ const series = [
             [0.3, 'rgba(160, 144, 0, 0.1)'],   
             [0.6, 'rgba(0, 0, 0, 0)']          
         ],
+        defaultAlwaysTooltipped: true,
     },
     {
         data: generateData(7, Math.PI/3, 0.8),
@@ -58,6 +61,7 @@ const series = [
             [0.3, 'rgba(185, 99, 168, 0.1)'],  
             [0.6, 'rgba(0, 0, 0, 0)']          
         ],
+        defaultAlwaysTooltipped: true,
     }
 ];
 
@@ -77,6 +81,7 @@ renderPage(
             series={series}
             showGrid={true}
             webgl={true}
+            tooltipOptions={{combineTooltips: true}}
         />
     </ExamplePage>
 );
