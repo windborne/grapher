@@ -6,7 +6,9 @@ import ExamplePage from './example_page.jsx';
 const series = [
     {
         data: [0, 1, 4, 10, 3, -7, -4, 3, 2],
-        rendering: 'area'
+        rendering: 'area',
+        zeroLineWidth: 3,
+        zeroLineColor: '#fff'
     }
 ];
 

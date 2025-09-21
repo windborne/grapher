@@ -21,7 +21,8 @@ const series = [
             '#ffaa00'
         ],
         zeroLineWidth: 5,
-        zeroLineColor: '#111'
+        zeroLineColor: '#111',
+        showIndividualPoints: true
     }
 ];
 

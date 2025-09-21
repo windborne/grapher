@@ -1,0 +1,290 @@
+import shadowFrag from './shadow.frag';
+import shadowVert from './shadow.vert';
+import colorToVector from '../helpers/color_to_vector';
+import createGLProgram from './create_gl_program';
+
+export default class ShadowProgram {
+
+    constructor(gl) {
+        this._gl = gl;
+
+        this._program = createGLProgram(gl, shadowVert, shadowFrag);
+        
+        if (!this._program) {
+            console.error('Failed to create shadow shader program');
+            this._program = null; 
+            return;
+        }
+        
+        gl.validateProgram(this._program);
+        if (!gl.getProgramParameter(this._program, gl.VALIDATE_STATUS)) {
+            console.error('Shadow program validation failed:', gl.getProgramInfoLog(this._program));
+        }
+
+        const positionLoc = gl.getAttribLocation(this._program, 'position');
+        const trapezoidBoundsLoc = gl.getAttribLocation(this._program, 'trapezoidBounds');
+        const trapezoidBottomLoc = gl.getAttribLocation(this._program, 'trapezoidBottom');
+        
+        if (positionLoc === -1 || trapezoidBoundsLoc === -1 || trapezoidBottomLoc === -1) {
+            console.error('Missing required shader attributes');
+        }
+        
+        this._positionBuffer = gl.createBuffer();
+        this._trapezoidBoundsBuffer = gl.createBuffer();
+        this._trapezoidBottomBuffer = gl.createBuffer();
+        this._indexBuffer = gl.createBuffer();
+        
+        this._gradientTexture = gl.createTexture();
+
+        if (!gl.getExtension('OES_element_index_uint')) {
+            console.error('Your browser does not support OES_element_index_uint');
+        }
+    }
+
+    dispose() {
+        const gl = this._gl;
+        if (this._gradientTexture) {
+            gl.deleteTexture(this._gradientTexture);
+            this._gradientTexture = null;
+        }
+    }
+
+    /**
+     * Convert trapezoids into WebGL geometry
+     * @param {Array} trapezoids - Array of trapezoid definitions
+     * @returns {Object} - Geometry data for WebGL
+     */
+    generateTrapezoidGeometry(trapezoids) {
+        const positions = [];
+        const trapezoidBounds = [];
+        const trapezoidBottom = [];
+        const indices = [];
+        
+        let vertexIndex = 0;
+        
+        for (const trap of trapezoids) {
+            const { x1, y1, x2, y2, bottomY1, bottomY2 } = trap;
+            
+            const vertices = [
+                [x1, y1],
+                [x2, y2],
+                [x2, bottomY2],
+                [x1, bottomY1]
+            ];
+            
+            const bounds = [x1, y1, x2, y2];
+            const bottom = [x1, bottomY1, x2, bottomY2];
+            
+            for (let i = 0; i < 4; i++) {
+                const [x, y] = vertices[i];
+                
+                positions.push(x, y);
+                trapezoidBounds.push(...bounds);
+                trapezoidBottom.push(...bottom);
+            }
+            
+            indices.push(
+                vertexIndex, vertexIndex + 1, vertexIndex + 2,
+                vertexIndex, vertexIndex + 2, vertexIndex + 3
+            );
+            
+            vertexIndex += 4;
+        }
+        
+        return {
+            positions: new Float32Array(positions),
+            trapezoidBounds: new Float32Array(trapezoidBounds),
+            trapezoidBottom: new Float32Array(trapezoidBottom),
+            indices: new Uint32Array(indices)
+        };
+    }
+
+    /**
+     * Parse gradient definition to shader uniforms (supports up to 16 stops)
+     * @param {Array} gradient - Gradient definition
+     * @param {String} fallbackColor - Fallback color
+     * @returns {Object} - Shader uniform data
+     */
+    parseGradient(gradient, fallbackColor) {
+        if (!gradient || !Array.isArray(gradient) || gradient.length < 2) {
+            // Fallback: single color
+            const fallbackColorVec = colorToVector(fallbackColor);
+            return {
+                textureData: new Uint8Array([
+                    0, 0, 0, 255,                                    // stop 0.0 as RGBA  
+                    Math.floor(fallbackColorVec[0] * 255),           // R
+                    Math.floor(fallbackColorVec[1] * 255),           // G  
+                    Math.floor(fallbackColorVec[2] * 255),           // B
+                    Math.floor(fallbackColorVec[3] * 255)            // A
+                ]),
+                textureWidth: 2,
+                gradientCount: 1,
+                fallbackColor: fallbackColorVec
+            };
+        }
+
+        const colors = [];
+        const stops = [];
+        
+        for (let i = 0; i < gradient.length; i++) {
+            const item = gradient[i];
+            
+            if (Array.isArray(item)) {
+                stops.push(item[0]);
+                colors.push(colorToVector(item[1]));
+            } else {
+                stops.push(i / (gradient.length - 1));
+                colors.push(colorToVector(item));
+            }
+        }
+        
+        // Create texture data: stop0, color0, stop1, color1, ...
+        // Each pixel is RGBA, stops stored in R channel
+        const textureWidth = colors.length * 2;
+        const textureData = new Uint8Array(textureWidth * 4);
+        
+        for (let i = 0; i < colors.length; i++) {
+            const stopIndex = i * 8;     // 2 pixels * 4 channels per stop/color pair
+            const colorIndex = stopIndex + 4;
+            
+            // Store stop position in R channel (0-255)
+            textureData[stopIndex] = Math.floor(stops[i] * 255);
+            textureData[stopIndex + 1] = 0;
+            textureData[stopIndex + 2] = 0; 
+            textureData[stopIndex + 3] = 255;
+            
+            // Store color
+            textureData[colorIndex] = Math.floor(colors[i][0] * 255);
+            textureData[colorIndex + 1] = Math.floor(colors[i][1] * 255);
+            textureData[colorIndex + 2] = Math.floor(colors[i][2] * 255);
+            textureData[colorIndex + 3] = Math.floor(colors[i][3] * 255);
+        }
+        
+        return {
+            textureData,
+            textureWidth,
+            gradientCount: colors.length,
+            fallbackColor: colorToVector(fallbackColor)
+        };
+    }
+
+    /**
+     * Draw shadow/trapezoid geometry
+     * @param {Array} individualPoints - Points defining the line
+     * @param {Object} params - Rendering parameters
+     */
+    draw(individualPoints, params) {
+        if (!individualPoints || individualPoints.length < 2) {
+            return;
+        }
+
+        const gl = this._gl;
+        const width = gl.drawingBufferWidth;
+        const height = gl.drawingBufferHeight;
+        
+        gl.useProgram(this._program);
+        
+        const trapezoids = [];
+        const { zero, inRenderSpaceAreaBottom } = params;
+        
+        for (let i = 0; i < individualPoints.length - 1; i++) {
+            const [x1, y1] = individualPoints[i];
+            const [x2, y2] = individualPoints[i + 1];
+            
+            let bottomY1 = zero;
+            let bottomY2 = zero;
+            
+            const y1RelativeToZero = y1 - zero;
+            const y2RelativeToZero = y2 - zero;
+            const crossesZero = (y1RelativeToZero * y2RelativeToZero) < 0;
+            
+            if (crossesZero) {
+                const t = Math.abs(y1RelativeToZero) / (Math.abs(y1RelativeToZero) + Math.abs(y2RelativeToZero));
+                const xCross = x1 + (x2 - x1) * t;
+                const yCross = zero;
+                
+                if (Math.abs(y1 - yCross) > 0.1) {
+                    trapezoids.push({ 
+                        x1, y1, 
+                        x2: xCross, y2: yCross, 
+                        bottomY1, 
+                        bottomY2: zero 
+                    });
+                }
+                
+                if (Math.abs(y2 - yCross) > 0.1) {
+                    trapezoids.push({ 
+                        x1: xCross, y1: yCross, 
+                        x2, y2, 
+                        bottomY1: zero, 
+                        bottomY2 
+                    });
+                }
+            } else {
+                const trapezoid = { x1, y1, x2, y2, bottomY1, bottomY2 };
+                trapezoids.push(trapezoid);
+            }
+        }
+        
+        if (trapezoids.length === 0) {
+            return;
+        }
+        
+        const geometry = this.generateTrapezoidGeometry(trapezoids);
+        
+        const positionLoc = gl.getAttribLocation(this._program, 'position');
+        const trapezoidBoundsLoc = gl.getAttribLocation(this._program, 'trapezoidBounds');
+        const trapezoidBottomLoc = gl.getAttribLocation(this._program, 'trapezoidBottom');
+        
+        gl.enableVertexAttribArray(positionLoc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, geometry.positions, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+        
+        gl.enableVertexAttribArray(trapezoidBoundsLoc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBoundsBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBounds, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(trapezoidBoundsLoc, 4, gl.FLOAT, false, 0, 0);
+        
+        gl.enableVertexAttribArray(trapezoidBottomLoc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBottomBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBottom, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(trapezoidBottomLoc, 4, gl.FLOAT, false, 0, 0);
+        
+        gl.uniform1f(gl.getUniformLocation(this._program, 'width'), width);
+        gl.uniform1f(gl.getUniformLocation(this._program, 'height'), height);
+        
+        const gradientData = this.parseGradient(params.gradient, params.color);
+ 
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this._gradientTexture);
+        
+        gl.texImage2D(
+            gl.TEXTURE_2D, 
+            0, 
+            gl.RGBA, 
+            gradientData.textureWidth, 
+            1, 
+            0, 
+            gl.RGBA, 
+            gl.UNSIGNED_BYTE, 
+            gradientData.textureData
+        );
+        
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.uniform1i(gl.getUniformLocation(this._program, 'gradientTexture'), 0);
+        gl.uniform1i(gl.getUniformLocation(this._program, 'gradientCount'), gradientData.gradientCount);
+        gl.uniform4fv(gl.getUniformLocation(this._program, 'fallbackColor'), gradientData.fallbackColor);
+        
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
+        gl.drawElements(gl.TRIANGLES, geometry.indices.length, gl.UNSIGNED_INT, 0);
+    }
+}

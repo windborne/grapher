@@ -23,8 +23,13 @@ export default function colorToVector(color) {
         ];
     }
 
-    if (typeof color !== 'string' || !/^#[\dA-F]{6}$/i.test(color)) {
+    if (typeof color !== 'string' || !/^#[\dA-F]{3}$|^#[\dA-F]{6}$/i.test(color)) {
         throw new Error(`Color must be a hex string: ${color}`);
+    }
+
+    // support for short hex codes, expanding 3-digit hex to 6-digit
+    if (color.length === 4) {
+        color = '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
     }
 
     const r = parseInt(color.substr(1, 2),  16)/255;

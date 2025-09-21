@@ -1,13 +1,14 @@
-import sizeCanvas from './size_canvas';
-import getColor from '../helpers/colors';
-import LineProgram from './line_program';
-import drawLine from './draw_line';
 import Eventable from '../eventable';
-import drawBackground from './draw_background.js';
-import BackgroundProgram from './background_program.js';
-import drawBars from './draw_bars';
-import drawArea from './draw_area';
+import getColor from '../helpers/colors';
 import inferType from '../state/infer_type';
+import BackgroundProgram from './background_program.js';
+import drawArea from './draw_area';
+import drawBackground from './draw_background.js';
+import drawBars from './draw_bars';
+import drawLine from './draw_line';
+import LineProgram from './line_program';
+import ShadowProgram from './shadow_program';
+import sizeCanvas from './size_canvas';
 
 export default class GraphBodyRenderer extends Eventable {
 
@@ -23,7 +24,9 @@ export default class GraphBodyRenderer extends Eventable {
             this._context = this._canvas.getContext('webgl');
             if (this._context) {
                 this._lineProgram = new LineProgram(this._context);
+                this._shadowProgram = new ShadowProgram(this._context);
             } else {
+                console.error('❌ WebGL context creation failed');
                 alert('WebGL failed! Attempting fallback to CPU rendering');
                 this._webgl = false;
             }
@@ -57,6 +60,7 @@ export default class GraphBodyRenderer extends Eventable {
     dispose() {
         this.clearListeners();
         this._lineProgram && this._lineProgram.dispose();
+        this._shadowProgram && this._shadowProgram.dispose();
         this._cachedAxisCount = null;
         this._stateController.off('axes_changed', this._onAxisChange);
         this._stateController.off('dragging_y_changed', this._boundResize);
@@ -67,6 +71,12 @@ export default class GraphBodyRenderer extends Eventable {
 
         if (this._intersectionObserver) {
             this._intersectionObserver.disconnect();
+        }
+
+        if (this._zeroLineCanvas && this._zeroLineCanvas.parentNode) {
+            this._zeroLineCanvas.parentNode.removeChild(this._zeroLineCanvas);
+            this._zeroLineCanvas = null;
+            this._zeroLineContext = null;
         }
     }
 
@@ -200,6 +210,91 @@ export default class GraphBodyRenderer extends Eventable {
                 inRenderSpaceAreaBottom
             });
             return;
+        }
+
+        if (singleSeries.rendering === 'shadow') {
+            if (!this._webgl || !this._shadowProgram) {
+                console.warn('Shadow rendering requires WebGL. Enable webgl={true} on your Grapher component.', {
+                    webgl: !!this._webgl,
+                    shadowProgram: !!this._shadowProgram,
+                    program: !!this._shadowProgram?._program
+                });
+                return;
+            }
+            
+            if (!this._shadowProgram._program) {
+                console.error('ShadowProgram has no valid WebGL program');
+                return;
+            }
+            
+            if (!bounds) {
+                bounds = singleSeries.axis.currentBounds;
+            }
+            
+            let zero = singleSeries.zeroLineY === 'bottom' ?
+                this._sizing.renderHeight :
+                (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+            
+            if (zero > this._sizing.renderHeight * 1.5) {
+                zero = this._sizing.renderHeight;
+            } else if (zero < -this._sizing.renderHeight * 0.5) {
+                zero = 0;
+            }
+            
+            this._shadowProgram.draw(getIndividualPoints(true), {
+                color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
+                gradient: singleSeries.gradient,
+                zero,
+                inRenderSpaceAreaBottom
+            });
+            
+            if (this._webgl) {
+                const gl = this._context;
+                gl.disable(gl.BLEND);
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            }
+            
+            if (singleSeries.zeroLineWidth && singleSeries.zeroLineWidth > 0) {
+                if (this._context2d) {
+                    // in non-webgl mode, use the existing 2d context
+                    this._context2d.save();
+                    this._context2d.strokeStyle = singleSeries.zeroLineColor || getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
+                    this._context2d.lineWidth = singleSeries.zeroLineWidth;
+                    this._context2d.globalCompositeOperation = 'source-over';
+                    
+                    this._context2d.beginPath();
+                    this._context2d.moveTo(0, zero);
+                    this._context2d.lineTo(this._sizing.renderWidth, zero);
+                    this._context2d.stroke();
+                    this._context2d.restore();
+                } else {
+                    // in webgl mode, we instead create an overlay 2d canvas for the zero line
+                    if (!this._zeroLineCanvas) {
+                        this._zeroLineCanvas = document.createElement('canvas');
+                        this._zeroLineCanvas.style.position = 'absolute';
+                        this._zeroLineCanvas.style.top = '0';
+                        this._zeroLineCanvas.style.left = '0';
+                        this._zeroLineCanvas.style.pointerEvents = 'none';
+                        this._zeroLineContext = this._zeroLineCanvas.getContext('2d');
+                        this._canvas.parentNode.insertBefore(this._zeroLineCanvas, this._canvas.nextSibling);
+                    }
+                    
+                    this._zeroLineCanvas.width = this._canvas.width;
+                    this._zeroLineCanvas.height = this._canvas.height;
+                    this._zeroLineCanvas.style.width = this._canvas.style.width;
+                    this._zeroLineCanvas.style.height = this._canvas.style.height;
+                    
+                    this._zeroLineContext.clearRect(0, 0, this._zeroLineCanvas.width, this._zeroLineCanvas.height);
+                    this._zeroLineContext.strokeStyle = singleSeries.zeroLineColor || getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
+                    this._zeroLineContext.lineWidth = singleSeries.zeroLineWidth;
+                    
+                    this._zeroLineContext.beginPath();
+                    this._zeroLineContext.moveTo(0, zero);
+                    this._zeroLineContext.lineTo(this._sizing.renderWidth, zero);
+                    this._zeroLineContext.stroke();
+                }
+            }
         }
 
         const drawParams = {

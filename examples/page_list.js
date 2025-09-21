@@ -147,5 +147,13 @@ module.exports = [
             'gradient_area_chart',
             'dynamic_bottom_area_chart'
         ]
+    },
+    {
+        name: 'Shadow charts',
+        pages: [
+            'shadow_chart',
+            'negative_shadow_chart',
+            'multi_shadow_chart',
+        ]
     }
 ];

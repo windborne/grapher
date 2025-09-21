@@ -112,7 +112,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
         const yDistance = Math.abs(pixelY - mouseY);
         const distance = Math.sqrt((xDistance)**2 + (pixelY - mouseY)**2);
 
-        if (xDistance > xDistanceThreshold || (!ignoreYDistance && yDistance > yDistanceThreshold) || (!ignoreYDistance && distance > distanceThreshold)) {
+        if (!ignoreYDistance && (xDistance > xDistanceThreshold || yDistance > yDistanceThreshold || distance > distanceThreshold)) {
             continue;
         }
 

@@ -24,9 +24,8 @@ export interface SeriesData {
   background?: object;
   hideFromKey?: boolean;
   showIndividualPoints?: boolean;
-  rendering?: 'line' | 'bar' | 'area';
+  rendering?: 'line' | 'bar' | 'area' | 'shadow';
   negativeColor?: string;
-  gradient?: any[];
   zeroLineWidth?: number;
   zeroLineColor?: string;
   zeroLineY?: number | string;
@@ -34,6 +33,7 @@ export interface SeriesData {
   tooltipWidth?: number;
   hasAreaBottom?: boolean;
   shadowColor?: string;
+  gradient?: string[] | [number, string][];
   rangeKey?: string;
 }
 

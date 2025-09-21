@@ -32,7 +32,7 @@ export default function drawArea(individualPoints, dataInRenderSpace, {
     context.shadowColor = shadowColor;
     context.shadowBlur = shadowBlur;
 
-    if (gradient && gradient.length > 2) {
+    if (gradient && gradient.length >= 2) {
         const globalGradient = context.createLinearGradient(0, 0, 0, sizing.renderHeight);
 
         for (let i = 0; i < gradient.length; i++) {
