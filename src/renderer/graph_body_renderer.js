@@ -9,6 +9,7 @@ import drawLine from './draw_line';
 import LineProgram from './line_program';
 import ShadowProgram from './shadow_program';
 import sizeCanvas from './size_canvas';
+import { applyReducedOpacity } from "../helpers/colors";
 
 export default class GraphBodyRenderer extends Eventable {
 
@@ -105,6 +106,52 @@ export default class GraphBodyRenderer extends Eventable {
         if (!this._initialized || !this._context || !this._canvas) {
             console.warn('GraphBodyRenderer: Cannot render - not initialized, missing context, or missing canvas');
             return;
+        }
+        
+        let cutoffIndex = -1;
+        // cutoff time calculations for visible bounds-based approach
+        
+        if (singleSeries.cutoffTime && singleSeries.data && singleSeries.data.length > 0) {
+            let cutoffDate;
+            if (singleSeries.cutoffTime === 'now') {
+                cutoffDate = new Date();
+            } else if (typeof singleSeries.cutoffTime === 'number') {
+                cutoffDate = new Date(singleSeries.cutoffTime);
+            } else {
+                cutoffDate = singleSeries.cutoffTime;
+            }
+            
+            // getting the ghost point
+            const cutoffTime = cutoffDate instanceof Date ? cutoffDate.getTime() : cutoffDate;
+            
+            for (let i = 0; i < singleSeries.data.length - 1; i++) {
+                const currentPoint = singleSeries.data[i];
+                const nextPoint = singleSeries.data[i + 1];
+                
+                const currentTime = Array.isArray(currentPoint) ? 
+                    (currentPoint[0] instanceof Date ? currentPoint[0].getTime() : currentPoint[0]) : i;
+                const nextTime = Array.isArray(nextPoint) ? 
+                    (nextPoint[0] instanceof Date ? nextPoint[0].getTime() : nextPoint[0]) : (i + 1);
+                
+                if (currentTime <= cutoffTime && cutoffTime <= nextTime) {
+                    // interpolate exact position between these two points
+                    const timeRatio = (cutoffTime - currentTime) / (nextTime - currentTime);
+                    cutoffIndex = i + timeRatio;
+                    break;
+                } else if (currentTime > cutoffTime) {
+                    // cutoff is before the first data point
+                    cutoffIndex = i;
+                    break;
+                }
+            }
+            
+            // cutoff is after all data points
+            if (cutoffIndex === -1) {
+                cutoffIndex = singleSeries.data.length - 1;
+            }
+            
+            
+            // Note: cutoffIndex is used for cutoff calculations but we no longer split data
         }
         
         const getIndividualPoints = (useDataSpace) => {
@@ -217,18 +264,32 @@ export default class GraphBodyRenderer extends Eventable {
         }
 
         if (singleSeries.rendering === 'bar') {
-            drawBars(getIndividualPoints(true), {
+            let barParams = {
                 ...commonCPUParams,
                 indexInAxis: singleSeries.axis.series.indexOf(singleSeries),
                 axisSeriesCount: singleSeries.axis.series.length,
                 closestSpacing: globalBounds.closestSpacing,
                 bounds
-            });
+            };
+
+            if (singleSeries.cutoffTime) {
+                barParams.cutoffIndex = cutoffIndex;
+                barParams.cutoffOpacity = 0.35;
+                barParams.originalData = singleSeries.data;
+                barParams.renderCutoffGradient = cutoffIndex >= 0; 
+                
+                const selection = this === this._stateController.rangeGraphRenderer 
+                    ? this._stateController._bounds 
+                    : (this._stateController._selection || this._stateController._bounds);
+                barParams.selectionBounds = selection;
+            }
+
+            drawBars(getIndividualPoints(true), barParams);
             return;
         }
 
         if (singleSeries.rendering === 'area') {
-            drawArea(getIndividualPoints(true), inRenderSpace, {
+            let areaParams = {
                 ...commonCPUParams,
                 showIndividualPoints: typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints,
                 gradient: singleSeries.gradient,
@@ -238,8 +299,23 @@ export default class GraphBodyRenderer extends Eventable {
                 shadowColor,
                 shadowBlur,
                 inRenderSpaceAreaBottom
-            });
-            return;
+            };
+
+        // add cutoff information for gradient area rendering
+        if (singleSeries.cutoffTime) {
+            areaParams.cutoffIndex = cutoffIndex;
+            areaParams.cutoffOpacity = 0.35;
+            areaParams.originalData = singleSeries.data;
+            areaParams.renderCutoffGradient = cutoffIndex >= 0; 
+            areaParams.isPreview = this === this._stateController.rangeGraphRenderer; 
+            
+            const selection = this === this._stateController.rangeGraphRenderer 
+                ? this._stateController._bounds 
+                : (this._stateController._selection || this._stateController._bounds);
+            areaParams.selectionBounds = selection;
+        }
+
+            drawArea(getIndividualPoints(true), inRenderSpace, areaParams);
         }
 
         if (singleSeries.rendering === 'shadow') {
@@ -269,6 +345,18 @@ export default class GraphBodyRenderer extends Eventable {
             let zero = singleSeries.zeroLineY === 'bottom' ?
                 this._sizing.renderHeight :
                 (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+                
+            const boundsChanged = !this._lastBounds || 
+                bounds.minY !== this._lastBounds.minY || 
+                bounds.maxY !== this._lastBounds.maxY || 
+                this._sizing.renderHeight !== this._lastRenderHeight;
+                
+            this._lastBounds = {...bounds};
+            this._lastRenderHeight = this._sizing.renderHeight;
+            
+            if (boundsChanged && this._lastShadowCache) {
+                this._lastShadowCache = null;
+            }
             
             if (zero > this._sizing.renderHeight * 1.5) {
                 zero = this._sizing.renderHeight;
@@ -276,12 +364,29 @@ export default class GraphBodyRenderer extends Eventable {
                 zero = 0;
             }
             
-            this._shadowProgram.draw(getIndividualPoints(true), {
+            let shadowParams = {
                 color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
                 gradient: singleSeries.gradient,
                 zero,
+                sizing: this._sizing,
                 inRenderSpaceAreaBottom
-            });
+            };
+
+            // add cutoff information for gradient shadow rendering
+            if (singleSeries.cutoffTime) {
+                shadowParams.cutoffIndex = cutoffIndex;
+                shadowParams.cutoffOpacity = 0.35;
+                shadowParams.originalData = singleSeries.data;
+                shadowParams.renderCutoffGradient = cutoffIndex >= 0; 
+                shadowParams.isPreview = this === this._stateController.rangeGraphRenderer; 
+
+                const selection = this === this._stateController.rangeGraphRenderer 
+                    ? this._stateController._bounds 
+                    : (this._stateController._selection || this._stateController._bounds);
+                shadowParams.selectionBounds = selection;
+            }
+
+            this._shadowProgram.draw(getIndividualPoints(true), shadowParams);
             
             if (this._webgl) {
                 const gl = this._context;
@@ -289,6 +394,7 @@ export default class GraphBodyRenderer extends Eventable {
                 gl.enable(gl.BLEND);
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             }
+            
             
             if (singleSeries.zeroLineWidth && singleSeries.zeroLineWidth > 0) {
                 if (this._context2d) {
@@ -332,6 +438,8 @@ export default class GraphBodyRenderer extends Eventable {
             }
         }
 
+        const shouldShowIndividualPoints = typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints;
+
         const drawParams = {
             color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
             context: this._context,
@@ -341,21 +449,39 @@ export default class GraphBodyRenderer extends Eventable {
             dashed: singleSeries.dashed,
             dashPattern: singleSeries.dashPattern,
             highlighted,
-            showIndividualPoints: typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints,
+            showIndividualPoints: shouldShowIndividualPoints,
             getIndividualPoints,
-            getRanges: singleSeries.rangeKey ? getRanges : null
+            getRanges: singleSeries.rangeKey ? getRanges : null,
+            rendering: singleSeries.rendering  // Pass rendering type for all charts
         };
 
         if (!inRenderSpace) {
             console.error('inRenderSpace is null for line rendering');
             return;
         }
-
+        
+        // Add cutoff information to drawParams for gradient line rendering
+        if (singleSeries.cutoffTime) {
+            drawParams.cutoffIndex = cutoffIndex;
+            drawParams.cutoffOpacity = 0.35;
+            drawParams.originalData = singleSeries.data;
+            drawParams.renderCutoffGradient = cutoffIndex >= 0; // Only render cutoff if valid cutoff
+            drawParams.currentBounds = bounds;
+            drawParams.isPreview = this === this._stateController.rangeGraphRenderer; // Flag for preview rendering
+            
+            // Always set selectionBounds with fallback
+            const selection = this === this._stateController.rangeGraphRenderer 
+                ? this._stateController._bounds 
+                : (this._stateController._selection || this._stateController._bounds);
+            drawParams.selectionBounds = selection;
+        }
+        
         if (this._webgl) {
             this._lineProgram.draw(inRenderSpace, drawParams);
         } else {
             drawLine(inRenderSpace, drawParams);
         }
+        
     }
 
     renderBackground(inBackgroundSpace) {

@@ -4,6 +4,9 @@ uniform vec4 color;
 uniform float thickness;
 uniform float shadowBlur;
 uniform vec4 shadowColor;
+uniform float width;        // Canvas width for normalization
+uniform float cutoffX;      // Cutoff X position as ratio (0.0-1.0)
+uniform float cutoffOpacity; // Opacity for pre-cutoff area
 
 varying vec2 position_vec;
 varying vec2 prev_position_vec;
@@ -39,13 +42,25 @@ float distance_from_line() {
 void main() {
     vec4 transparent = vec4(0.0, 0.0, 0.0, 0.0);
 
+    // Apply cutoff opacity if active
+    vec4 finalColor = vec4(color);
+    if (cutoffX >= 0.0) {
+        // Convert pixel position to normalized coordinate (0.0 to 1.0)
+        float normalizedX = gl_FragCoord.x / width;
+        
+        // Apply reduced opacity to pixels left of cutoff
+        if (normalizedX < cutoffX) {
+            finalColor.a *= cutoffOpacity;
+        }
+    }
+
     float dist = distance_from_line();
 
     if (dist + shadowBlur >= thickness) {
         float percent_shadowed = ((thickness - dist) / shadowBlur);
         gl_FragColor = mix(transparent, shadowColor, percent_shadowed*percent_shadowed);
     } else {
-        gl_FragColor = vec4(color);
+        gl_FragColor = finalColor;
         gl_FragColor.rgb *= gl_FragColor.a;
     }
 }

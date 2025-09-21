@@ -114,8 +114,6 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
                 axis.series.map((singleSeries, i) => {
                     const height = elementHeight/axis.series.length;
 
-                    console.log('showSeriesKey', showSeriesKey);
-
                     return (
                         <rect
                             x={side === 'left' ? 0 : 2}

@@ -16,16 +16,16 @@ const series = [
             [new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), 25]
         ],
         cutoffTime: 'now',
-        color: '#3498db'
+        color: '#3498db',
+        width: 5,
+        showIndividualPoints: true,
     }
 ];
 
 renderPage(
-    <ExamplePage page="values_graph">
+    <ExamplePage page="cutoff_now_graph">
         <Grapher
             series={series}
-            showIndividualPoints={true}
-            webgl={false}
             title="Line Chart with Cutoff at 'Now'"
         />
     </ExamplePage>

@@ -35,6 +35,7 @@ export interface SeriesData {
   shadowColor?: string;
   gradient?: string[] | [number, string][];
   rangeKey?: string;
+  cutoffTime?: number | Date | 'now';
 }
 
 export interface TooltipOptions {
