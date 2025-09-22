@@ -28,7 +28,6 @@ renderPage(
     <ExamplePage page="cutoff_custom_time_graph">
         <Grapher
             series={series}
-            title={`Line Chart with Cutoff at ${cutoffDate.toLocaleDateString()}`}
         />
     </ExamplePage>
 );

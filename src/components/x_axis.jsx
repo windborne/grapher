@@ -103,6 +103,9 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
             {/* Render time ticks in first row */}
             {
                 dates && timeTicks && timeTicks.map(({ pixelValue, label, size, position, skipGrid }, i) => {
+
+                    const singleTick = timeTicks.length === 1;
+                    
                     if (isNaN(pixelValue)) {
                         return null;
                     }
@@ -127,9 +130,9 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
                             {
                                 showAxes &&
                                 <text 
-                                    x={position === 'last' ? pixelValue - 3 : pixelValue + 3} 
+                                    x={(position === 'last' && !singleTick) ? pixelValue - 3 : pixelValue + 3} 
                                     y={12} 
-                                    textAnchor={position === 'last' ? 'end' : 'start'}
+                                    textAnchor={(position === 'last' && !singleTick) ? 'end' : 'start'}
                                     className='x-axis-text x-axis-time-text'
                                 >
                                     {label}
@@ -142,7 +145,8 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
             
             {/* Render date ticks in second row */}
             {
-                dates && dateTicks && dateTicks.map(({ pixelValue, label, size, position }, i) => {
+                dates && dateTicks && dateTicks.map(({ pixelValue, label, size, position, trueValue }, i) => {
+                    
                     if (isNaN(pixelValue)) {
                         return null;
                     }
@@ -150,6 +154,13 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
                     const classes = ['axis-item', `axis-item-${size}`, `axis-item-${position}`];
                     if (bigLabels) {
                         classes.push('axis-item-big-labels');
+                    }
+
+                    let timezoneLabel = undefined;
+                    if (timeZone) {
+                        if (i === 0) {
+                            timezoneLabel = timeZone.toLowerCase() === 'utc' ? 'UTC' : timeZone;
+                        }
                     }
 
                     return (
@@ -162,7 +173,14 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
                                     textAnchor={position === 'last' ? 'end' : 'start'}
                                     className='x-axis-text x-axis-date-text'
                                 >
-                                    {label}
+                                    <tspan className='x-axis-date-label'>
+                                        {label}
+                                    </tspan>
+                                    {timezoneLabel && (
+                                        <tspan className='x-axis-timezone-label'>
+                                            {' '}({timezoneLabel})
+                                        </tspan>
+                                    )}
                                 </text>
                             }
                         </g>

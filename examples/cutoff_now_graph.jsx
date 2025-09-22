@@ -26,7 +26,6 @@ renderPage(
     <ExamplePage page="cutoff_now_graph">
         <Grapher
             series={series}
-            title="Line Chart with Cutoff at 'Now'"
         />
     </ExamplePage>
 );
