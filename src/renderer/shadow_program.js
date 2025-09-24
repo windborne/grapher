@@ -2,7 +2,7 @@ import shadowFrag from "./shadow.frag";
 import shadowVert from "./shadow.vert";
 import colorToVector from "../helpers/color_to_vector";
 import createGLProgram from "./create_gl_program";
-import { applyReducedOpacityToGradient } from "../helpers/colors";
+import { applyReducedOpacity, applyReducedOpacityToGradient } from "../helpers/colors";
 
 export default class ShadowProgram {
   constructor(gl) {
@@ -380,7 +380,7 @@ export default class ShadowProgram {
     if (timeRatio < 0) {
       this.draw(individualPoints, { ...params, renderCutoffGradient: false });
     } else if (timeRatio > 1) {
-      const reducedOpacityColor = this.applyReducedOpacity(
+      const reducedOpacityColor = applyReducedOpacity(
         params.color,
         cutoffOpacity
       );
@@ -445,7 +445,7 @@ export default class ShadowProgram {
     }
 
     if (preCutoffPoints.length >= 2) {
-      const reducedOpacityColor = this.applyReducedOpacity(
+      const reducedOpacityColor = applyReducedOpacity(
         params.color,
         cutoffOpacity
       );

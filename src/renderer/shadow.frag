@@ -13,57 +13,60 @@ vec4 interpolateGradient(float position) {
         return fallbackColor;
     }
     if (gradientCount == 1) {
-        // Sample first color from texture
         return texture2D(gradientTexture, vec2(0.5 / float(gradientCount * 2), 0.5));
     }
 
-    // Declare variables once at the top
     float textureWidth = float(gradientCount * 2);
     float firstStop = texture2D(gradientTexture, vec2(0.5 / textureWidth, 0.5)).r;
     float lastStop = texture2D(gradientTexture, vec2((float((gradientCount - 1) * 2) + 0.5) / textureWidth, 0.5)).r;
     
     // Scale position to fit the gradient range
-    // If gradient goes from 0.0 to 0.5, map shadow area 0.0-1.0 to gradient 0.0-0.5
     if (lastStop > firstStop) {
         position = firstStop + position * (lastStop - firstStop);
     }
     
-    // Clamp position to [0.0, 1.0]
     position = clamp(position, 0.0, 1.0);
 
-    // Find which interval this position belongs to by sampling gradient stops
-    for (int i = 0; i < 15; i++) { // Max 15 intervals (16 stops)
-        if (i >= gradientCount - 1) break;
-
-        float stopA = texture2D(gradientTexture, vec2((float(i * 2) + 0.5) / textureWidth, 0.5)).r;
-        float stopB = texture2D(gradientTexture, vec2((float((i + 1) * 2) + 0.5) / textureWidth, 0.5)).r;
-
-        if (position >= stopA && position <= stopB) {
-            // Sample colors from texture
-            vec4 colorA = texture2D(gradientTexture, vec2((float(i * 2 + 1) + 0.5) / textureWidth, 0.5));
-            vec4 colorB = texture2D(gradientTexture, vec2((float((i + 1) * 2 + 1) + 0.5) / textureWidth, 0.5));
-            
-            float t = (stopB - stopA) > 0.001 ? (position - stopA) / (stopB - stopA) : 0.0;
-            return mix(colorA, colorB, t);
-        }
-    }
-
-    // Handle edge cases - sample first and last colors
+    // Handle boundary cases first
     vec4 firstColor = texture2D(gradientTexture, vec2(1.5 / textureWidth, 0.5));
     vec4 lastColor = texture2D(gradientTexture, vec2((float((gradientCount - 1) * 2 + 1) + 0.5) / textureWidth, 0.5));
     
-    if (position < firstStop) {
-        return firstColor;
-    }
-    if (position > lastStop) {
-        return lastColor;
-    }
-
-    return fallbackColor;
+    if (position <= firstStop) return firstColor;
+    if (position >= lastStop) return lastColor;
+    
+    // Calculate normalized position within the gradient range
+    float normalizedPos = (position - firstStop) / max(lastStop - firstStop, 0.001);
+    normalizedPos = clamp(normalizedPos, 0.0, 1.0);
+    
+    // Map to segment index using only float operations
+    float segmentFloat = normalizedPos * float(gradientCount - 1);
+    float segmentIndex = floor(segmentFloat);
+    
+    // Ensure segment index is within valid bounds using float operations
+    segmentIndex = min(segmentIndex, float(gradientCount - 2));
+    segmentIndex = max(segmentIndex, 0.0);
+    
+    // Calculate texture coordinates for the two colors to interpolate
+    float texCoordA = (segmentIndex * 2.0 + 1.0 + 0.5) / textureWidth;
+    float texCoordB = ((segmentIndex + 1.0) * 2.0 + 1.0 + 0.5) / textureWidth;
+    
+    // Sample the two colors
+    vec4 colorA = texture2D(gradientTexture, vec2(texCoordA, 0.5));
+    vec4 colorB = texture2D(gradientTexture, vec2(texCoordB, 0.5));
+    
+    // Get the actual gradient stops for proper interpolation
+    float stopA = texture2D(gradientTexture, vec2((segmentIndex * 2.0 + 0.5) / textureWidth, 0.5)).r;
+    float stopB = texture2D(gradientTexture, vec2(((segmentIndex + 1.0) * 2.0 + 0.5) / textureWidth, 0.5)).r;
+    
+    // Calculate interpolation factor based on actual stop positions
+    float stopRange = stopB - stopA;
+    float t = stopRange > 0.001 ? (position - stopA) / stopRange : 0.0;
+    t = clamp(t, 0.0, 1.0);
+    
+    return mix(colorA, colorB, t);
 }
 
 void main() {
-    // TRUE vertical strip gradient: interpolate line Y and bottom Y at this X position
     float pixelX = worldPos.x;
     float pixelY = worldPos.y;
     

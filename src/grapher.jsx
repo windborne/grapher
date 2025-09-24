@@ -156,7 +156,7 @@ function Grapher(props) {
     const showingSidebar = useShowingSidebar(stateController);
 
     const showAxisColors = typeof props.showAxisColors === 'boolean' ? props.showAxisColors : (theme !== 'export');
-    const showGrid = typeof props.showGrid === 'boolean' ? props.showGrid : false;
+    const showGrid = typeof props.showGrid === 'boolean' ? props.showGrid : true;
     const showAxes = typeof props.showAxes === 'boolean' ? props.showAxes : false;
 
     const commonYAxisProps = {

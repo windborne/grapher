@@ -36,7 +36,6 @@ module.exports = [
             'no_data_graph',
             'discontinuities_graph',
             'twenty_lines_graph',
-            'cutoff_test_graph',
             'mixed_range_graph',
             'long_dates_graph',
             'altitude_graph',

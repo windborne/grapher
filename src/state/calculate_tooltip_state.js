@@ -82,7 +82,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             continue;
         }
 
-        const ignoreYDistance = alwaysTooltipped.has(singleSeries) || allTooltipped;
+        const ignoreYDistanceCheck = alwaysTooltipped.has(singleSeries) || allTooltipped;
         let xDistanceThreshold = DISTANCE_THRESHOLD;
         let yDistanceThreshold = DISTANCE_THRESHOLD;
         let distanceThreshold = DISTANCE_THRESHOLD;
@@ -112,7 +112,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
         const yDistance = Math.abs(pixelY - mouseY);
         const distance = Math.sqrt((xDistance)**2 + (pixelY - mouseY)**2);
 
-        if (!ignoreYDistance && (xDistance > xDistanceThreshold || yDistance > yDistanceThreshold || distance > distanceThreshold)) {
+        if (!ignoreYDistanceCheck && (xDistance > xDistanceThreshold || yDistance > yDistanceThreshold || distance > distanceThreshold)) {
             continue;
         }
 
