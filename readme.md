@@ -66,7 +66,7 @@ Grapher supports multiple data formats within a series:
 4. **Observable**: Object with an observe method, which may emit tuples or objects
 5. **Generator function**: Function that generates an array data points as a function of zoom
 
-## <a id="grapherprops"></a>Schema GrapherProps
+### <a id="grapherprops"></a>Schema `GrapherProps`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -121,7 +121,7 @@ Grapher supports multiple data formats within a series:
 | draggablePoints | [DraggablePoint](#draggablepoint)`[]` | ✗ |
 | verticalLines | [VerticalLine](#verticalline)`[]` | ✗ |
 
-## <a id="seriesdata"></a>Schema SeriesData
+### <a id="seriesdata"></a>Schema `SeriesData`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -161,7 +161,7 @@ Grapher supports multiple data formats within a series:
 | rangeKey | `string` | ✗ |
 | cutoffTime | `number \| Date \| 'now'` | ✗ |
 
-## <a id="tooltipoptions"></a>Schema TooltipOptions
+### <a id="tooltipoptions"></a>Schema `TooltipOptions`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -178,7 +178,7 @@ Grapher supports multiple data formats within a series:
 | customTooltip | `React.ComponentType<any>` | ✗ |
 | combineTooltips | `boolean \| number` | ✗ |
 
-## <a id="customboundsselector"></a>Schema CustomBoundsSelector
+### <a id="customboundsselector"></a>Schema `CustomBoundsSelector`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -186,7 +186,7 @@ Grapher supports multiple data formats within a series:
 | **calculator** | `(globalBounds?: any) => any` | **✓** |
 | datesOnly | `boolean` | ✗ |
 
-## <a id="annotation"></a>Schema Annotation
+### <a id="annotation"></a>Schema `Annotation`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -197,7 +197,7 @@ Grapher supports multiple data formats within a series:
 | content | `string` | ✗ |
 | lineOnly | `boolean` | ✗ |
 
-## <a id="draggablepoint"></a>Schema DraggablePoint
+### <a id="draggablepoint"></a>Schema `DraggablePoint`
 
 | Prop | Type | Required |
 |------|------|----------|
@@ -210,7 +210,7 @@ Grapher supports multiple data formats within a series:
 | onClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ |
 | onDoubleClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ |
 
-## <a id="verticalline"></a>Schema VerticalLine
+### <a id="verticalline"></a>Schema `VerticalLine`
 
 | Prop | Type | Required |
 |------|------|----------|
