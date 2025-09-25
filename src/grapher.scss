@@ -30,6 +30,7 @@
   $range-graph-selection-bar-color: #808083,
   $range-graph-selection-bar-track-color: #303033,
   $range-graph-selection-bar-rifles-color: #FFF,
+  $range-graph-selection-bar-height: 14px,
   $range-graph-handle-color: #AAA,
   $range-graph-handle-fill-color: #666,
   $range-graph-axis-text-color: #9f9f9f,
@@ -651,14 +652,18 @@
   .range-selection-graph {
     width: 100%;
     background-color: $range-graph-selection-background-color;
+    height: calc(#{$secondary-graph-body-height} + #{$range-graph-selection-bar-height}); 
 
     .graph-body-secondary {
       height: $secondary-graph-body-height;
 
+      canvas {
+        height: 100%;
+      }
+
       svg {
         position: absolute;
         left: 0;
-        height: $secondary-graph-body-height;
         width: 100%;
         overflow: visible;
 
@@ -671,6 +676,33 @@
         .target-selection-outline {
           stroke: $range-graph-selection-outline-color;
           fill: none;
+        }
+
+        .selection-bar-track {
+          fill: $range-graph-selection-bar-track-color;
+        }
+
+        .selection-bar {
+          fill: $range-graph-selection-bar-color;
+          cursor: ew-resize;
+        }
+
+        .selection-bar-rifles {
+          stroke: $range-graph-selection-bar-rifles-color;
+          stroke-width: 1px;
+          cursor: ew-resize;
+        }
+
+        .selection-bar-handle-hit {
+          cursor: ew-resize;
+        }
+
+        .selection-bar-handle {
+          stroke: $range-graph-handle-color;
+          fill: $range-graph-handle-fill-color;
+          stroke-width: 1px;
+          cursor: ew-resize;
+          transition: stroke-width 0.15s ease, fill 0.15s ease;
         }
 
         .selection-handle {
@@ -690,6 +722,14 @@
 
           &.selection-handle-dragging .selection-handle-line {
             stroke-width: 3;
+          }
+
+          &:hover .selection-bar-handle {
+            stroke-width: 2px;
+          }
+
+          &.selection-handle-dragging .selection-bar-handle {
+            stroke-width: 2px;
           }
         }
 
@@ -834,6 +874,7 @@
           $range-graph-selection-bar-color: #B0B0B7,
           $range-graph-selection-bar-track-color: #EEE,
           $range-graph-selection-bar-rifles-color: #333,
+          $range-graph-selection-bar-height: 14px,
           $range-graph-handle-color: #333,
           $range-graph-handle-fill-color: #B0B0B7,
           $range-graph-axis-text-color: #555,
@@ -894,6 +935,7 @@
           $range-graph-selection-bar-color: #B0B0B7,
           $range-graph-selection-bar-track-color: #EEE,
           $range-graph-selection-bar-rifles-color: #333,
+          $range-graph-selection-bar-height: 14px,
           $range-graph-handle-color: #333,
           $range-graph-handle-fill-color: #B0B0B7,
           $range-graph-axis-text-color: #333,

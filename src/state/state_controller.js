@@ -878,12 +878,19 @@ export default class StateController extends Eventable {
             });
 
             if (this.rangeGraphRenderer && this.rangeGraphRenderer.sizing) {
+                // Use tighter bounds for range graph to prevent clipping
+                const rangeGraphBounds = {
+                    ...this._globalBounds,
+                    minY: this._globalBounds.unscaledMinY !== undefined ? this._globalBounds.unscaledMinY : this._globalBounds.minY,
+                    maxY: this._globalBounds.unscaledMaxY !== undefined ? this._globalBounds.unscaledMaxY : this._globalBounds.maxY
+                };
+                
                 this.rangeGraphRenderer.render(singleSeries, singleSeries.inRenderSpaceRangeGraph, {
                     shadowColor: 'transparent',
                     shadowBlur: 0,
                     width: 1,
-                    bounds: this._globalBounds,
-                    globalBounds: this._globalBounds,
+                    bounds: rangeGraphBounds,
+                    globalBounds: rangeGraphBounds,
                     inRenderSpaceAreaBottom: singleSeries.inRenderSpaceRangeGraphAreaBottom
                 });
             }
@@ -997,6 +1004,13 @@ export default class StateController extends Eventable {
 
         const { scale } = singleSeries.axis;
         const globalBounds = this._globalBounds;
+     
+        const rangeGraphBounds = {
+            ...globalBounds,
+            minY: globalBounds.unscaledMinY !== undefined ? globalBounds.unscaledMinY : globalBounds.minY,
+            maxY: globalBounds.unscaledMaxY !== undefined ? globalBounds.unscaledMaxY : globalBounds.maxY
+        };
+        
         const renderWidth = Math.ceil(this.rangeGraphRenderer.sizing.renderWidth/DPI_INCREASE);
         const renderHeight = Math.ceil(this.rangeGraphRenderer.sizing.renderHeight);
 
@@ -1026,10 +1040,10 @@ export default class StateController extends Eventable {
         });
 
         const toRenderSpaceParams = {
-            minX: globalBounds.minX,
-            maxX: globalBounds.maxX,
-            minY: globalBounds.minY,
-            maxY: globalBounds.maxY,
+            minX: rangeGraphBounds.minX,
+            maxX: rangeGraphBounds.maxX,
+            minY: rangeGraphBounds.minY,
+            maxY: rangeGraphBounds.maxY,
             renderWidth,
             renderHeight,
             scale,

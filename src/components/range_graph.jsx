@@ -245,6 +245,8 @@ export default class RangeGraph extends React.PureComponent {
             pixelMaxX = 0;
         }
 
+        const barSize = 14;
+        const totalHeight = elementHeight + barSize; 
         let ticks;
 
         if (selectionBounds.dates && this.props.markDates) {
@@ -272,8 +274,16 @@ export default class RangeGraph extends React.PureComponent {
                 <div className="graph-body graph-body-secondary" style={{ touchAction: 'none' }}>
                     <canvas ref={(el) => this.el = el} />
 
-                    <svg>
+                    <svg style={{ height: totalHeight }}>
                         <g>
+                            <rect
+                                x={0}
+                                y={elementHeight}
+                                width={elementWidth}
+                                height={barSize}
+                                className="selection-bar-track"
+                            />
+
                             {
                                 ticks && ticks.map(({ pixelValue, label, size, position }, i) => {
                                     if (isNaN(pixelValue)) {
@@ -289,15 +299,33 @@ export default class RangeGraph extends React.PureComponent {
 
                                     return (
                                         <g key={i} className={classes.join(' ')}>
-                                            <path d={`M${pixelValue},0 v15`} />
+                                            <path d={`M${pixelValue},0 v${elementHeight}`} />
 
-                                            <text x={pixelValue + 3} y={12}>
+                                            <text x={pixelValue + 3} y={elementHeight}>
                                                 {label}
                                             </text>
                                         </g>
                                     );
                                 })
                             }
+
+                            <rect
+                                x={pixelMinX}
+                                y={elementHeight}
+                                width={pixelMaxX - pixelMinX}
+                                height={barSize}
+                                className="selection-bar"
+                                onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
+                            />
+
+                            <path
+                                d="M -3 3.5 L -3 9.333333333333334 M 0 3.5 L 0 9.333333333333334 M 3 3.5 L 3 9.333333333333334"
+                                className="selection-bar-rifles"
+                                transform={`translate(${pixelMinX + (pixelMaxX - pixelMinX)/2},${elementHeight})`}
+                                onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
+                            />
                         </g>
 
                         <g>
@@ -305,17 +333,7 @@ export default class RangeGraph extends React.PureComponent {
                                 x={pixelMinX}
                                 y={0}
                                 width={pixelMaxX - pixelMinX}
-                                height={elementHeight}
-                                className="target-selection"
-                                onMouseDown={this.startScroll}
-                                onTouchStart={this.startScroll}
-                            />
-
-                            <rect
-                                x={pixelMinX}
-                                y={0}
-                                width={pixelMaxX - pixelMinX}
-                                height={elementHeight}
+                                height={totalHeight}
                                 className="target-selection-outline"
                             />
                         </g>
@@ -323,42 +341,42 @@ export default class RangeGraph extends React.PureComponent {
                         {/* Left handle */}
                         <g className={`selection-handle${(this._dragType === 'left' || this._dragType === 'scroll') ? ' selection-handle-dragging' : ''}`}>
                             <rect
-                                x={pixelMinX - 6}
-                                y={0}
-                                width={20}
-                                height={elementHeight}
+                                x={pixelMinX - 15}
+                                y={(elementHeight - 30)/2}
+                                width={30}
+                                height={30}
                                 fill="transparent"
-                                className="selection-handle-hit"
+                                className="selection-bar-handle-hit"
                                 onMouseDown={this.startLeftDrag}
                                 onTouchStart={this.startLeftDrag}
                             />
-                            <line
-                                x1={pixelMinX}
-                                y1={0}
-                                x2={pixelMinX}
-                                y2={elementHeight}
-                                className="selection-handle-line"
+                            <path
+                                d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+                                className="selection-bar-handle"
+                                transform={`translate(${pixelMinX},${(elementHeight - 15)/2})`}
+                                onMouseDown={this.startLeftDrag}
+                                onTouchStart={this.startLeftDrag}
                             />
                         </g>
 
                         {/* Right handle */}
                         <g className={`selection-handle${(this._dragType === 'right' || this._dragType === 'scroll') ? ' selection-handle-dragging' : ''}`}>
                             <rect
-                                x={pixelMaxX - 6}
-                                y={0}
-                                width={20}
-                                height={elementHeight}
+                                x={pixelMaxX - 15}
+                                y={(elementHeight - 30)/2}
+                                width={30}
+                                height={30}
                                 fill="transparent"
-                                className="selection-handle-hit"
+                                className="selection-bar-handle-hit"
                                 onMouseDown={this.startRightDrag}
                                 onTouchStart={this.startRightDrag}
                             />
-                            <line
-                                x1={pixelMaxX}
-                                y1={0}
-                                x2={pixelMaxX}
-                                y2={elementHeight}
-                                className="selection-handle-line"
+                            <path
+                                d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+                                className="selection-bar-handle"
+                                transform={`translate(${pixelMaxX},${(elementHeight - 15)/2})`}
+                                onMouseDown={this.startRightDrag}
+                                onTouchStart={this.startRightDrag}
                             />
                         </g>
 
