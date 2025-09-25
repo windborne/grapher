@@ -36,7 +36,6 @@ module.exports = [
             'no_data_graph',
             'discontinuities_graph',
             'twenty_lines_graph',
-            'cutoff_test_graph',
             'mixed_range_graph',
             'long_dates_graph',
             'altitude_graph',
@@ -67,7 +66,7 @@ module.exports = [
             'marked_dates_graph',
             'custom_tooltips_graph',
             'combined_tooltips_graph',
-            'mark_now_graph'
+            'mark_now_graph',
         ]
     },
     {
@@ -146,6 +145,26 @@ module.exports = [
             'negative_area_chart',
             'gradient_area_chart',
             'dynamic_bottom_area_chart'
+        ]
+    },
+    {
+        name: 'Shadow charts',
+        pages: [
+            'shadow_chart',
+            'negative_shadow_chart',
+            'multi_shadow_chart',
+        ]
+    },
+    {
+        name: 'Cutoff charts',
+        pages: [
+            'cutoff_now_graph',
+            'cutoff_custom_time_graph',
+            'cutoff_area_graph',
+            'cutoff_bar_graph',
+            'cutoff_shadow_graph',
+            'cutoff_out_of_bounds_graph',
+            'cutoff_dynamic_bottom_area'
         ]
     }
 ];

@@ -136,11 +136,6 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
             }
 
             {
-                showAxes &&
-                <path d={`M${side === 'left' ? Y_AXIS_WIDTH-2 : 0},3 V${elementHeight + 1}`} className="axis-line-shadow" />
-            }
-
-            {
                 ticks.map(({ pixelValue, label, size, skipGrid }, i) => {
                     const edge = side === 'left' ? (sideIndex + 1) * Y_AXIS_WIDTH : -sideIndex*Y_AXIS_WIDTH;
                     const length = (side === 'left' ? 1 : - 1) * (elementWidth+1);

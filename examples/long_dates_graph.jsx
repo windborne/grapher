@@ -18,6 +18,7 @@ renderPage(
     <ExamplePage page="long_dates_graph">
         <Grapher
             series={series}
+            timeZone="UTC"
         />
     </ExamplePage>
 );

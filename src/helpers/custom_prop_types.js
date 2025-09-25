@@ -65,7 +65,7 @@ const SingleSeries = PropTypes.shape({
     background: PropTypes.object,
     hideFromKey: PropTypes.bool,
     showIndividualPoints: PropTypes.bool,
-    rendering: PropTypes.oneOf(['line', 'bar', 'area']), // defaults to line
+    rendering: PropTypes.oneOf(['line', 'bar', 'area', 'shadow']), // defaults to line
     negativeColor: PropTypes.string, // only applies to bar
     gradient: PropTypes.array, // only applies to area
     zeroLineWidth: PropTypes.number, // only applies to bar and area
@@ -75,6 +75,7 @@ const SingleSeries = PropTypes.shape({
     tooltipWidth: PropTypes.number,
     hasAreaBottom: PropTypes.bool,
     shadowColor: PropTypes.string,
+    gradient: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array])), // gradient colors or [position, color] pairs
     rangeKey: PropTypes.string
 });
 

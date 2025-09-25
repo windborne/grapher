@@ -14,6 +14,11 @@ export function drawZeroLine(y, { context, sizing, color, zeroColor, zeroWidth})
         return;
     }
 
+    if (!context) {
+        console.error('Canvas context is null in drawZeroLine');
+        return;
+    }
+
     context.strokeStyle = zeroColor || color;
     context.lineWidth = zeroWidth;
 

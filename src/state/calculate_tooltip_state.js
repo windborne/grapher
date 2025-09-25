@@ -82,7 +82,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             continue;
         }
 
-        const ignoreYDistance = alwaysTooltipped.has(singleSeries) || allTooltipped;
+        const ignoreYDistanceCheck = alwaysTooltipped.has(singleSeries) || allTooltipped;
         let xDistanceThreshold = DISTANCE_THRESHOLD;
         let yDistanceThreshold = DISTANCE_THRESHOLD;
         let distanceThreshold = DISTANCE_THRESHOLD;
@@ -112,7 +112,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
         const yDistance = Math.abs(pixelY - mouseY);
         const distance = Math.sqrt((xDistance)**2 + (pixelY - mouseY)**2);
 
-        if (xDistance > xDistanceThreshold || (!ignoreYDistance && yDistance > yDistanceThreshold) || (!ignoreYDistance && distance > distanceThreshold)) {
+        if (!ignoreYDistanceCheck && (xDistance > xDistanceThreshold || yDistance > yDistanceThreshold || distance > distanceThreshold)) {
             continue;
         }
 
@@ -170,12 +170,12 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             xLabel,
             yLabel,
             fullYPrecision: singleSeries.fullYPrecision,
-            ignoreYDistance
+            ignoreYDistanceCheck
         });
     }
 
-    const unsavedTooltips = tooltips.filter(({ distance, ignoreYDistance }) => {
-        return distance === minDistance || ignoreYDistance;
+    const unsavedTooltips = tooltips.filter(({ distance, ignoreYDistanceCheck }) => {
+        return distance === minDistance || ignoreYDistanceCheck;
     }).sort((a, b) => b.distance - a.distance);
 
     return {
@@ -225,7 +225,7 @@ export function toggleTooltipSaved({ currentTooltips, savedTooltips }) {
     }
 
     const lastTooltip = currentTooltips[currentTooltips.length - 1];
-    if (lastTooltip.xDistance > DISTANCE_THRESHOLD || (!lastTooltip.ignoreYDistance && lastTooltip.distance > DISTANCE_THRESHOLD)) {
+    if (lastTooltip.xDistance > DISTANCE_THRESHOLD || (!lastTooltip.ignoreYDistanceCheck && lastTooltip.distance > DISTANCE_THRESHOLD)) {
         return savedTooltips;
     }
 

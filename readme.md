@@ -78,7 +78,7 @@ The `series` prop requires an array of objects, where each object represents a d
 - **name**: Series name for display in legend
 - **xLabel**: Label for x-axis
 - **yLabel**: Label for y-axis
-- **rendering**: Visual representation ('line', 'bar', or 'area', defaults to 'line')
+- **rendering**: Visual representation ('line', 'bar', 'area', or 'shadow', defaults to 'line'). The 'shadow' option creates an area chart with individual point-based (trapezoid) gradients extending downward.
 - **ignoreDiscontinuities**: Whether to connect points across gaps (boolean)
 - **dashed**: Whether to use dashed lines (boolean)
 - **dashPattern**: Array defining dash pattern (array of numbers)

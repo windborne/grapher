@@ -248,6 +248,225 @@ function placeDatesGrid({ min, max, precision, expectedLabelSize, labelPadding, 
     return ticks.filter(({ pixelValue }) => pixelValue <= totalSize && pixelValue >= 0);
 }
 
+function placeTimeOnlyGrid({ min, max, precision, expectedLabelSize, labelPadding, totalSize, skipFirst=false, skipLast=false, scale='linear', formatter, inverted=false, formatOptions={} }) {
+    const paddedLabelSize = expectedLabelSize + 2*labelPadding;
+    const ticks = [];
+    const placementParams = { scale, min, max, inverted, totalSize, precision, formatter, formatOptions, dates: true };
+
+    const desiredCount = Math.floor(totalSize/paddedLabelSize);
+    const span = max - min;
+    
+    let unit, amount;
+    
+    const hourSpan = span / (60 * 60 * 1000);
+    const minuteSpan = span / (60 * 1000);
+    
+    if (hourSpan <= desiredCount * 8) {
+        unit = 'h';
+        amount = Math.max(1, Math.ceil(hourSpan / desiredCount));
+        if (amount <= 6) {
+        } else if (amount <= 12) {
+            amount = 12;
+        } else if (amount <= 24) {
+            amount = 24;
+        } else {
+            amount = Math.ceil(amount / 24) * 24;
+        }
+    } else {
+        unit = 'h';
+        amount = 24;
+    }
+    
+    if (!skipFirst) {
+        ticks.push(placeTickByPixel(0, {...placementParams, justTime: true}, {position: 'first'}));
+    }
+    
+    let currentDate = new Date(min);
+    
+    if (unit === 'h') {
+        currentDate.setMinutes(0, 0, 0);
+        if (amount === 24) {
+            currentDate.setHours(0);
+        } else if (amount === 12) {
+            const currentHour = currentDate.getHours();
+            const alignedHour = currentHour < 12 ? 0 : 12;
+            currentDate.setHours(alignedHour);
+        } else {
+            const currentHour = currentDate.getHours();
+            const alignedHour = Math.floor(currentHour / amount) * amount;
+            currentDate.setHours(alignedHour);
+        }
+    } else if (unit === 'm') {
+        currentDate.setSeconds(0, 0);
+        const currentMinute = currentDate.getMinutes();
+        const alignedMinute = Math.floor(currentMinute / amount) * amount;
+        currentDate.setMinutes(alignedMinute);
+    } else if (unit === 's') {
+        currentDate.setMilliseconds(0);
+        const currentSecond = currentDate.getSeconds();
+        const alignedSecond = Math.floor(currentSecond / amount) * amount;
+        currentDate.setSeconds(alignedSecond);
+    }
+    
+    while (currentDate < min) {
+        if (unit === 'h') {
+            currentDate = new Date(currentDate.valueOf() + amount * 60 * 60 * 1000);
+        } else if (unit === 'm') {
+            currentDate = new Date(currentDate.valueOf() + amount * 60 * 1000);
+        } else if (unit === 's') {
+            currentDate = new Date(currentDate.valueOf() + amount * 1000);
+        }
+    }
+    
+    while (currentDate < max) {
+        const tick = placeTick(currentDate, {...placementParams, justTime: true});
+        
+        const reservedSpaceForLast = expectedLabelSize + labelPadding;
+        const maxPixelForMiddleTicks = totalSize - reservedSpaceForLast;
+        
+        if (ticks.length && (tick.pixelValue - ticks[ticks.length - 1].pixelValue) < (expectedLabelSize + labelPadding)) {
+        } else if (tick.pixelValue + expectedLabelSize < maxPixelForMiddleTicks) {
+            ticks.push(tick);
+        } else {
+            break;
+        }
+        
+        if (unit === 'h') {
+            currentDate = new Date(currentDate.valueOf() + amount * 60 * 60 * 1000);
+        } else if (unit === 'm') {
+            currentDate = new Date(currentDate.valueOf() + amount * 60 * 1000);
+        } else if (unit === 's') {
+            currentDate = new Date(currentDate.valueOf() + amount * 1000);
+        } else {
+            break;
+        }
+    }
+    
+    if (!skipLast) {
+        const lastTick = placeTick(max, {...placementParams, justTime: true}, {position: 'last'});
+        if (ticks.length === 0 || (lastTick.pixelValue - ticks[ticks.length - 1].pixelValue) >= (expectedLabelSize + labelPadding/2)) {
+            ticks.push(lastTick);
+        } else {
+            ticks[ticks.length - 1] = lastTick;
+        }
+    }
+    
+    return ticks.filter(({ pixelValue }) => pixelValue <= totalSize && pixelValue >= 0);
+}
+
+function placeDateOnlyGrid({ min, max, precision, expectedLabelSize, labelPadding, totalSize, skipFirst=false, skipLast=false, scale='linear', formatter, inverted=false, formatOptions={} }) {
+    const paddedLabelSize = expectedLabelSize + 2*labelPadding;
+    const ticks = [];
+    
+    const minYear = new Date(min).getFullYear();
+    const maxYear = new Date(max).getFullYear();
+    const spanMultipleYears = minYear !== maxYear;
+
+    const customDateFormatter = (date, options) => {
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const d = new Date(date);
+        const month = monthNames[d.getMonth()];
+        const day = d.getDate();
+        const year = d.getFullYear();
+        
+        if (spanMultipleYears) {
+            return `${month} ${day} ${year}`;
+        } else {
+            return `${month} ${day}`;
+        }
+    };
+    
+    const placementParams = { scale, min, max, inverted, totalSize, precision, formatter: customDateFormatter, formatOptions, dates: true };
+    
+    const span = max - min;
+    const hourSpan = span / (60 * 60 * 1000);
+    
+    let { amount, unit } = getEvenDateTickSpacing(span, totalSize/paddedLabelSize, formatOptions.unitOverride);
+    
+    if ((unit === 'h' || unit === 'm' || unit === 's') && hourSpan >= 48) {
+        unit = 'd';
+        amount = Math.max(1, Math.ceil(hourSpan / 24 / Math.floor(totalSize/paddedLabelSize)));
+    } else if ((unit === 'h' || unit === 'm' || unit === 's') && hourSpan < 48) {
+        const startTick = placeTick(min, {...placementParams, justDate: true}, {position: 'first'});
+        const endTick = placeTick(max, {...placementParams, justDate: true}, {position: 'last'});
+        
+        const ticks = [startTick];
+        if ((endTick.pixelValue - startTick.pixelValue) >= (expectedLabelSize + labelPadding)) {
+            ticks.push(endTick);
+        }
+        
+        return ticks.filter(({ pixelValue }) => pixelValue <= totalSize && pixelValue >= 0);
+    }
+    
+    if (!skipFirst) {
+        ticks.push(placeTickByPixel(0, {...placementParams, justDate: true}, {position: 'first'}));
+    }
+    
+    let currentDate = new Date(min);
+    
+    if (unit === 'month') {
+        currentDate = startOfDayInTimezone(currentDate, formatOptions.timeZone);
+        currentDate.setDate(1);
+    } else if (unit === 'd') {
+        currentDate = startOfDayInTimezone(currentDate, formatOptions.timeZone);
+        currentDate.setHours(0, 0, 0, 0);
+    }
+    
+    while (currentDate < max) {
+        let delta = 24*60*60*1000;
+        
+        if (unit === 'month') {
+            delta = 0;
+            if (currentDate.getMonth() === 11) {
+                currentDate = new Date(currentDate.getFullYear() + 1, 0, 1);
+            } else {
+                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+            }
+        } else if (unit === 'year') {
+            currentDate = new Date(currentDate.getFullYear() + 1, 0, 1);
+            delta = 0;
+        } else if (unit === 'd') {
+            delta = amount * 24 * 60 * 60 * 1000;
+        }
+        
+        if (delta > 0) {
+            currentDate = new Date(currentDate.valueOf() + delta);
+        }
+        
+        const tick = placeTick(currentDate, {...placementParams, justDate: true});
+        
+        const reservedSpaceForLast = expectedLabelSize + labelPadding;
+        const maxPixelForMiddleTicks = totalSize - reservedSpaceForLast;
+        
+        if (ticks.length && (tick.pixelValue - ticks[ticks.length - 1].pixelValue) < (expectedLabelSize + (labelPadding || 0))) {
+            continue;
+        }
+        
+        if (tick.pixelValue + expectedLabelSize < maxPixelForMiddleTicks) {
+            ticks.push(tick);
+        } else {
+            break;
+        }
+    }
+    
+    if (!skipLast) {
+        const lastTick = placeTick(max, {...placementParams, justDate: true}, {position: 'last'});
+        if (ticks.length === 0 || (lastTick.pixelValue - ticks[ticks.length - 1].pixelValue) >= (expectedLabelSize + labelPadding/2)) {
+            ticks.push(lastTick);
+        } else {
+            ticks[ticks.length - 1] = lastTick;
+        }
+    }
+
+    if (ticks.length === 0 && hourSpan >= 48) {
+        ticks.push(placeTickByPixel(0, {...placementParams, justDate: true}, {position: 'first'}));
+    }
+    
+    return ticks.filter(({ pixelValue }) => pixelValue <= totalSize && pixelValue >= 0);
+}
+
+export { placeTimeOnlyGrid, placeDateOnlyGrid };
+
 export default function placeGrid(opts) {
     if (opts.dates) {
         return placeDatesGrid(opts);

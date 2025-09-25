@@ -70,14 +70,16 @@ export default class RangeGraph extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.draggingY !== this.props.draggingY) {
+        if (prevProps.draggingY !== this.props.draggingY && this._renderer) {
             this._renderer.resize();
         }
     }
 
     componentWillUnmount() {
-        this._renderer.dispose();
-        this._renderer = null;
+        if (this._renderer) {
+            this._renderer.dispose();
+            this._renderer = null;
+        }
     }
 
     onMouseMove(event) {
@@ -197,6 +199,7 @@ export default class RangeGraph extends React.PureComponent {
 
     stopDragging() {
         this._dragType = null;
+        this.forceUpdate();
         window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('mouseup', this.stopDragging);
         window.removeEventListener('touchmove', this.onMouseMove);
@@ -243,6 +246,7 @@ export default class RangeGraph extends React.PureComponent {
         }
 
         const barSize = 14;
+        const totalHeight = elementHeight + barSize; 
         let ticks;
 
         if (selectionBounds.dates && this.props.markDates) {
@@ -270,7 +274,7 @@ export default class RangeGraph extends React.PureComponent {
                 <div className="graph-body graph-body-secondary" style={{ touchAction: 'none' }}>
                     <canvas ref={(el) => this.el = el} />
 
-                    <svg>
+                    <svg style={{ height: totalHeight }}>
                         <g>
                             <rect
                                 x={0}
@@ -287,6 +291,11 @@ export default class RangeGraph extends React.PureComponent {
                                     }
 
                                     const classes = ['axis-item', `axis-item-${size}`, `axis-item-${position}`];
+                                    
+                                    const isHighlighted = pixelValue >= pixelMinX && pixelValue <= pixelMaxX;
+                                    if (isHighlighted) {
+                                        classes.push('axis-item-highlighted');
+                                    }
 
                                     return (
                                         <g key={i} className={classes.join(' ')}>
@@ -324,22 +333,13 @@ export default class RangeGraph extends React.PureComponent {
                                 x={pixelMinX}
                                 y={0}
                                 width={pixelMaxX - pixelMinX}
-                                height={elementHeight}
-                                className="target-selection"
-                                onMouseDown={this.startScroll}
-                                onTouchStart={this.startScroll}
-                            />
-
-                            <rect
-                                x={pixelMinX}
-                                y={0}
-                                width={pixelMaxX - pixelMinX}
-                                height={elementHeight + barSize}
+                                height={totalHeight}
                                 className="target-selection-outline"
                             />
                         </g>
 
-                        <g>
+                        {/* Left handle */}
+                        <g className={`selection-handle${(this._dragType === 'left' || this._dragType === 'scroll') ? ' selection-handle-dragging' : ''}`}>
                             <rect
                                 x={pixelMinX - 15}
                                 y={(elementHeight - 30)/2}
@@ -359,7 +359,8 @@ export default class RangeGraph extends React.PureComponent {
                             />
                         </g>
 
-                        <g>
+                        {/* Right handle */}
+                        <g className={`selection-handle${(this._dragType === 'right' || this._dragType === 'scroll') ? ' selection-handle-dragging' : ''}`}>
                             <rect
                                 x={pixelMaxX - 15}
                                 y={(elementHeight - 30)/2}
@@ -378,6 +379,7 @@ export default class RangeGraph extends React.PureComponent {
                                 onTouchStart={this.startRightDrag}
                             />
                         </g>
+
                     </svg>
 
                     {

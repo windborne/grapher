@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {calculatePrecision, calculateTimePrecision, formatX} from '../helpers/format';
-import placeGrid from '../helpers/place_grid';
+import placeGrid, { placeTimeOnlyGrid, placeDateOnlyGrid } from '../helpers/place_grid';
 import {useEnumMap, useHasXEnum, usePrimarySize, useSelection} from '../state/hooks';
 import StateController from '../state/state_controller';
 
@@ -44,40 +44,153 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
     const minLabel = formatX(minX, {...formatOptions, dates, precision }).toString();
     const maxLabel = formatX(maxX, {...formatOptions, dates, precision }).toString();
 
-    let expectedLabelWidth = Math.max(minLabel.length, maxLabel.length) * 4;
+    let expectedLabelWidth = Math.max(minLabel.length, maxLabel.length);
     if (bigLabels) {
         expectedLabelWidth *= 2;
     }
 
-    const labelPadding = 30; // space in between labels in the expected case
+    const labelPadding = 30;
 
-    const ticks = placeGrid({
-        min: minX,
-        max: maxX,
-        totalSize: elementWidth,
-        precision,
-        dates,
-        formatter: formatXAxisLabel || formatX,
-        expectedLabelSize: expectedLabelWidth,
-        labelPadding,
-        formatOptions
-    });
+    let timeTicks = null;
+    let dateTicks = null;
+    let regularTicks = null;
+    
+    if (dates) {
+        timeTicks = placeTimeOnlyGrid({
+            min: minX,
+            max: maxX,
+            totalSize: elementWidth,
+            precision,
+            expectedLabelSize: expectedLabelWidth,
+            labelPadding: labelPadding * 0.8,
+            formatter: formatXAxisLabel || formatX,
+            formatOptions
+        });
+        
+        dateTicks = placeDateOnlyGrid({
+            min: minX,
+            max: maxX,
+            totalSize: elementWidth,
+            precision,
+            expectedLabelSize: expectedLabelWidth * 2,
+            labelPadding: labelPadding * 1.5,
+            formatter: formatXAxisLabel || formatX,
+            formatOptions
+        });
+    } else {
+        regularTicks = placeGrid({
+            min: minX,
+            max: maxX,
+            totalSize: elementWidth,
+            precision,
+            dates,
+            formatter: formatXAxisLabel || formatX,
+            expectedLabelSize: expectedLabelWidth,
+            labelPadding,
+            formatOptions
+        });
+    }
 
-    const xAxisHeight = 20;
+    const xAxisHeight = dates ? 30 : 20;
 
     return (
-        <svg className="axis x-axis" style={showAxes ? undefined : {marginBottom: -20}}>
+        <svg className={`axis x-axis${dates ? ' x-axis-dual' : ''}`} style={showAxes ? undefined : {marginBottom: -20}}>
             {
                 showAxes &&
                 <path d={`M-1,0 H${elementWidth}`} className="axis-line" />
             }
-            {
-                showAxes &&
-                <path d={`M-2,1 H${elementWidth + 1}`} className="axis-line-shadow" />
-            }
 
+            {/* Render time ticks in first row */}
             {
-                ticks.map(({ pixelValue, label, size, position, skipGrid }, i) => {
+                dates && timeTicks && timeTicks.map(({ pixelValue, label, size, position, skipGrid }, i) => {
+
+                    const singleTick = timeTicks.length === 1;
+                    
+                    if (isNaN(pixelValue)) {
+                        return null;
+                    }
+
+                    const classes = ['axis-item', `axis-item-${size}`, `axis-item-${position}`];
+                    if (bigLabels) {
+                        classes.push('axis-item-big-labels');
+                    }
+                    
+                    return (
+                        <g key={`time-${i}`} className={classes.join(' ')}>
+                            {
+                                showAxes &&
+                                <path d={`M${pixelValue},1 v12`} className="axis-tick" />
+                            }
+
+                            {
+                                showGrid && !skipGrid &&
+                                <path d={`M${pixelValue},0 v-${elementHeight}`} />
+                            }
+
+                            {
+                                showAxes &&
+                                <text 
+                                    x={(position === 'last' && !singleTick) ? pixelValue - 3 : pixelValue + 3} 
+                                    y={12} 
+                                    textAnchor={(position === 'last' && !singleTick) ? 'end' : 'start'}
+                                    className='x-axis-text x-axis-time-text'
+                                >
+                                    {label}
+                                </text>
+                            }
+                        </g>
+                    );
+                })
+            }
+            
+            {/* Render date ticks in second row */}
+            {
+                dates && dateTicks && dateTicks.map(({ pixelValue, label, size, position, trueValue }, i) => {
+                    
+                    if (isNaN(pixelValue)) {
+                        return null;
+                    }
+
+                    const classes = ['axis-item', `axis-item-${size}`, `axis-item-${position}`];
+                    if (bigLabels) {
+                        classes.push('axis-item-big-labels');
+                    }
+
+                    let timezoneLabel = undefined;
+                    if (timeZone) {
+                        if (i === 0) {
+                            timezoneLabel = timeZone.toLowerCase() === 'utc' ? 'UTC' : timeZone;
+                        }
+                    }
+
+                    return (
+                        <g key={`date-${i}`} className={classes.join(' ')}>
+                            {
+                                showAxes &&
+                                <text 
+                                    x={position === 'last' ? pixelValue - 3 : pixelValue + 3} 
+                                    y={25} 
+                                    textAnchor={position === 'last' ? 'end' : 'start'}
+                                    className='x-axis-text x-axis-date-text'
+                                >
+                                    <tspan className='x-axis-date-label'>
+                                        {label}
+                                    </tspan>
+                                    {timezoneLabel && (
+                                        <tspan className='x-axis-timezone-label'>
+                                            {' '}({timezoneLabel})
+                                        </tspan>
+                                    )}
+                                </text>
+                            }
+                        </g>
+                    );
+                })
+            }
+            
+            {/* Render regular ticks for non-date data */}
+            {
+                !dates && regularTicks && regularTicks.map(({ pixelValue, label, size, position, skipGrid }, i) => {
                     if (isNaN(pixelValue)) {
                         return null;
                     }
@@ -91,7 +204,7 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
                         <g key={i} className={classes.join(' ')}>
                             {
                                 showAxes &&
-                                <path d={`M${pixelValue},1 v6`} className="axis-tick" />
+                                <path d={`M${pixelValue},1 v12`} className="axis-tick" />
                             }
 
                             {
@@ -101,7 +214,12 @@ function XAxis({ showAxes, showGrid, stateController, bigLabels, xTickUnit, cloc
 
                             {
                                 showAxes &&
-                                <text x={pixelValue} y={xAxisHeight - 5}>
+                                <text 
+                                    x={position === 'last' ? pixelValue - 3 : pixelValue + 3} 
+                                    y={xAxisHeight - 5} 
+                                    textAnchor={position === 'last' ? 'end' : 'start'}
+                                    className='x-axis-text'
+                                >
                                     {label}
                                 </text>
                             }
