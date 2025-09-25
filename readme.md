@@ -68,166 +68,166 @@ Grapher supports multiple data formats within a series:
 
 ### <a id="grapherprops"></a>Schema `GrapherProps`
 
-| Prop | Type | Required |
-|------|------|----------|
-| **series** | [SeriesData](#seriesdata)`[]` | **✓** |
-| id | `string` | ✗ |
-| webgl | `boolean` | ✗ |
-| requireWASM | `boolean` | ✗ |
-| checkIntersection | `boolean` | ✗ |
-| onAxisChange | `(axes: any) => void` | ✗ |
-| onRenderTime | `(time: number) => void` | ✗ |
-| exportStateController | `(controller: any) => void` | ✗ |
-| onPointDrag | `(point: any) => void` | ✗ |
-| onDraggablePointsDoubleClick | `(point: any) => void` | ✗ |
-| onPointClick | `(point: any) => void` | ✗ |
-| timingFrameCount | `number` | ✗ |
-| stateControllerInitialization | `object` | ✗ |
-| syncPool | `SyncPool` | ✗ |
-| dragPositionYOffset | `number` | ✗ |
-| theme | `'day' \| 'night' \| 'export'` | ✗ |
-| title | `string` | ✗ |
-| fullscreen | `boolean` | ✗ |
-| bodyHeight | `number` | ✗ |
-| height | `number \| string` | ✗ |
-| width | `number \| string` | ✗ |
-| showAxes | `boolean` | ✗ |
-| showRangeGraph | `boolean` | ✗ |
-| showRangeSelectors | `boolean` | ✗ |
-| showSeriesKey | `boolean` | ✗ |
-| showTooltips | `boolean` | ✗ |
-| showGrid | `boolean` | ✗ |
-| showAxisColors | `boolean` | ✗ |
-| bigLabels | `boolean` | ✗ |
-| xTickUnit | `'year'` | ✗ |
-| formatXAxisLabel | `(value: any) => string` | ✗ |
-| xAxisIntegersOnly | `boolean` | ✗ |
-| clockStyle | `'12h' \| '24h'` | ✗ |
-| timeZone | `string` | ✗ |
-| markRangeGraphDates | `boolean` | ✗ |
-| boundsSelectionEnabled | `boolean` | ✗ |
-| customBoundsSelectors | [CustomBoundsSelector](#customboundsselector)`[]` | ✗ |
-| customBoundsSelectorsOnly | `boolean` | ✗ |
-| sidebarEnabled | `boolean` | ✗ |
-| defaultBoundsCalculator | `string` | ✗ |
-| percentile | `number` | ✗ |
-| defaultShowAnnotations | `boolean` | ✗ |
-| defaultShowOptions | `boolean` | ✗ |
-| defaultShowIndividualPoints | `boolean` | ✗ |
-| defaultShowSidebar | `boolean` | ✗ |
-| defaultLineWidth | `number` | ✗ |
-| tooltipOptions | [TooltipOptions](#tooltipoptions) | ✗ |
-| annotations | [Annotation](#annotation)`[]` | ✗ |
-| draggablePoints | [DraggablePoint](#draggablepoint)`[]` | ✗ |
-| verticalLines | [VerticalLine](#verticalline)`[]` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| **series** | [SeriesData](#seriesdata)`[]` | **✓** | The data for the graph and is the only property that is truly required. See "Series Data Formats" section for more details. |
+| id | `string` | ✗ | Unique identifier for the grapher instance. |
+| webgl | `boolean` | ✗ | If true, will render with WebGL rather than a 2D context. This is more performant, but uses more resources. |
+| requireWASM | `boolean` | ✗ | If true, will wait until the WASM extensions are ready before it renders. This can be useful when your app has expensive initialization. |
+| checkIntersection | `boolean` | ✗ | Controls intersection observer usage for performance optimization. |
+| onAxisChange | `(axes: any) => void` | ✗ | Called every time the axes change. Receives an array of objects with the `axis` property set to {left, right}-{index}. Useful for saving state between reloads. |
+| onRenderTime | `(time: number) => void` | ✗ | Called every time the grapher renders with diagnostic information about how long rendering took. |
+| exportStateController | `(controller: any) => void` | ✗ | Callback that receives the state controller instance for external manipulation. |
+| onPointDrag | `(point: any) => void` | ✗ | Callback function that fires when draggable points are moved. |
+| onDraggablePointsDoubleClick | `(point: any) => void` | ✗ | Callback function that fires when draggable points are double-clicked. |
+| onPointClick | `(point: any) => void` | ✗ | Click handler for data points. |
+| timingFrameCount | `number` | ✗ | Sets the number of frames for when the state controller's `averageLoopTime` method is called. |
+| stateControllerInitialization | `object` | ✗ | Options for initializing the internal state controller. |
+| syncPool | `SyncPool` | ✗ | For synchronizing with other grapher instances. |
+| dragPositionYOffset | `number` | ✗ | Y-offset for drag positioning, used in multigrapher. |
+| theme | `'day' \| 'night' \| 'export'` | ✗ | Sets the theme of grapher. You can also override any CSS property directly in a stylesheet. |
+| title | `string` | ✗ | Sets the title text for the graph. |
+| fullscreen | `boolean` | ✗ | If true, displays the graph in fullscreen mode. |
+| bodyHeight | `number` | ✗ | Sets the height of the graph body (i.e., excluding range graph, series controls, etc.). |
+| height | `number \| string` | ✗ | Sets the height of the entire graph. |
+| width | `number \| string` | ✗ | Sets the width of the graph. |
+| showAxes | `boolean` | ✗ | Whether to show the axes on the graph. |
+| showRangeGraph | `boolean` | ✗ | Whether to show the smaller range graph below the main graph. |
+| showRangeSelectors | `boolean` | ✗ | Whether to show the top bar with range selection (e.g., "last day" button) and other options. |
+| showSeriesKey | `boolean` | ✗ | Whether to show the key of which series have which colors. |
+| showTooltips | `boolean` | ✗ | Whether to display tooltips when hovering over data points. |
+| showGrid | `boolean` | ✗ | Whether to show grid lines on the graph. |
+| showAxisColors | `boolean` | ✗ | Whether to color-code axes based on the series they represent. |
+| bigLabels | `boolean` | ✗ | If true, uses larger text for labels. |
+| xTickUnit | `'year'` | ✗ | Specifies the unit for x-axis ticks. Currently supports 'year'. |
+| formatXAxisLabel | `(value: any) => string` | ✗ | A custom function to format the x-axis labels. This function should take a single argument (the raw x-value) and return a string to display as the label. |
+| xAxisIntegersOnly | `boolean` | ✗ | If true, only displays integer values on the x-axis. |
+| clockStyle | `'12h' \| '24h'` | ✗ | Format for displaying time, either '12h' or '24h'. |
+| timeZone | `string` | ✗ | Time zone for date/time display. Can be 'local', 'utc', or a full timezone string. |
+| markRangeGraphDates | `boolean` | ✗ | Whether to mark significant dates on the range graph. |
+| boundsSelectionEnabled | `boolean` | ✗ | Whether to enable the bounds selection feature. |
+| customBoundsSelectors | [CustomBoundsSelector](#customboundsselector)`[]` | ✗ | Array of custom range selector objects with label, calculator, and optional datesOnly properties. |
+| customBoundsSelectorsOnly | `boolean` | ✗ | If true, only displays custom bounds selectors. |
+| sidebarEnabled | `boolean` | ✗ | Whether to enable the sidebar. |
+| defaultBoundsCalculator | `string` | ✗ | String identifier for the default bounds calculator to use. |
+| percentile | `number` | ✗ | Sets the percentile value for calculations. |
+| defaultShowAnnotations | `boolean` | ✗ | Default visibility of annotations. |
+| defaultShowOptions | `boolean` | ✗ | Default visibility of the options panel. |
+| defaultShowIndividualPoints | `boolean` | ✗ | Default setting for showing individual data points. |
+| defaultShowSidebar | `boolean` | ✗ | Default visibility of the sidebar. |
+| defaultLineWidth | `number` | ✗ | Default width of the lines in the graph. |
+| tooltipOptions | [TooltipOptions](#tooltipoptions) | ✗ | Configures tooltip appearance and behavior with various options. |
+| annotations | [Annotation](#annotation)`[]` | ✗ | Array of annotation objects to display on the graph with position, content, and series targeting. |
+| draggablePoints | [DraggablePoint](#draggablepoint)`[]` | ✗ | Array of interactive point objects with position, styling, and event handlers. |
+| verticalLines | [VerticalLine](#verticalline)`[]` | ✗ | Array of vertical line objects to display on the graph with position, styling, and text options. |
 
 ### <a id="seriesdata"></a>Schema `SeriesData`
 
-| Prop | Type | Required |
-|------|------|----------|
-| **data** | `any[] \| Observable \| Function` | **✓** |
-| type | `'values' \| 'tuples' \| 'objects' \| 'tuple_observable' \| 'object_observable' \| 'infer'` | ✗ |
-| xKey | `string` | ✗ |
-| yKey | `string` | ✗ |
-| xUnixDates | `boolean` | ✗ |
-| color | `string \| number` | ✗ |
-| name | `string` | ✗ |
-| xLabel | `string` | ✗ |
-| yLabel | `string` | ✗ |
-| rendering | `'line' \| 'bar' \| 'area' \| 'shadow'` | ✗ |
-| ignoreDiscontinuities | `boolean` | ✗ |
-| dashed | `boolean` | ✗ |
-| dashPattern | `number[]` | ✗ |
-| width | `number` | ✗ |
-| axis | `string \| object` | ✗ |
-| rangeSelectorWidth | `number` | ✗ |
-| expandYWith | `number[]` | ✗ |
-| defaultAlwaysTooltipped | `boolean` | ✗ |
-| square | `boolean` | ✗ |
-| shiftXBy | `number` | ✗ |
-| graph | `number` | ✗ |
-| background | `object` | ✗ |
-| hideFromKey | `boolean` | ✗ |
-| showIndividualPoints | `boolean` | ✗ |
-| negativeColor | `string` | ✗ |
-| gradient | `string[] \| [number, string][]` | ✗ |
-| zeroLineWidth | `number` | ✗ |
-| zeroLineColor | `string` | ✗ |
-| zeroLineY | `number \| 'bottom'` | ✗ |
-| pointRadius | `number` | ✗ |
-| tooltipWidth | `number` | ✗ |
-| hasAreaBottom | `boolean` | ✗ |
-| shadowColor | `string` | ✗ |
-| rangeKey | `string` | ✗ |
-| cutoffTime | `number \| Date \| 'now'` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| **data** | `any[] \| Observable \| Function` | **✓** | The actual data points (see Data Formats section). |
+| type | `'values' \| 'tuples' \| 'objects' \| 'tuple_observable' \| 'object_observable' \| 'infer'` | ✗ | Data type or 'infer' to automatically detect. |
+| xKey | `string` | ✗ | Property name for x-values when using object data. |
+| yKey | `string` | ✗ | Property name for y-values when using object data. |
+| xUnixDates | `boolean` | ✗ | Whether x-values are Unix timestamps. |
+| color | `string \| number` | ✗ | Series color (string or number). |
+| name | `string` | ✗ | Series name for display in legend. |
+| xLabel | `string` | ✗ | Label for x-axis. |
+| yLabel | `string` | ✗ | Label for y-axis. |
+| rendering | `'line' \| 'bar' \| 'area' \| 'shadow'` | ✗ | Visual representation (defaults to 'line'). The 'shadow' option creates an area chart with individual point-based trapezoid gradients extending downward. |
+| ignoreDiscontinuities | `boolean` | ✗ | Whether to connect points across gaps. |
+| dashed | `boolean` | ✗ | Whether to use dashed lines. |
+| dashPattern | `number[]` | ✗ | Array defining dash pattern. |
+| width | `number` | ✗ | Line width. |
+| axis | `string \| object` | ✗ | Axis specification for the series. |
+| rangeSelectorWidth | `number` | ✗ | Width of the range selector for this series. |
+| expandYWith | `number[]` | ✗ | Values to include when calculating y-axis range. |
+| defaultAlwaysTooltipped | `boolean` | ✗ | Whether to always show tooltip for this series. |
+| square | `boolean` | ✗ | Whether to render the series with square points. |
+| shiftXBy | `number` | ✗ | Value to shift x-coordinates by. |
+| graph | `number` | ✗ | Affects which graph this series belongs to in multigrapher. |
+| background | `object` | ✗ | Background configuration. |
+| hideFromKey | `boolean` | ✗ | Whether to hide this series from the legend. |
+| showIndividualPoints | `boolean` | ✗ | Whether to show individual data points. |
+| negativeColor | `string` | ✗ | Color for negative values. |
+| gradient | `string[] \| [number, string][]` | ✗ | Gradient configuration, only applies to area rendering. |
+| zeroLineWidth | `number` | ✗ | Width of the zero line, only applies to bar and area rendering. |
+| zeroLineColor | `string` | ✗ | Color of the zero line, only applies to bar and area rendering. |
+| zeroLineY | `number \| 'bottom'` | ✗ | Y-coordinate of the zero line, only applies to bar and area rendering. Defaults to zero; may also be the string "bottom". |
+| pointRadius | `number` | ✗ | Radius of points, only applies to area rendering. |
+| tooltipWidth | `number` | ✗ | Expected width of the tooltip. Will make the tooltip switch sides when this width plus the tooltip left position is greater than the graph width. |
+| hasAreaBottom | `boolean` | ✗ | Read the bottom of the area from data. By default, the bottom of an area will just be zero; this allows changing that via passing in `[[x1, bottom], [x1, top], [x2, bottom], [x2, top]]` to data. |
+| shadowColor | `string` | ✗ | Color of the shadow. |
+| rangeKey | `string` | ✗ | If provided, will draw range bars. The range value should be of shape `{min: number, max: number}`. Not compatible with webgl. |
+| cutoffTime | `number \| Date \| 'now'` | ✗ | Creates visual cutoff effects in line, area, bar, and shadow renderings. Can be a timestamp, Date object, or 'now' for current time. |
 
 ### <a id="tooltipoptions"></a>Schema `TooltipOptions`
 
-| Prop | Type | Required |
-|------|------|----------|
-| includeSeriesLabel | `boolean` | ✗ |
-| includeXLabel | `boolean` | ✗ |
-| includeYLabel | `boolean` | ✗ |
-| includeXValue | `boolean` | ✗ |
-| includeYValue | `boolean` | ✗ |
-| floating | `boolean` | ✗ |
-| alwaysFixedPosition | `boolean` | ✗ |
-| floatPosition | `'top' \| 'bottom'` | ✗ |
-| floatDelta | `number` | ✗ |
-| savingDisabled | `boolean` | ✗ |
-| customTooltip | `React.ComponentType<any>` | ✗ |
-| combineTooltips | `boolean \| number` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| includeSeriesLabel | `boolean` | ✗ | Whether to show series name in tooltip. |
+| includeXLabel | `boolean` | ✗ | Whether to show x-axis label in tooltip. |
+| includeYLabel | `boolean` | ✗ | Whether to show y-axis label in tooltip. |
+| includeXValue | `boolean` | ✗ | Whether to show x-axis value in tooltip. |
+| includeYValue | `boolean` | ✗ | Whether to show y-axis value in tooltip. |
+| floating | `boolean` | ✗ | Whether tooltip floats or is fixed position. |
+| alwaysFixedPosition | `boolean` | ✗ | Forces tooltip to always use fixed position. |
+| floatPosition | `'top' \| 'bottom'` | ✗ | Placement of floating tooltip. |
+| floatDelta | `number` | ✗ | Pixel offset for floating tooltip positioning. |
+| savingDisabled | `boolean` | ✗ | Prevents tooltip settings from being saved. |
+| customTooltip | `React.ComponentType<any>` | ✗ | A react component to use as a custom tooltip. If used in conjunction with `combineTooltips`, see combined tooltips examples. |
+| combineTooltips | `boolean \| number` | ✗ | If true, combines multiple tooltips into one when multiple series are shown. Can alternatively be set to a threshold in pixels for how close values need to be in order to be combined. |
 
 ### <a id="customboundsselector"></a>Schema `CustomBoundsSelector`
 
-| Prop | Type | Required |
-|------|------|----------|
-| **label** | `string` | **✓** |
-| **calculator** | `(globalBounds?: any) => any` | **✓** |
-| datesOnly | `boolean` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| **label** | `string` | **✓** | Display text for the selector. |
+| **calculator** | `(globalBounds?: any) => any` | **✓** | Function that determines the bounds. |
+| datesOnly | `boolean` | ✗ | If true, only works with date values. |
 
 ### <a id="annotation"></a>Schema `Annotation`
 
-| Prop | Type | Required |
-|------|------|----------|
-| x | `string \| number \| Date` | ✗ |
-| startX | `string \| number \| Date` | ✗ |
-| endX | `string \| number \| Date` | ✗ |
-| series | `string[]` | ✗ |
-| content | `string` | ✗ |
-| lineOnly | `boolean` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| x | `string \| number \| Date` | ✗ | Position on x-axis where annotation should appear. |
+| startX | `string \| number \| Date` | ✗ | Start position for range annotations. |
+| endX | `string \| number \| Date` | ✗ | End position for range annotations. |
+| series | `string[]` | ✗ | Optional array of series names the annotation applies to. |
+| content | `string` | ✗ | Text content of the annotation. |
+| lineOnly | `boolean` | ✗ | Shows only the line portion of annotations without background/content areas. |
 
 ### <a id="draggablepoint"></a>Schema `DraggablePoint`
 
-| Prop | Type | Required |
-|------|------|----------|
-| **x** | `number` | **✓** |
-| **y** | `number` | **✓** |
-| radius | `number` | ✗ |
-| fillColor | `string` | ✗ |
-| strokeColor | `string` | ✗ |
-| strokeWidth | `number` | ✗ |
-| onClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ |
-| onDoubleClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| **x** | `number` | **✓** | X-coordinate position. |
+| **y** | `number` | **✓** | Y-coordinate position. |
+| radius | `number` | ✗ | Optional size of the point. |
+| fillColor | `string` | ✗ | Optional interior color. |
+| strokeColor | `string` | ✗ | Optional outline color. |
+| strokeWidth | `number` | ✗ | Optional outline width. |
+| onClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ | Optional click handler function. |
+| onDoubleClick | `(point: `[DraggablePoint](#draggablepoint)`) => void` | ✗ | Optional double-click handler function. |
 
 ### <a id="verticalline"></a>Schema `VerticalLine`
 
-| Prop | Type | Required |
-|------|------|----------|
-| **x** | `number` | **✓** |
-| color | `string` | ✗ |
-| lineTop | `number` | ✗ |
-| width | `number` | ✗ |
-| markTop | `boolean` | ✗ |
-| style | `object` | ✗ |
-| markerStyle | `object` | ✗ |
-| text | `string` | ✗ |
-| textTop | `number` | ✗ |
-| textStyle | `object` | ✗ |
-| minPixelX | `number` | ✗ |
-| maxPixelX | `number` | ✗ |
-| onRangeGraph | `boolean \| object` | ✗ |
-| onRangeGraphOnly | `boolean` | ✗ |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| **x** | `number` | **✓** | X-coordinate position where the line should appear. |
+| color | `string` | ✗ | Optional line color. |
+| lineTop | `number` | ✗ | Optional value to specify the top position of the line. |
+| width | `number` | ✗ | Optional line width. |
+| markTop | `boolean` | ✗ | Whether to add a marker at the top of the line. |
+| style | `object` | ✗ | Optional styling object for the line. |
+| markerStyle | `object` | ✗ | Optional styling object for the marker. |
+| text | `string` | ✗ | Optional text to display alongside the line. |
+| textTop | `number` | ✗ | Optional value to specify the vertical position of the text. |
+| textStyle | `object` | ✗ | Optional styling object for the text. |
+| minPixelX | `number` | ✗ | If the x position of the line in pixels is less than this value, the line will be hidden. |
+| maxPixelX | `number` | ✗ | If the x position of the line in pixels is greater than this value, the line will be hidden. |
+| onRangeGraph | `boolean \| object` | ✗ | If true, will show the line on the range graph as well. This may also be an object with any of the above options to adjust the styling. |
+| onRangeGraphOnly | `boolean` | ✗ | If true, the vertical line will only appear on the range graph and not the primary graph. |
 
 ## Developing
 Other than an `npm install`, you'll need to install rust and [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/).
