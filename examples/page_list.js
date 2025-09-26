@@ -45,7 +45,7 @@ module.exports = [
             'simultaneous_observable_graph',
             'empty_data_graph',
             'observable_with_background_graph',
-            'change_at_end_graph'
+            'change_at_end_graph',
         ]
     },
     {

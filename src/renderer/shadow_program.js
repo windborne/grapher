@@ -253,10 +253,28 @@ export default class ShadowProgram {
           });
         }
       } else {
-        const trapezoid = { x1, y1, x2, y2, bottomY1, bottomY2 };
+        // Skip trapezoids completely outside canvas
+        if (x1 > width || x2 < 0) {
+          continue;
+        }
+        
+        // Clip trapezoid to canvas bounds if it extends beyond
+        let finalX2 = x2;
+        let finalY2 = y2;
+        let finalBottomY2 = bottomY2;
+        
+        if (x2 > width) {
+          const ratio = (width - x1) / (x2 - x1);
+          finalX2 = width;
+          finalY2 = y1 + (y2 - y1) * ratio;
+          finalBottomY2 = bottomY1 + (bottomY2 - bottomY1) * ratio;
+        }
+        
+        const trapezoid = { x1, y1, x2: finalX2, y2: finalY2, bottomY1, bottomY2: finalBottomY2 };
         trapezoids.push(trapezoid);
       }
     }
+    
 
 
     if (trapezoids.length === 0) {
@@ -264,7 +282,6 @@ export default class ShadowProgram {
     }
 
     const geometry = this.generateTrapezoidGeometry(trapezoids);
-
     const positionLoc = gl.getAttribLocation(this._program, "position");
     const trapezoidBoundsLoc = gl.getAttribLocation(
       this._program,

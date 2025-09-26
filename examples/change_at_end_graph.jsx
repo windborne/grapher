@@ -4,12 +4,15 @@ import renderPage from './render_page';
 import ExamplePage from './example_page.jsx';
 
 const data = [];
-const count = 199;
+const count = 4000;
 for (let i = 0; i < count; i++) {
-    data.push([i, 0]);
+    //snowflake reference
+    data.push([i, 0 + Math.sin((i * i) % (10 ** 9 + 7)) * 0.01]);
 }
 
-data.push([count, -1]);
+for (let j = 0; j < 20; j++) {
+    data.push([count + j, 1 + Math.sin((j * j) % (10 ** 9 + 7)) * 0.01]);
+}
 
 const series = [
     {
@@ -22,11 +25,8 @@ renderPage(
         <Grapher
             series={series}
             showSeriesKey={false}
-            showRangeSelectors={false}
-            showRangeGraph={false}
             defaultShowIndividualPoints={true}
-            // requireWASM={true}
-            width={data.length}
+            width={count / 4}
         />
     </ExamplePage>
 );

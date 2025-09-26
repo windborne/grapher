@@ -8,8 +8,7 @@ import drawBars from './draw_bars';
 import drawLine from './draw_line';
 import LineProgram from './line_program';
 import ShadowProgram from './shadow_program';
-import sizeCanvas from './size_canvas';
-import { applyReducedOpacity } from "../helpers/colors";
+import sizeCanvas, { DPI_INCREASE } from './size_canvas';
 
 export default class GraphBodyRenderer extends Eventable {
 
@@ -161,21 +160,34 @@ export default class GraphBodyRenderer extends Eventable {
             }
         }
         
-        const getIndividualPoints = (useDataSpace) => {
+        const getIndividualPoints = (useDataSpace, includeBeyondBounds = false) => {
             if (!useDataSpace && inRenderSpace && inRenderSpace.yValues) {
+                if (!bounds) {
+                    bounds = singleSeries.axis.currentBounds;
+                }
+                
                 const individualPoints = [];
                 const { yValues, nullMask } = inRenderSpace;
+                const threshold = yValues.length / 2;
+                let pastThreshold = 0;
+                const samples = [];
                 
                 for (let pixelX = 0; pixelX < yValues.length; pixelX++) {
                     if (nullMask[pixelX] === 0) {
-                        individualPoints.push([pixelX, yValues[pixelX]]);
+                        const xCoord = pixelX * DPI_INCREASE;
+                        individualPoints.push([xCoord, yValues[pixelX]]);
+                        
+                        if (pixelX > threshold) {
+                            pastThreshold++;
+                            if (samples.length < 3) samples.push({pixelX, xCoord, nullMask: nullMask[pixelX]});
+                        }
                     }
                 }
                 
-                if (individualPoints.length === 0) {
-                    return getIndividualPoints(true);
+                if (individualPoints.length < 50) {
+                    return getIndividualPoints(true, includeBeyondBounds);
                 }
-                
+
                 return individualPoints;
             }
 
@@ -189,6 +201,12 @@ export default class GraphBodyRenderer extends Eventable {
                 data = singleSeries.inDataSpace;
             }
 
+            let boundsMinX = bounds.minX instanceof Date ? bounds.minX.getTime() : bounds.minX;
+            let boundsMaxX = bounds.maxX instanceof Date ? bounds.maxX.getTime() : bounds.maxX;
+            
+            let foundBeyondBounds = false;
+            let lastPointBeforeBounds = null;
+            
             for (let i = 0; i < data.length; i++) {
                 let x, y;
                 
@@ -206,15 +224,36 @@ export default class GraphBodyRenderer extends Eventable {
                 }
 
                 let xValue = x instanceof Date ? x.getTime() : x;
-                let boundsMinX = bounds.minX instanceof Date ? bounds.minX.getTime() : bounds.minX;
-                let boundsMaxX = bounds.maxX instanceof Date ? bounds.maxX.getTime() : bounds.maxX;
+                
+                if (xValue < boundsMinX) {
+                    if (includeBeyondBounds) {
+                        lastPointBeforeBounds = [xValue, y];
+                    }
+                    continue;
+                }
+                
+                if (xValue > boundsMaxX) {
+                    if (includeBeyondBounds && !foundBeyondBounds) {
+                        foundBeyondBounds = true;
+                    } else {
+                        break;
+                    }
+                }
 
-                individualPoints.push([
-                    (xValue - boundsMinX) / (boundsMaxX - boundsMinX) * this._sizing.renderWidth,
-                    (1.0 - (y - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight
-                ]);
+                const renderWidth = this._sizing.renderWidth / DPI_INCREASE;
+                const xCoord = (xValue - boundsMinX) / (boundsMaxX - boundsMinX) * (renderWidth - 1) * DPI_INCREASE;
+                const yCoord = (1.0 - (y - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+                
+                individualPoints.push([xCoord, yCoord]);
             }
 
+            if (lastPointBeforeBounds && includeBeyondBounds) {
+                const [beforeXValue, beforeY] = lastPointBeforeBounds;
+                const renderWidth = this._sizing.renderWidth / DPI_INCREASE;
+                const beforeXCoord = (beforeXValue - boundsMinX) / (boundsMaxX - boundsMinX) * (renderWidth - 1) * DPI_INCREASE;
+                const beforeYCoord = (1.0 - (beforeY - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+                individualPoints.unshift([beforeXCoord, beforeYCoord]);
+            }
 
             return individualPoints;
         };
@@ -424,7 +463,7 @@ export default class GraphBodyRenderer extends Eventable {
                 shadowParams.selectionBounds = selection || bounds;
             }
 
-            this._shadowProgram.draw(getIndividualPoints(false), shadowParams);
+            this._shadowProgram.draw(getIndividualPoints(false, true), shadowParams);
             
             if (this._webgl) {
                 const gl = this._context;
@@ -432,7 +471,6 @@ export default class GraphBodyRenderer extends Eventable {
                 gl.enable(gl.BLEND);
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             }
-            
             
             if (singleSeries.zeroLineWidth && singleSeries.zeroLineWidth > 0) {
                 if (this._context2d) {
