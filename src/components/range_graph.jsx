@@ -335,6 +335,8 @@ export default class RangeGraph extends React.PureComponent {
                                 width={pixelMaxX - pixelMinX}
                                 height={totalHeight}
                                 className="target-selection-outline"
+                                onMouseDown={this.startScroll}
+                                onTouchStart={this.startScroll}
                             />
                         </g>
 

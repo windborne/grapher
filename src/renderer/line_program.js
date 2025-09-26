@@ -108,7 +108,7 @@ export default class LineProgram {
         gl.uniform4f(gl.getUniformLocation(this._program, 'shadowColor'), ...colorToVector(shadowColor));
         
         const cutoffX = parameters.cutoffX !== undefined ? parameters.cutoffX : -1.0; // Use parameter or disable
-        const cutoffOpacity = parameters.cutoffOpacity !== undefined ? parameters.cutoffOpacity : 1.0;
+        const cutoffOpacity = parameters.cutoffOpacity !== undefined ? parameters.cutoffOpacity : 0.35;
         
         gl.uniform1f(gl.getUniformLocation(this._program, 'cutoffX'), cutoffX);
         gl.uniform1f(gl.getUniformLocation(this._program, 'cutoffOpacity'), cutoffOpacity);
@@ -260,7 +260,7 @@ export default class LineProgram {
             if (timeRatio < 0) {
                 this.draw(dataInRenderSpace, { ...parameters, renderCutoffGradient: false });
             } else if (timeRatio > 1) {
-                const reducedOpacityColor = this.applyReducedOpacity(parameters.color, cutoffOpacity);
+                const reducedOpacityColor = applyReducedOpacity(parameters.color, cutoffOpacity);
                 this.draw(dataInRenderSpace, { 
                     ...parameters, 
                     color: reducedOpacityColor,
@@ -290,7 +290,7 @@ export default class LineProgram {
             if (cutoffTime < visibleMinTime) {
                 this.draw(dataInRenderSpace, { ...parameters, renderCutoffGradient: false });
             } else if (cutoffTime > visibleMaxTime) {
-                const reducedOpacityColor = this.applyReducedOpacity(parameters.color, cutoffOpacity);
+                const reducedOpacityColor = applyReducedOpacity(parameters.color, cutoffOpacity);
                 this.draw(dataInRenderSpace, { 
                     ...parameters, 
                     color: reducedOpacityColor,

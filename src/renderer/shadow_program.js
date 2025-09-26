@@ -189,6 +189,7 @@ export default class ShadowProgram {
    * @param {Object} params - Rendering parameters
    */
   draw(individualPoints, params) {
+
     if (!individualPoints || individualPoints.length < 2) {
       return;
     }
@@ -210,6 +211,7 @@ export default class ShadowProgram {
 
     const trapezoids = [];
     const { zero, inRenderSpaceAreaBottom } = params;
+
 
     for (let i = 0; i < individualPoints.length - 1; i++) {
       const [x1, y1] = individualPoints[i];
@@ -255,6 +257,7 @@ export default class ShadowProgram {
         trapezoids.push(trapezoid);
       }
     }
+
 
     if (trapezoids.length === 0) {
       return;
@@ -329,6 +332,13 @@ export default class ShadowProgram {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
 
     gl.drawElements(gl.TRIANGLES, geometry.indices.length, gl.UNSIGNED_INT, 0);
+    
+    const error = gl.getError();
+    if (error !== gl.NO_ERROR) {
+        console.error('WebGL error in shadow rendering:', error);
+    } else {
+      //he he he haw
+    }
   }
 
   /**
@@ -337,45 +347,56 @@ export default class ShadowProgram {
    * @param {Object} params - Rendering parameters with cutoff info
    */
   drawShadowWithCutoff(individualPoints, params) {
+
     const { cutoffIndex, cutoffOpacity, originalData, selectionBounds, zero } =
       params;
 
     this._lastIndividualPoints = null;
     this._lastParams = null;
 
+    // All cutoff data is now in tuple format [x, y] from graph_body_renderer
     let cutoffTime;
-    if (typeof originalData[0] === "object" && originalData[0].length === 2) {
+    
+    if (Array.isArray(originalData[0]) && originalData[0].length === 2) {
       const baseIndex = Math.floor(cutoffIndex);
       const fraction = cutoffIndex - baseIndex;
 
       if (fraction === 0 || baseIndex >= originalData.length - 1) {
-        const cutoffDate =
-          originalData[Math.min(baseIndex, originalData.length - 1)][0];
-        cutoffTime =
-          cutoffDate instanceof Date ? cutoffDate.getTime() : cutoffDate;
+        const cutoffItem = originalData[Math.min(baseIndex, originalData.length - 1)];
+        const cutoffDate = cutoffItem[0];
+        cutoffTime = cutoffDate instanceof Date ? cutoffDate.getTime() : cutoffDate;
       } else {
-        const currentDate = originalData[baseIndex][0];
-        const nextDate = originalData[baseIndex + 1][0];
-        const currentTime =
-          currentDate instanceof Date ? currentDate.getTime() : currentDate;
-        const nextTime =
-          nextDate instanceof Date ? nextDate.getTime() : nextDate;
+        const currentItem = originalData[baseIndex];
+        const nextItem = originalData[baseIndex + 1];
+        const currentDate = currentItem[0];
+        const nextDate = nextItem[0];
+        const currentTime = currentDate instanceof Date ? currentDate.getTime() : currentDate;
+        const nextTime = nextDate instanceof Date ? nextDate.getTime() : nextDate;
         cutoffTime = currentTime + fraction * (nextTime - currentTime);
       }
     } else {
       cutoffTime = cutoffIndex;
     }
 
-    const firstTime =
-      originalData[0][0] instanceof Date
-        ? originalData[0][0].getTime()
-        : originalData[0][0];
-    const lastTime =
-      originalData[originalData.length - 1][0] instanceof Date
-        ? originalData[originalData.length - 1][0].getTime()
-        : originalData[originalData.length - 1][0];
-
-    const timeRatio = (cutoffTime - firstTime) / (lastTime - firstTime);
+    const visibleBounds = params.selectionBounds;
+    let firstTime, lastTime;
+    
+    if (visibleBounds && visibleBounds.minX !== undefined && visibleBounds.maxX !== undefined) {
+        firstTime = visibleBounds.minX instanceof Date ? visibleBounds.minX.getTime() : visibleBounds.minX;
+        lastTime = visibleBounds.maxX instanceof Date ? visibleBounds.maxX.getTime() : visibleBounds.maxX;
+    } else {
+        const firstItem = originalData[0];
+        const lastItem = originalData[originalData.length - 1];
+        const firstX = firstItem[0];
+        const lastX = lastItem[0];
+        
+        firstTime = firstX instanceof Date ? firstX.getTime() : firstX;
+        lastTime = lastX instanceof Date ? lastX.getTime() : lastX;
+    }
+    
+    const timeDiff = cutoffTime - firstTime;
+    const totalTime = lastTime - firstTime;
+    const timeRatio = timeDiff / totalTime;
 
     if (timeRatio < 0) {
       this.draw(individualPoints, { ...params, renderCutoffGradient: false });
@@ -392,7 +413,7 @@ export default class ShadowProgram {
     } else {
       this.drawSplitShadowTrapezoids(
         individualPoints,
-        params,
+        { ...params, selectionBounds: params.selectionBounds },
         timeRatio,
         cutoffTime
       );
@@ -407,41 +428,41 @@ export default class ShadowProgram {
    * @param {number} cutoffTime - Cutoff timestamp
    */
   drawSplitShadowTrapezoids(individualPoints, params, timeRatio, cutoffTime) {
-    const { zero, cutoffOpacity } = params;
+    const { zero, cutoffOpacity, selectionBounds } = params;
     const gl = this._gl;
 
-    const renderCutoffIndex = timeRatio * (individualPoints.length - 1);
-    const splitIndex = Math.floor(renderCutoffIndex);
-    const fraction = renderCutoffIndex - splitIndex;
-
-    let ghostPoint = null;
-    if (
-      splitIndex >= 0 &&
-      splitIndex < individualPoints.length - 1 &&
-      fraction > 0
-    ) {
-      const beforePoint = individualPoints[splitIndex];
-      const afterPoint = individualPoints[splitIndex + 1];
-      ghostPoint = [
-        beforePoint[0] + fraction * (afterPoint[0] - beforePoint[0]),
-        beforePoint[1] + fraction * (afterPoint[1] - beforePoint[1]),
-      ];
-    }
+    const renderWidth = gl.canvas.width;
+    const cutoffPixelX = timeRatio * renderWidth;
 
     const preCutoffPoints = [];
-    for (let i = 0; i <= splitIndex && i < individualPoints.length; i++) {
-      preCutoffPoints.push(individualPoints[i]);
-    }
-    if (ghostPoint && splitIndex < individualPoints.length - 1) {
-      preCutoffPoints.push(ghostPoint);
-    }
-
     const postCutoffPoints = [];
-    if (ghostPoint && splitIndex < individualPoints.length - 1) {
-      postCutoffPoints.push(ghostPoint);
+    
+    for (let i = 0; i < individualPoints.length; i++) {
+        const [pixelX, pixelY] = individualPoints[i];
+        
+        if (pixelX < cutoffPixelX) {
+            preCutoffPoints.push(individualPoints[i]);
+        } else {
+            postCutoffPoints.push(individualPoints[i]);
+        }
     }
-    for (let i = splitIndex + 1; i < individualPoints.length; i++) {
-      postCutoffPoints.push(individualPoints[i]);
+    
+    let ghostPoint = null;
+    if (preCutoffPoints.length > 0 && postCutoffPoints.length > 0) {
+        const lastPrePoint = preCutoffPoints[preCutoffPoints.length - 1];
+        const firstPostPoint = postCutoffPoints[0];
+        
+        const [x1, y1] = lastPrePoint;
+        const [x2, y2] = firstPostPoint;
+        
+        if (x2 !== x1) {
+            const interpolationRatio = (cutoffPixelX - x1) / (x2 - x1);
+            const ghostY = y1 + interpolationRatio * (y2 - y1);
+            ghostPoint = [cutoffPixelX, ghostY];
+            
+            preCutoffPoints.push(ghostPoint);
+            postCutoffPoints.unshift(ghostPoint);
+        }
     }
 
     if (preCutoffPoints.length >= 2) {
@@ -467,6 +488,7 @@ export default class ShadowProgram {
         gradient: translucentGradient,
         renderCutoffGradient: false,
       });
+    } else {
     }
 
     if (postCutoffPoints.length >= 2) {
@@ -474,6 +496,7 @@ export default class ShadowProgram {
         ...params,
         renderCutoffGradient: false,
       });
+    } else {
     }
   }
 }

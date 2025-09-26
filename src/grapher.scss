@@ -675,7 +675,8 @@
 
         .target-selection-outline {
           stroke: $range-graph-selection-outline-color;
-          fill: none;
+          cursor: ew-resize;
+          fill: transparent;
         }
 
         .selection-bar-track {

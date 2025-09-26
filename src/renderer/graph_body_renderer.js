@@ -109,7 +109,23 @@ export default class GraphBodyRenderer extends Eventable {
         }
         
         let cutoffIndex = -1;
-        // cutoff time calculations for visible bounds-based approach
+        let cutoffTime = null; 
+        let cutoffData = singleSeries.data; 
+
+        const isObjectFormat = singleSeries.data && singleSeries.data.length > 0 && 
+                              typeof singleSeries.data[0] === 'object' && 
+                              !Array.isArray(singleSeries.data[0]);
+        
+        if (isObjectFormat && singleSeries.cutoffTime) {
+            cutoffData = singleSeries.data.map(point => {
+                const xValue = point[singleSeries.xKey || 'x'];
+                const yValue = point[singleSeries.yKey || 'y'];
+                
+                const convertedX = typeof xValue === 'string' ? new Date(xValue) : xValue;
+                
+                return [convertedX, yValue];
+            });
+        }
         
         if (singleSeries.cutoffTime && singleSeries.data && singleSeries.data.length > 0) {
             let cutoffDate;
@@ -121,40 +137,48 @@ export default class GraphBodyRenderer extends Eventable {
                 cutoffDate = singleSeries.cutoffTime;
             }
             
-            // getting the ghost point
-            const cutoffTime = cutoffDate instanceof Date ? cutoffDate.getTime() : cutoffDate;
+            cutoffTime = cutoffDate instanceof Date ? cutoffDate.getTime() : cutoffDate;
             
-            for (let i = 0; i < singleSeries.data.length - 1; i++) {
-                const currentPoint = singleSeries.data[i];
-                const nextPoint = singleSeries.data[i + 1];
+            for (let i = 0; i < cutoffData.length - 1; i++) {
+                const currentPoint = cutoffData[i];
+                const nextPoint = cutoffData[i + 1];
                 
-                const currentTime = Array.isArray(currentPoint) ? 
-                    (currentPoint[0] instanceof Date ? currentPoint[0].getTime() : currentPoint[0]) : i;
-                const nextTime = Array.isArray(nextPoint) ? 
-                    (nextPoint[0] instanceof Date ? nextPoint[0].getTime() : nextPoint[0]) : (i + 1);
+                const currentTime = currentPoint[0] instanceof Date ? currentPoint[0].getTime() : currentPoint[0];
+                const nextTime = nextPoint[0] instanceof Date ? nextPoint[0].getTime() : nextPoint[0];
                 
                 if (currentTime <= cutoffTime && cutoffTime <= nextTime) {
-                    // interpolate exact position between these two points
                     const timeRatio = (cutoffTime - currentTime) / (nextTime - currentTime);
                     cutoffIndex = i + timeRatio;
                     break;
                 } else if (currentTime > cutoffTime) {
-                    // cutoff is before the first data point
                     cutoffIndex = i;
                     break;
                 }
             }
             
-            // cutoff is after all data points
             if (cutoffIndex === -1) {
-                cutoffIndex = singleSeries.data.length - 1;
+                cutoffIndex = cutoffData.length - 1;
             }
-            
-            
-            // Note: cutoffIndex is used for cutoff calculations but we no longer split data
         }
         
         const getIndividualPoints = (useDataSpace) => {
+            if (!useDataSpace && inRenderSpace && inRenderSpace.yValues) {
+                const individualPoints = [];
+                const { yValues, nullMask } = inRenderSpace;
+                
+                for (let pixelX = 0; pixelX < yValues.length; pixelX++) {
+                    if (nullMask[pixelX] === 0) {
+                        individualPoints.push([pixelX, yValues[pixelX]]);
+                    }
+                }
+                
+                if (individualPoints.length === 0) {
+                    return getIndividualPoints(true);
+                }
+                
+                return individualPoints;
+            }
+
             if (!bounds) {
                 bounds = singleSeries.axis.currentBounds;
             }
@@ -165,16 +189,32 @@ export default class GraphBodyRenderer extends Eventable {
                 data = singleSeries.inDataSpace;
             }
 
-            for (let [x, y] of data) {
-                if (y === null) {
+            for (let i = 0; i < data.length; i++) {
+                let x, y;
+                
+                if (Array.isArray(data[i])) {
+                    [x, y] = data[i];
+                } else if (typeof data[i] === 'object' && data[i] !== null) {
+                    x = data[i][singleSeries.xKey];
+                    y = data[i][singleSeries.yKey];
+                } else {
+                    continue;
+                }
+                
+                if (y === null || y === undefined) {
                     continue;
                 }
 
+                let xValue = x instanceof Date ? x.getTime() : x;
+                let boundsMinX = bounds.minX instanceof Date ? bounds.minX.getTime() : bounds.minX;
+                let boundsMaxX = bounds.maxX instanceof Date ? bounds.maxX.getTime() : bounds.maxX;
+
                 individualPoints.push([
-                    (x - bounds.minX) / (bounds.maxX - bounds.minX) * this._sizing.renderWidth,
+                    (xValue - boundsMinX) / (boundsMaxX - boundsMinX) * this._sizing.renderWidth,
                     (1.0 - (y - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight
                 ]);
             }
+
 
             return individualPoints;
         };
@@ -224,7 +264,6 @@ export default class GraphBodyRenderer extends Eventable {
                 return;
             }
             
-            //we still need a canvas context for cpu stuff
             if (!this._context2d) {
                 this._context2d = this._canvas.getContext('2d', { willReadFrequently: false });
             }
@@ -235,7 +274,6 @@ export default class GraphBodyRenderer extends Eventable {
             }
 
             if (this._webgl) {
-                // make sure we don't have any webgl stuff in the way before we get back to CPU rendering
                 this._context.flush();
             }
 
@@ -275,7 +313,7 @@ export default class GraphBodyRenderer extends Eventable {
             if (singleSeries.cutoffTime) {
                 barParams.cutoffIndex = cutoffIndex;
                 barParams.cutoffOpacity = 0.35;
-                barParams.originalData = singleSeries.data;
+                barParams.originalData = cutoffData;
                 barParams.renderCutoffGradient = cutoffIndex >= 0; 
                 
                 const selection = this === this._stateController.rangeGraphRenderer 
@@ -301,11 +339,10 @@ export default class GraphBodyRenderer extends Eventable {
                 inRenderSpaceAreaBottom
             };
 
-        // add cutoff information for gradient area rendering
         if (singleSeries.cutoffTime) {
             areaParams.cutoffIndex = cutoffIndex;
             areaParams.cutoffOpacity = 0.35;
-            areaParams.originalData = singleSeries.data;
+            areaParams.originalData = cutoffData;
             areaParams.renderCutoffGradient = cutoffIndex >= 0; 
             areaParams.isPreview = this === this._stateController.rangeGraphRenderer; 
             
@@ -344,7 +381,9 @@ export default class GraphBodyRenderer extends Eventable {
             
             let zero = singleSeries.zeroLineY === 'bottom' ?
                 this._sizing.renderHeight :
-                (1.0 - ((singleSeries.zeroLineY || 0) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+                singleSeries.zeroLineY !== undefined ? 
+                    (1.0 - ((singleSeries.zeroLineY) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight :
+                    this._sizing.renderHeight;
                 
             const boundsChanged = !this._lastBounds || 
                 bounds.minY !== this._lastBounds.minY || 
@@ -372,21 +411,20 @@ export default class GraphBodyRenderer extends Eventable {
                 inRenderSpaceAreaBottom
             };
 
-            // add cutoff information for gradient shadow rendering
             if (singleSeries.cutoffTime) {
                 shadowParams.cutoffIndex = cutoffIndex;
                 shadowParams.cutoffOpacity = 0.35;
-                shadowParams.originalData = singleSeries.data;
+                shadowParams.originalData = cutoffData;
                 shadowParams.renderCutoffGradient = cutoffIndex >= 0; 
                 shadowParams.isPreview = this === this._stateController.rangeGraphRenderer; 
 
                 const selection = this === this._stateController.rangeGraphRenderer 
                     ? this._stateController._bounds 
                     : (this._stateController._selection || this._stateController._bounds);
-                shadowParams.selectionBounds = selection;
+                shadowParams.selectionBounds = selection || bounds;
             }
 
-            this._shadowProgram.draw(getIndividualPoints(true), shadowParams);
+            this._shadowProgram.draw(getIndividualPoints(false), shadowParams);
             
             if (this._webgl) {
                 const gl = this._context;
@@ -398,7 +436,6 @@ export default class GraphBodyRenderer extends Eventable {
             
             if (singleSeries.zeroLineWidth && singleSeries.zeroLineWidth > 0) {
                 if (this._context2d) {
-                    // in non-webgl mode, use the existing 2d context
                     this._context2d.save();
                     this._context2d.strokeStyle = singleSeries.zeroLineColor || getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
                     this._context2d.lineWidth = singleSeries.zeroLineWidth;
@@ -410,7 +447,6 @@ export default class GraphBodyRenderer extends Eventable {
                     this._context2d.stroke();
                     this._context2d.restore();
                 } else {
-                    // in webgl mode, we instead create an overlay 2d canvas for the zero line
                     if (!this._zeroLineCanvas) {
                         this._zeroLineCanvas = document.createElement('canvas');
                         this._zeroLineCanvas.style.position = 'absolute';
@@ -460,20 +496,18 @@ export default class GraphBodyRenderer extends Eventable {
             return;
         }
         
-        // Add cutoff information to drawParams for gradient line rendering
         if (singleSeries.cutoffTime) {
             drawParams.cutoffIndex = cutoffIndex;
             drawParams.cutoffOpacity = 0.35;
-            drawParams.originalData = singleSeries.data;
-            drawParams.renderCutoffGradient = cutoffIndex >= 0; // Only render cutoff if valid cutoff
+            drawParams.originalData = cutoffData;
+            drawParams.renderCutoffGradient = cutoffIndex >= 0;
             drawParams.currentBounds = bounds;
-            drawParams.isPreview = this === this._stateController.rangeGraphRenderer; // Flag for preview rendering
+            drawParams.isPreview = this === this._stateController.rangeGraphRenderer;
             
-            // Always set selectionBounds with fallback
             const selection = this === this._stateController.rangeGraphRenderer 
                 ? this._stateController._bounds 
                 : (this._stateController._selection || this._stateController._bounds);
-            drawParams.selectionBounds = selection;
+            drawParams.selectionBounds = selection || bounds;    
         }
         
         if (this._webgl) {
