@@ -171,7 +171,11 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
                 clientX: touch.clientX,
                 clientY: touch.clientY
             });
-            if (event.cancelable) event.preventDefault();
+            
+            // Only prevent default if touch is within grapher bounds
+            if (event.cancelable && event.target.closest('.graph-body')) {
+                event.preventDefault();
+            }
         };
 
         const onGlobalTouchMove = (event) => {
@@ -184,7 +188,11 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
                 clientX: touch.clientX,
                 clientY: touch.clientY
             });
-            if (event.cancelable) event.preventDefault();
+            
+            // Only prevent default if touch is within grapher bounds
+            if (event.cancelable && event.target.closest('.graph-body')) {
+                event.preventDefault();
+            }
         };
 
         const onGlobalTouchEnd = () => {
