@@ -62,6 +62,19 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             data = data.filter((tuple) => typeof tuple[1] === 'number');
         }
 
+        if (data.length === 0) {
+            continue;
+        }
+
+        const dataMinX = data[0][0];
+        const dataMaxX = data[data.length - 1][0];
+        const dataRange = dataMaxX - dataMinX;
+        const padding = Math.max(dataRange * 0.05, (bounds.maxX - bounds.minX) * 0.02); 
+
+        if (trueX < dataMinX - padding || trueX > dataMaxX + padding) {
+            continue;
+        }
+
         const closestIndex = binarySearch(data, trueX, { returnIndex: true });
         const closestPoint = data[closestIndex];
 

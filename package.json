@@ -1,6 +1,6 @@
 {
   "name": "@windborne/grapher",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "Graphing library",
   "main": "src/index.js",
   "module": "dist/bundle.esm.js",
