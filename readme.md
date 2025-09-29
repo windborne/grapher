@@ -149,8 +149,10 @@ Grapher supports multiple data formats within a series:
 | background | `object` | ✗ | Background configuration. |
 | hideFromKey | `boolean` | ✗ | Whether to hide this series from the legend. |
 | showIndividualPoints | `boolean` | ✗ | Whether to show individual data points. |
-| negativeColor | `string` | ✗ | Color for negative values. |
-| gradient | `string[] \| [number, string][]` | ✗ | Gradient configuration, only applies to area rendering. |
+| minPointSpacing | `number` | ✗ | Minimum pixel spacing between individual points to prevent overlap. |
+| negativeColor | `string` | ✗ | Color for lines and points with negative values (below zero). |
+| gradient | `string[] \| [number, string][]` | ✗ | Gradient configuration for area and shadow fills. Array of colors or [position, color] pairs. |
+| negativeGradient | `string[] \| [number, string][]` | ✗ | Separate gradient for negative values (below zero) in area and shadow charts. Same format as gradient. |
 | zeroLineWidth | `number` | ✗ | Width of the zero line, only applies to bar and area rendering. |
 | zeroLineColor | `string` | ✗ | Color of the zero line, only applies to bar and area rendering. |
 | zeroLineY | `number \| 'bottom'` | ✗ | Y-coordinate of the zero line, only applies to bar and area rendering. Defaults to zero; may also be the string "bottom". |
