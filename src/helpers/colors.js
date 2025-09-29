@@ -91,3 +91,15 @@ export function applyReducedOpacityToGradient(gradient, opacityFactor) {
     return stop;
   });
 }
+
+/**
+ * Creates a default gradient from a color at half opacity
+ * @param {string} color 
+ * @returns {Array<[number, string]>}
+ */
+export function createDefaultGradient(color) {
+  if (!color) return [[0, 'transparent'], [1, 'transparent']];
+  
+  const halfOpacityColor = applyReducedOpacity(color, 0.5);
+  return [[0, halfOpacityColor], [1, halfOpacityColor]];
+}

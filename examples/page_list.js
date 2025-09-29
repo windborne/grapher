@@ -155,6 +155,7 @@ module.exports = [
             'shadow_chart',
             'negative_shadow_chart',
             'multi_shadow_chart',
+            'default_gradient_shadow_chart',
         ]
     },
     {

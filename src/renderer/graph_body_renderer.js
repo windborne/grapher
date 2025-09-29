@@ -1,5 +1,5 @@
 import Eventable from '../eventable';
-import getColor from '../helpers/colors';
+import getColor, { createDefaultGradient } from '../helpers/colors';
 import inferType from '../state/infer_type';
 import BackgroundProgram from './background_program.js';
 import drawArea from './draw_area';
@@ -477,9 +477,10 @@ export default class GraphBodyRenderer extends Eventable {
                 zero = 0;
             }
             
+            const shadowColor = getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
             let shadowParams = {
-                color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
-                gradient: singleSeries.gradient,
+                color: shadowColor,
+                gradient: singleSeries.gradient || createDefaultGradient(shadowColor),
                 zero,
                 sizing: this._sizing,
                 inRenderSpaceAreaBottom
