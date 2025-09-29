@@ -317,7 +317,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
 
             if (!bounds) {
-                bounds = singleSeries.axis.currentBounds;
+                bounds = singleSeries.axis?.currentBounds;
+            }
+
+            if (!bounds) {
+                console.error('No bounds available for rendering');
+                return;
             }
 
             const zero = singleSeries.zeroLineY === 'bottom' ?
@@ -417,7 +422,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
             
             if (!bounds) {
-                bounds = singleSeries.axis.currentBounds;
+                bounds = singleSeries.axis?.currentBounds;
+            }
+            
+            if (!bounds) {
+                console.error('No bounds available for shadow rendering');
+                return;
             }
             
             let zero;
@@ -527,17 +537,23 @@ export default class GraphBodyRenderer extends Eventable {
 
         const shouldShowIndividualPoints = typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints;
 
+        if (!bounds) {
+            bounds = singleSeries.axis?.currentBounds || globalBounds;
+        }
+
         let zero;
         if (singleSeries.zeroLineY === 'bottom') {
             zero = this._sizing.renderHeight;
-        } else if (singleSeries.zeroLineY !== undefined) {
+        } else if (singleSeries.zeroLineY !== undefined && bounds) {
             zero = (1.0 - ((singleSeries.zeroLineY) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
-        } else {
+        } else if (bounds) {
             if (bounds.minY <= 0 && bounds.maxY >= 0) {
                 zero = (1.0 - (0 - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
             } else {
                 zero = this._sizing.renderHeight;
             }
+        } else {
+            zero = this._sizing.renderHeight;
         }
         const hasNegatives = !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0);
 
