@@ -6,6 +6,7 @@ import ExamplePage from './example_page.jsx';
 const series = [
     {
         data: [0, 1, 4, 10, 0],
+        showIndividualPoints: true,
         defaultAlwaysTooltipped: true
     }
 ];

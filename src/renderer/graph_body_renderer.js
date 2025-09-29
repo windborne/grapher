@@ -370,6 +370,7 @@ export default class GraphBodyRenderer extends Eventable {
                 ...commonCPUParams,
                 showIndividualPoints: typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints,
                 gradient: singleSeries.gradient,
+                negativeGradient: singleSeries.negativeGradient,
                 pointRadius: singleSeries.pointRadius,
                 minPointSpacing: singleSeries.minPointSpacing,
                 highlighted,
@@ -451,9 +452,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
             
             const shadowColor = getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
+            const hasNegatives = !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0);
             let shadowParams = {
                 color: shadowColor,
                 gradient: singleSeries.gradient || createDefaultGradient(shadowColor),
+                negativeGradient: singleSeries.negativeGradient,
+                hasNegatives,
                 zero,
                 sizing: this._sizing,
                 inRenderSpaceAreaBottom
@@ -523,9 +527,54 @@ export default class GraphBodyRenderer extends Eventable {
 
         const shouldShowIndividualPoints = typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints;
 
+        let zero;
+        if (singleSeries.zeroLineY === 'bottom') {
+            zero = this._sizing.renderHeight;
+        } else if (singleSeries.zeroLineY !== undefined) {
+            zero = (1.0 - ((singleSeries.zeroLineY) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+        } else {
+            if (bounds.minY <= 0 && bounds.maxY >= 0) {
+                zero = (1.0 - (0 - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+            } else {
+                zero = this._sizing.renderHeight;
+            }
+        }
+        const hasNegatives = !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0);
+
+        // For WebGL shadow rendering, we need a separate 2D canvas overlay for lines/points
+        // since WebGL and 2D contexts can't coexist on the same canvas
+        let drawContext = this._context;
+        
+        if (this._webgl && singleSeries.rendering === 'shadow' && (width > 0 || shouldShowIndividualPoints)) {
+            // Only create overlay if we're actually drawing lines or points
+            if (!this._overlayCanvas) {
+                this._overlayCanvas = document.createElement('canvas');
+                this._overlayCanvas.style.position = 'absolute';
+                this._overlayCanvas.style.top = '0';
+                this._overlayCanvas.style.left = '0';
+                this._overlayCanvas.style.pointerEvents = 'none';
+                this._overlayContext = this._overlayCanvas.getContext('2d');
+                this._canvas.parentNode.insertBefore(this._overlayCanvas, this._canvas.nextSibling);
+            }
+            
+            // Size the overlay canvas to match the main canvas
+            this._overlayCanvas.width = this._canvas.width;
+            this._overlayCanvas.height = this._canvas.height;
+            this._overlayCanvas.style.width = this._canvas.style.width;
+            this._overlayCanvas.style.height = this._canvas.style.height;
+            
+            // Clear the overlay before drawing
+            this._overlayContext.clearRect(0, 0, this._overlayCanvas.width, this._overlayCanvas.height);
+            
+            drawContext = this._overlayContext;
+        } else if (this._context2d) {
+            // For non-WebGL or non-shadow charts with 2D context
+            drawContext = this._context2d;
+        }
+
         const drawParams = {
             color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
-            context: this._context,
+            context: drawContext,
             width: width || singleSeries.width || defaultLineWidth,
             shadowColor,
             shadowBlur,
@@ -537,7 +586,11 @@ export default class GraphBodyRenderer extends Eventable {
             minPointSpacing: singleSeries.minPointSpacing,
             getIndividualPoints,
             getRanges: singleSeries.rangeKey ? getRanges : null,
-            rendering: singleSeries.rendering  // Pass rendering type for all charts
+            rendering: singleSeries.rendering,  // Pass rendering type for all charts
+            negativeColor: singleSeries.negativeColor,
+            hasNegatives,
+            zero,
+            zeroColor: singleSeries.zeroLineColor
         };
         
 
@@ -560,7 +613,10 @@ export default class GraphBodyRenderer extends Eventable {
             drawParams.selectionBounds = selection || bounds;    
         }
         
-        if (this._webgl) {
+        // For shadow rendering, always use 2D canvas for lines/points even with WebGL
+        // This is because shadow uses WebGL for the fill but needs 2D canvas for lines/points
+        // to support negativeColor and other features
+        if (this._webgl && singleSeries.rendering !== 'shadow') {
             this._lineProgram.draw(inRenderSpace, drawParams);
         } else {
             drawLine(inRenderSpace, drawParams);

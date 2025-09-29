@@ -210,7 +210,9 @@ export default class ShadowProgram {
     }
 
     const trapezoids = [];
-    const { zero, inRenderSpaceAreaBottom } = params;
+    const positiveTrapezoids = [];
+    const negativeTrapezoids = [];
+    const { zero, inRenderSpaceAreaBottom, negativeGradient, hasNegatives } = params;
 
 
     for (let i = 0; i < individualPoints.length - 1; i++) {
@@ -232,25 +234,45 @@ export default class ShadowProgram {
         const yCross = zero;
 
         if (Math.abs(y1 - yCross) > 0.1) {
-          trapezoids.push({
+          const trap = {
             x1,
             y1,
             x2: xCross,
             y2: yCross,
             bottomY1,
             bottomY2: zero,
-          });
+          };
+          trapezoids.push(trap);
+          
+          // Determine if positive or negative (in screen coords, smaller Y is higher/positive)
+          if (hasNegatives && negativeGradient) {
+            if (y1 <= zero) {
+              positiveTrapezoids.push(trap);
+            } else {
+              negativeTrapezoids.push(trap);
+            }
+          }
         }
 
         if (Math.abs(y2 - yCross) > 0.1) {
-          trapezoids.push({
+          const trap = {
             x1: xCross,
             y1: yCross,
             x2,
             y2,
             bottomY1: zero,
             bottomY2,
-          });
+          };
+          trapezoids.push(trap);
+          
+          // Determine if positive or negative
+          if (hasNegatives && negativeGradient) {
+            if (y2 <= zero) {
+              positiveTrapezoids.push(trap);
+            } else {
+              negativeTrapezoids.push(trap);
+            }
+          }
         }
       } else {
         // Skip trapezoids completely outside canvas
@@ -272,16 +294,24 @@ export default class ShadowProgram {
         
         const trapezoid = { x1, y1, x2: finalX2, y2: finalY2, bottomY1, bottomY2: finalBottomY2 };
         trapezoids.push(trapezoid);
+        
+        // Determine if positive or negative
+        if (hasNegatives && negativeGradient) {
+          // Check average Y position
+          const avgY = (y1 + finalY2) / 2;
+          if (avgY <= zero) {
+            positiveTrapezoids.push(trapezoid);
+          } else {
+            negativeTrapezoids.push(trapezoid);
+          }
+        }
       }
     }
-    
-
 
     if (trapezoids.length === 0) {
       return;
     }
 
-    const geometry = this.generateTrapezoidGeometry(trapezoids);
     const positionLoc = gl.getAttribLocation(this._program, "position");
     const trapezoidBoundsLoc = gl.getAttribLocation(
       this._program,
@@ -292,63 +322,82 @@ export default class ShadowProgram {
       "trapezoidBottom"
     );
 
-    gl.enableVertexAttribArray(positionLoc);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, geometry.positions, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
-
-    gl.enableVertexAttribArray(trapezoidBoundsLoc);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBoundsBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBounds, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(trapezoidBoundsLoc, 4, gl.FLOAT, false, 0, 0);
-
-    gl.enableVertexAttribArray(trapezoidBottomLoc);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBottomBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBottom, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(trapezoidBottomLoc, 4, gl.FLOAT, false, 0, 0);
-
     gl.uniform1f(gl.getUniformLocation(this._program, "width"), width);
     gl.uniform1f(gl.getUniformLocation(this._program, "height"), height);
-
-    const gradientData = this.parseGradient(params.gradient, params.color);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this._gradientTexture);
-
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.RGBA,
-      gradientData.textureWidth,
-      1,
-      0,
-      gl.RGBA,
-      gl.UNSIGNED_BYTE,
-      gradientData.textureData
-    );
-
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    gl.uniform1i(gl.getUniformLocation(this._program, "gradientTexture"), 0);
-    gl.uniform1i(
-      gl.getUniformLocation(this._program, "gradientCount"),
-      gradientData.gradientCount
-    );
-    gl.uniform4fv(
-      gl.getUniformLocation(this._program, "fallbackColor"),
-      gradientData.fallbackColor
-    );
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
+    // Helper function to render a set of trapezoids with a given gradient
+    const renderTrapezoidSet = (trapSet, gradient, color) => {
+      if (trapSet.length === 0) return;
 
-    gl.drawElements(gl.TRIANGLES, geometry.indices.length, gl.UNSIGNED_INT, 0);
+      const geometry = this.generateTrapezoidGeometry(trapSet);
+
+      gl.enableVertexAttribArray(positionLoc);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this._positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, geometry.positions, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+      gl.enableVertexAttribArray(trapezoidBoundsLoc);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBoundsBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBounds, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(trapezoidBoundsLoc, 4, gl.FLOAT, false, 0, 0);
+
+      gl.enableVertexAttribArray(trapezoidBottomLoc);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this._trapezoidBottomBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, geometry.trapezoidBottom, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(trapezoidBottomLoc, 4, gl.FLOAT, false, 0, 0);
+
+      const gradientData = this.parseGradient(gradient, color);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this._gradientTexture);
+
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gradientData.textureWidth,
+        1,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        gradientData.textureData
+      );
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+      gl.uniform1i(gl.getUniformLocation(this._program, "gradientTexture"), 0);
+      gl.uniform1i(
+        gl.getUniformLocation(this._program, "gradientCount"),
+        gradientData.gradientCount
+      );
+      gl.uniform4fv(
+        gl.getUniformLocation(this._program, "fallbackColor"),
+        gradientData.fallbackColor
+      );
+
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW);
+
+      gl.drawElements(gl.TRIANGLES, geometry.indices.length, gl.UNSIGNED_INT, 0);
+    };
+
+    // If we have negativeGradient and separate trapezoid sets, render them separately
+    if (hasNegatives && negativeGradient && (positiveTrapezoids.length > 0 || negativeTrapezoids.length > 0)) {
+      // Render positive trapezoids with the normal gradient
+      renderTrapezoidSet(positiveTrapezoids, params.gradient, params.color);
+      
+      // Render negative trapezoids with negativeGradient
+      renderTrapezoidSet(negativeTrapezoids, negativeGradient, params.color);
+    } else {
+      // Fallback to rendering all trapezoids with the same gradient (original behavior)
+      renderTrapezoidSet(trapezoids, params.gradient, params.color);
+    }
     
     const error = gl.getError();
     if (error !== gl.NO_ERROR) {

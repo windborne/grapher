@@ -27,6 +27,7 @@ export interface SeriesData {
   minPointSpacing?: number;
   rendering?: 'line' | 'bar' | 'area' | 'shadow';
   negativeColor?: string;
+  negativeGradient?: string[] | [number, string][];
   zeroLineWidth?: number;
   zeroLineColor?: string;
   zeroLineY?: number | string;

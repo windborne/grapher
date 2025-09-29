@@ -14,6 +14,15 @@ const series = [
             [0.9, '#007a75'],
             [1, '#ffff00']
         ],
+        color: 'white',
+        negativeColor: 'red',
+        negativeGradient: [
+            [0, 'white'],
+            [0.5, 'white'],
+            [0.6, 'yellow'],
+            [0.9, 'green'],
+            [1, 'red']
+        ],
         zeroLineWidth: 5,
         zeroLineColor: '#111',
         showIndividualPoints: true

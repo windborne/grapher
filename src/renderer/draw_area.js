@@ -34,6 +34,7 @@ export default function drawArea(
     zero,
     hasNegatives,
     gradient,
+    negativeGradient,
     zeroColor,
     zeroWidth,
     showIndividualPoints,
@@ -95,9 +96,10 @@ export default function drawArea(
   // we want to draw a polygon with a flat line at areaBottom, and then follows the shape of the data
   const areaBottom = hasNegatives ? zero : sizing.renderHeight;
 
-  const areaPaths = pathsFrom(dataInRenderSpace);
+  const shouldSplitAreaPaths = hasNegatives && negativeGradient;
+  const areaPaths = pathsFrom(dataInRenderSpace, shouldSplitAreaPaths ? { splitAtY: zero } : undefined);
   const areaBottomPaths =
-    inRenderSpaceAreaBottom && pathsFrom(inRenderSpaceAreaBottom);
+    inRenderSpaceAreaBottom && pathsFrom(inRenderSpaceAreaBottom, shouldSplitAreaPaths ? { splitAtY: zero } : undefined);
 
   const linePaths = pathsFrom(dataInRenderSpace, {
     splitAtY: zero,
@@ -139,6 +141,56 @@ export default function drawArea(
   for (let pathI = 0; pathI < areaPaths.length; pathI++) {
     const path = areaPaths[pathI];
     const areaBottomPath = areaBottomPaths && areaBottomPaths[pathI];
+    
+    // Determine if this path segment is positive or negative for gradient application
+    let isPositive = true;
+    if (hasNegatives && negativeGradient && path.length > 0) {
+      // Check the average Y position of the path to determine if it's above or below zero
+      let sumY = 0;
+      for (let i = 0; i < path.length; i++) {
+        sumY += path[i][1];
+      }
+      const avgY = sumY / path.length;
+      isPositive = avgY <= zero; // In screen coordinates, smaller Y is higher up (positive)
+    }
+    
+    // Set the fill style based on whether this is a positive or negative segment
+    if (hasNegatives && negativeGradient) {
+      if (isPositive) {
+        // Use the original gradient or color for positive areas
+        if (gradient && gradient.length >= 2) {
+          const globalGradient = context.createLinearGradient(0, 0, 0, sizing.renderHeight);
+          for (let i = 0; i < gradient.length; i++) {
+            const value = gradient[i];
+            if (Array.isArray(value)) {
+              globalGradient.addColorStop(value[0], value[1]);
+            } else {
+              globalGradient.addColorStop(i / (gradient.length - 1), value);
+            }
+          }
+          context.fillStyle = globalGradient;
+        } else {
+          context.fillStyle = color;
+        }
+      } else {
+        // Use negativeGradient for negative areas
+        if (negativeGradient.length >= 2) {
+          const negGradient = context.createLinearGradient(0, 0, 0, sizing.renderHeight);
+          for (let i = 0; i < negativeGradient.length; i++) {
+            const value = negativeGradient[i];
+            if (Array.isArray(value)) {
+              negGradient.addColorStop(value[0], value[1]);
+            } else {
+              negGradient.addColorStop(i / (negativeGradient.length - 1), value);
+            }
+          }
+          context.fillStyle = negGradient;
+        } else {
+          context.fillStyle = negativeColor || color;
+        }
+      }
+    }
+    
     context.beginPath();
 
     const [firstX, _startY] = path[0];
@@ -180,7 +232,7 @@ export default function drawArea(
       continue;
     }
 
-    if (hasNegatives) {
+    if (hasNegatives && negativeColor) {
       let positive = true;
       if (path.length >= 2) {
         positive = path[1][1] <= zero;
@@ -193,6 +245,8 @@ export default function drawArea(
       } else {
         context.strokeStyle = negativeColor;
       }
+    } else {
+      context.strokeStyle = color;
     }
 
     context.beginPath();
@@ -222,8 +276,6 @@ export default function drawArea(
   }
 
   if (showIndividualPoints && !renderCutoffGradient) {
-    context.fillStyle = color;
-
     // Apply point spacing for individual point circles only
     function applyPointSpacing(points, minSpacing) {
       if (!minSpacing || points.length <= 1) {
@@ -246,16 +298,19 @@ export default function drawArea(
 
     const pointsToRender = applyPointSpacing(individualPoints, minPointSpacing);
     for (let [x, y] of pointsToRender) {
+      // Determine the color for this point
+      let pointColor = color;
       if (negativeColor && hasNegatives) {
         if (y === zero && zeroColor) {
-          context.fillStyle = zeroColor;
+          pointColor = zeroColor;
         } else if (y < zero) {
-          context.fillStyle = color;
+          pointColor = color;
         } else {
-          context.fillStyle = negativeColor;
+          pointColor = negativeColor;
         }
       }
-
+      
+      context.fillStyle = pointColor;
       context.beginPath();
       context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
       context.fill();

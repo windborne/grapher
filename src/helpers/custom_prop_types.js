@@ -67,8 +67,9 @@ const SingleSeries = PropTypes.shape({
     showIndividualPoints: PropTypes.bool,
     minPointSpacing: PropTypes.number,
     rendering: PropTypes.oneOf(['line', 'bar', 'area', 'shadow']), // defaults to line
-    negativeColor: PropTypes.string, // only applies to bar
-    gradient: PropTypes.array, // only applies to area
+    negativeColor: PropTypes.string, // colors lines and points below zero for all renderings
+    gradient: PropTypes.array, // only applies to area and shadow
+    negativeGradient: PropTypes.array, // gradient for values below zero (area and shadow)
     zeroLineWidth: PropTypes.number, // only applies to bar and area
     zeroLineColor: PropTypes.string,  // only applies to bar and area
     zeroLineY: PropTypes.oneOfType([PropTypes.number, PropTypes.string]), // only applies to bar and area
