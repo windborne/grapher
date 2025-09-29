@@ -125,7 +125,22 @@ export default class LineProgram {
             const pointSize = parameters.pointRadius ? parameters.pointRadius * 2 * DPI_INCREASE : 2*(thickness+6);
             gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'pointSize'), pointSize);
 
-            const individualPoints = parameters.getIndividualPoints();
+            let individualPoints = parameters.getIndividualPoints();
+            
+            if (parameters.minPointSpacing && individualPoints.length > 1) {
+                const spacedPoints = [];
+                let lastX = -Infinity;
+                
+                for (const point of individualPoints) {
+                    const [x] = point;
+                    if (x - lastX >= parameters.minPointSpacing) {
+                        spacedPoints.push(point);
+                        lastX = x;
+                    }
+                }
+                
+                individualPoints = spacedPoints;
+            }
 
             if (parameters.cutoffIndex !== undefined && parameters.cutoffIndex > 0 && parameters.originalData) {
                 const { originalData } = parameters;

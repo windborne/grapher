@@ -9,27 +9,19 @@ for (let i = 0; i < 1000; i++) {
 }
 
 const series = [
-    // {
-    //     data: data.map(([x, y]) => [x, -y]),
-    //     showIndividualPoints: true,
-    //     minPointSpacing: 100, 
-    //     color: 'rgb(150, 150, 240)',
-    //     gradient: [
-    //         [0, 'rgba(150, 150, 240, 0.5)'],
-    //         [1, 'rgba(150, 150, 240, 0.5)']
-    //     ],
-    //     name: 'Spaced Points',
-    //     pointRadius: 10,
-    //     rendering: 'shadow'
-    // },
+    {
+        data: data.map(([x, y]) => [x, -y]),
+        showIndividualPoints: true,
+        minPointSpacing: 100, 
+        color: 'rgb(150, 150, 240)',
+        name: 'Spaced Points',
+        pointRadius: 10,
+        rendering: 'shadow'
+    },
     {
         data,
         showIndividualPoints: true,
         color: 'rgb(240, 150, 150)',
-        gradient: [
-            [0, 'rgba(240, 150, 150, 0.5)'],
-            [1, 'rgba(240, 150, 150, 0.5)']
-        ],
         name: 'No Spacing',
         pointRadius: 3,
         rendering: 'shadow',

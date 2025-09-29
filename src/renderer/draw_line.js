@@ -2,8 +2,27 @@ import {DPI_INCREASE} from './size_canvas';
 import pathsFrom from './paths_from';
 import { applyReducedOpacity } from "../helpers/colors";
 
+function applyPointSpacing(points, minSpacing) {
+    if (!minSpacing || points.length <= 1) {
+        return points;
+    }
+    
+    const spacedPoints = [];
+    let lastX = -Infinity;
+    
+    for (const point of points) {
+        const [x] = point;
+        if (x - lastX >= minSpacing) {
+            spacedPoints.push(point);
+            lastX = x;
+        }
+    }
+    
+    return spacedPoints;
+}
+
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, getIndividualPoints, getRanges, cutoffIndex, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -343,8 +362,9 @@ export default function drawLine(dataInRenderSpace, {
                 const visibleMinTime = selectionBounds.minX instanceof Date ? selectionBounds.minX.getTime() : selectionBounds.minX;
                 const visibleMaxTime = selectionBounds.maxX instanceof Date ? selectionBounds.maxX.getTime() : selectionBounds.maxX;
                 
-                for (let i = 0; i < individualPoints.length; i++) {
-                    const [x, y] = individualPoints[i];
+                const spacedPoints = applyPointSpacing(individualPoints, minPointSpacing);
+                for (let i = 0; i < spacedPoints.length; i++) {
+                    const [x, y] = spacedPoints[i];
                     
                     let isBeforeCutoff = false;
                     if (cutoffTime < visibleMinTime) {
@@ -369,8 +389,9 @@ export default function drawLine(dataInRenderSpace, {
                     context.fill();
                 }
             } else if (!selectionBounds) {
-                for (let i = 0; i < individualPoints.length; i++) {
-                    const [x, y] = individualPoints[i];
+                const spacedPoints = applyPointSpacing(individualPoints, minPointSpacing);
+                for (let i = 0; i < spacedPoints.length; i++) {
+                    const [x, y] = spacedPoints[i];
                     context.fillStyle = color;
                     context.beginPath();
                     context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
@@ -380,8 +401,9 @@ export default function drawLine(dataInRenderSpace, {
                 const visibleMinTime = selectionBounds.minX instanceof Date ? selectionBounds.minX.getTime() : selectionBounds.minX;
                 const visibleMaxTime = selectionBounds.maxX instanceof Date ? selectionBounds.maxX.getTime() : selectionBounds.maxX;
                 
-                for (let i = 0; i < individualPoints.length; i++) {
-                    const [x, y] = individualPoints[i];
+                const spacedPoints = applyPointSpacing(individualPoints, minPointSpacing);
+                for (let i = 0; i < spacedPoints.length; i++) {
+                    const [x, y] = spacedPoints[i];
                     
                     let isBeforeCutoff = false;
                     if (cutoffTime < visibleMinTime) {
@@ -407,8 +429,9 @@ export default function drawLine(dataInRenderSpace, {
                 }
             }
         } else {
-            for (let i = 0; i < individualPoints.length; i++) {
-                const [x, y] = individualPoints[i];
+            const spacedPoints = applyPointSpacing(individualPoints, minPointSpacing);
+            for (let i = 0; i < spacedPoints.length; i++) {
+                const [x, y] = spacedPoints[i];
                 context.fillStyle = color;
                 context.beginPath();
                 context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);

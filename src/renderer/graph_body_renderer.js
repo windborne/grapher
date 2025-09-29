@@ -188,21 +188,6 @@ export default class GraphBodyRenderer extends Eventable {
                     return getIndividualPoints(true, includeBeyondBounds);
                 }
 
-                // Apply minPointSpacing if specified
-                if (singleSeries.minPointSpacing && individualPoints.length > 1) {
-                    const spacedPoints = [];
-                    let lastX = -Infinity;
-                    
-                    for (const [x, y] of individualPoints) {
-                        if (x - lastX >= singleSeries.minPointSpacing) {
-                            spacedPoints.push([x, y]);
-                            lastX = x;
-                        }
-                    }
-                    
-                    return spacedPoints;
-                }
-
                 return individualPoints;
             }
 
@@ -270,19 +255,6 @@ export default class GraphBodyRenderer extends Eventable {
                 individualPoints.unshift([beforeXCoord, beforeYCoord]);
             }
 
-            if (singleSeries.minPointSpacing && individualPoints.length > 1) {
-                const spacedPoints = [];
-                let lastX = -Infinity;
-                
-                for (const [x, y] of individualPoints) {
-                    if (x - lastX >= singleSeries.minPointSpacing) {
-                        spacedPoints.push([x, y]);
-                        lastX = x;
-                    }
-                }
-                
-                return spacedPoints;
-            }
             return individualPoints;
         };
 
@@ -399,6 +371,7 @@ export default class GraphBodyRenderer extends Eventable {
                 showIndividualPoints: typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints,
                 gradient: singleSeries.gradient,
                 pointRadius: singleSeries.pointRadius,
+                minPointSpacing: singleSeries.minPointSpacing,
                 highlighted,
                 width: width || singleSeries.width || defaultLineWidth,
                 shadowColor,
@@ -561,10 +534,12 @@ export default class GraphBodyRenderer extends Eventable {
             highlighted,
             showIndividualPoints: shouldShowIndividualPoints,
             pointRadius: singleSeries.pointRadius,
+            minPointSpacing: singleSeries.minPointSpacing,
             getIndividualPoints,
             getRanges: singleSeries.rangeKey ? getRanges : null,
             rendering: singleSeries.rendering  // Pass rendering type for all charts
         };
+        
 
         if (!inRenderSpace) {
             console.error('inRenderSpace is null for line rendering');

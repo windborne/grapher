@@ -39,6 +39,7 @@ export default function drawArea(
     showIndividualPoints,
     negativeColor,
     pointRadius,
+    minPointSpacing,
     width,
     highlighted,
     shadowColor = "black",
@@ -223,7 +224,28 @@ export default function drawArea(
   if (showIndividualPoints && !renderCutoffGradient) {
     context.fillStyle = color;
 
-    for (let [x, y] of individualPoints) {
+    // Apply point spacing for individual point circles only
+    function applyPointSpacing(points, minSpacing) {
+      if (!minSpacing || points.length <= 1) {
+          return points;
+      }
+      
+      const spacedPoints = [];
+      let lastX = -Infinity;
+      
+      for (const point of points) {
+          const [x] = point;
+          if (x - lastX >= minSpacing) {
+              spacedPoints.push(point);
+              lastX = x;
+          }
+      }
+      
+      return spacedPoints;
+    }
+
+    const pointsToRender = applyPointSpacing(individualPoints, minPointSpacing);
+    for (let [x, y] of pointsToRender) {
       if (negativeColor && hasNegatives) {
         if (y === zero && zeroColor) {
           context.fillStyle = zeroColor;
