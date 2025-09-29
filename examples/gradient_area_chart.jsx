@@ -16,13 +16,13 @@ const series = [
         ],
         color: 'white',
         negativeColor: 'red',
-        negativeGradient: [
-            [0, 'white'],
-            [0.5, 'white'],
-            [0.6, 'yellow'],
-            [0.9, 'green'],
-            [1, 'red']
-        ],
+        // negativeGradient: [
+        //     [0, 'white'],
+        //     [0.5, 'white'],
+        //     [0.6, 'yellow'],
+        //     [0.9, 'green'],
+        //     [1, 'red']
+        // ],
         zeroLineWidth: 5,
         zeroLineColor: '#111',
         showIndividualPoints: true
