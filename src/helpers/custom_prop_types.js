@@ -65,6 +65,7 @@ const SingleSeries = PropTypes.shape({
     background: PropTypes.object,
     hideFromKey: PropTypes.bool,
     showIndividualPoints: PropTypes.bool,
+    minPointSpacing: PropTypes.number,
     rendering: PropTypes.oneOf(['line', 'bar', 'area', 'shadow']), // defaults to line
     negativeColor: PropTypes.string, // only applies to bar
     gradient: PropTypes.array, // only applies to area
@@ -139,7 +140,7 @@ const DraggablePoint = PropTypes.shape({
 const DraggablePoints = PropTypes.arrayOf(DraggablePoint);
 
 const VerticalLine = PropTypes.shape({
-    x: PropTypes.number.isRequired,
+    x: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
     color: PropTypes.string,
     lineTop: PropTypes.number,
     width: PropTypes.number,

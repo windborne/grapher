@@ -24,6 +24,7 @@ export interface SeriesData {
   background?: object;
   hideFromKey?: boolean;
   showIndividualPoints?: boolean;
+  minPointSpacing?: number;
   rendering?: 'line' | 'bar' | 'area' | 'shadow';
   negativeColor?: string;
   zeroLineWidth?: number;
@@ -80,7 +81,7 @@ export interface DraggablePoint {
 }
 
 export interface VerticalLine {
-  x: number;
+  x: number | Date;
   color?: string;
   lineTop?: number;
   width?: number;

@@ -220,7 +220,7 @@ export default function drawArea(
     });
   }
 
-  if (showIndividualPoints) {
+  if (showIndividualPoints && !renderCutoffGradient) {
     context.fillStyle = color;
 
     for (let [x, y] of individualPoints) {
@@ -312,14 +312,15 @@ function drawAreaWithCutoff(
     cutoffTime = cutoffIndex;
   }
 
-  const firstTime =
-    originalData[0][0] instanceof Date
-      ? originalData[0][0].getTime()
-      : originalData[0][0];
-  const lastTime =
-    originalData[originalData.length - 1][0] instanceof Date
-      ? originalData[originalData.length - 1][0].getTime()
-      : originalData[originalData.length - 1][0];
+  let firstTime, lastTime;
+  if (isPreview && selectionBounds) {
+    firstTime = selectionBounds.minX instanceof Date ? selectionBounds.minX.getTime() : selectionBounds.minX;
+    lastTime = selectionBounds.maxX instanceof Date ? selectionBounds.maxX.getTime() : selectionBounds.maxX;
+  } else {
+    firstTime = originalData[0][0] instanceof Date ? originalData[0][0].getTime() : originalData[0][0];
+    lastTime = originalData[originalData.length - 1][0] instanceof Date ? 
+      originalData[originalData.length - 1][0].getTime() : originalData[originalData.length - 1][0];
+  }
 
   const timeRatio = (cutoffTime - firstTime) / (lastTime - firstTime);
 
@@ -657,7 +658,7 @@ function drawAreaWithCutoff(
     }
 
     // draw outline lines with cutoff
-    if (timeRatio >= 0 && timeRatio <= 1) {
+    if (timeRatio >= 0 && timeRatio <= 1 && !isPreview) {
       if (selectionBounds) {
         const visibleMinTime =
           selectionBounds.minX instanceof Date
@@ -719,7 +720,7 @@ function drawAreaWithCutoff(
           highlighted,
         });
       }
-    } else {
+    } else if (!isPreview) {
       // draw lines normally without cutoff
       drawLinesNormally(linePaths, {
         color,
@@ -744,7 +745,7 @@ function drawAreaWithCutoff(
       });
     }
 
-    if (showIndividualPoints) {
+    if (showIndividualPoints && !isPreview) {
       if (timeRatio >= 0 && timeRatio <= 1) {
         if (selectionBounds) {
           const visibleMinTime =
@@ -1072,71 +1073,48 @@ function drawLinesWithCutoff(
   }
   width *= DPI_INCREASE;
 
-  let totalLength = 0;
-  const pathLengths = [];
-
-  for (let path of linePaths) {
-    if (path.length > 0) {
-      pathLengths.push(path.length);
-      totalLength += path.length;
-    } else {
-      pathLengths.push(0);
-    }
-  }
-
-  if (totalLength === 0) return;
-
-  const globalCutoffIndex = timeRatio * totalLength;
-
-  let currentIndex = 0;
-  let targetPathIndex = -1;
-  let cutoffIndexInPath = 0;
-
-  for (let i = 0; i < pathLengths.length; i++) {
-    if (pathLengths[i] === 0) continue;
-
-    if (globalCutoffIndex <= currentIndex + pathLengths[i]) {
-      targetPathIndex = i;
-      cutoffIndexInPath = globalCutoffIndex - currentIndex;
-      break;
-    }
-    currentIndex += pathLengths[i];
-  }
-
+  const cutoffPixelX = timeRatio * context.canvas.width;
   const preCutoffPaths = [];
   const postCutoffPaths = [];
-  let ghostPoint = null;
 
-  for (let i = 0; i < linePaths.length; i++) {
-    const path = linePaths[i];
+  for (let path of linePaths) {
     if (!path.length) continue;
 
-    if (i < targetPathIndex) {
-      preCutoffPaths.push(path);
-    } else if (i > targetPathIndex) {
-      postCutoffPaths.push(path);
-    } else if (i === targetPathIndex) {
-      const splitIndex = Math.floor(cutoffIndexInPath);
-      const fraction = cutoffIndexInPath - splitIndex;
+    const prePath = [];
+    const postPath = [];
+    let ghostPoint = null;
+    let splitIndex = -1;
 
-      if (splitIndex < path.length - 1 && fraction > 0) {
-        const [x1, y1] = path[splitIndex];
-        const [x2, y2] = path[splitIndex + 1];
-        ghostPoint = [x1 + fraction * (x2 - x1), y1 + fraction * (y2 - y1)];
+    for (let i = 0; i < path.length; i++) {
+      const [x, y] = path[i];
+      
+      if (x < cutoffPixelX) {
+        prePath.push([x, y]);
+        splitIndex = i;
+      } else {
+        postPath.push([x, y]);
       }
+    }
 
-      if (splitIndex > 0) {
-        const prePath = path.slice(0, splitIndex + 1);
-        if (ghostPoint) prePath.push(ghostPoint);
-        preCutoffPaths.push(prePath);
+    if (prePath.length > 0 && postPath.length > 0) {
+      const lastPrePoint = prePath[prePath.length - 1];
+      const firstPostPoint = postPath[0];
+      const [x1, y1] = lastPrePoint;
+      const [x2, y2] = firstPostPoint;
+      
+      if (x2 !== x1) {
+        const fraction = (cutoffPixelX - x1) / (x2 - x1);
+        ghostPoint = [cutoffPixelX, y1 + fraction * (y2 - y1)];
+        prePath.push(ghostPoint);
+        postPath.unshift(ghostPoint);
       }
+    }
 
-      if (splitIndex < path.length - 1) {
-        const postPath = [];
-        if (ghostPoint) postPath.push(ghostPoint);
-        postPath.push(...path.slice(splitIndex + 1));
-        postCutoffPaths.push(postPath);
-      }
+    if (prePath.length > 0) {
+      preCutoffPaths.push(prePath);
+    }
+    if (postPath.length > 0) {
+      postCutoffPaths.push(postPath);
     }
   }
 
@@ -1200,12 +1178,13 @@ function drawPointsWithCutoffByRatio(
     return;
   }
 
-  const cutoffPixelIndex = timeRatio * individualPoints.length;
+  const canvasWidth = context.canvas.width;
+  const cutoffPixelX = timeRatio * canvasWidth;
 
   for (let i = 0; i < individualPoints.length; i++) {
     const [x, y] = individualPoints[i];
 
-    const isBeforeCutoff = i < cutoffPixelIndex;
+    const isBeforeCutoff = x < cutoffPixelX;
 
     let pointColor = color;
     if (isBeforeCutoff) {

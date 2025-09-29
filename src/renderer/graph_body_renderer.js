@@ -161,7 +161,7 @@ export default class GraphBodyRenderer extends Eventable {
         }
         
         const getIndividualPoints = (useDataSpace, includeBeyondBounds = false) => {
-            if (!useDataSpace && inRenderSpace && inRenderSpace.yValues) {
+            if (!useDataSpace && inRenderSpace && inRenderSpace.yValues && !showIndividualPoints) {
                 if (!bounds) {
                     bounds = singleSeries.axis.currentBounds;
                 }
@@ -186,6 +186,21 @@ export default class GraphBodyRenderer extends Eventable {
                 
                 if (individualPoints.length < 50) {
                     return getIndividualPoints(true, includeBeyondBounds);
+                }
+
+                // Apply minPointSpacing if specified
+                if (singleSeries.minPointSpacing && individualPoints.length > 1) {
+                    const spacedPoints = [];
+                    let lastX = -Infinity;
+                    
+                    for (const [x, y] of individualPoints) {
+                        if (x - lastX >= singleSeries.minPointSpacing) {
+                            spacedPoints.push([x, y]);
+                            lastX = x;
+                        }
+                    }
+                    
+                    return spacedPoints;
                 }
 
                 return individualPoints;
@@ -255,6 +270,19 @@ export default class GraphBodyRenderer extends Eventable {
                 individualPoints.unshift([beforeXCoord, beforeYCoord]);
             }
 
+            if (singleSeries.minPointSpacing && individualPoints.length > 1) {
+                const spacedPoints = [];
+                let lastX = -Infinity;
+                
+                for (const [x, y] of individualPoints) {
+                    if (x - lastX >= singleSeries.minPointSpacing) {
+                        spacedPoints.push([x, y]);
+                        lastX = x;
+                    }
+                }
+                
+                return spacedPoints;
+            }
             return individualPoints;
         };
 
@@ -351,7 +379,7 @@ export default class GraphBodyRenderer extends Eventable {
 
             if (singleSeries.cutoffTime) {
                 barParams.cutoffIndex = cutoffIndex;
-                barParams.cutoffOpacity = 0.35;
+                barParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
                 barParams.originalData = cutoffData;
                 barParams.renderCutoffGradient = cutoffIndex >= 0; 
                 
@@ -380,7 +408,7 @@ export default class GraphBodyRenderer extends Eventable {
 
         if (singleSeries.cutoffTime) {
             areaParams.cutoffIndex = cutoffIndex;
-            areaParams.cutoffOpacity = 0.35;
+            areaParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
             areaParams.originalData = cutoffData;
             areaParams.renderCutoffGradient = cutoffIndex >= 0; 
             areaParams.isPreview = this === this._stateController.rangeGraphRenderer; 
@@ -418,11 +446,18 @@ export default class GraphBodyRenderer extends Eventable {
                 bounds = singleSeries.axis.currentBounds;
             }
             
-            let zero = singleSeries.zeroLineY === 'bottom' ?
-                this._sizing.renderHeight :
-                singleSeries.zeroLineY !== undefined ? 
-                    (1.0 - ((singleSeries.zeroLineY) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight :
-                    this._sizing.renderHeight;
+            let zero;
+            if (singleSeries.zeroLineY === 'bottom') {
+                zero = this._sizing.renderHeight;
+            } else if (singleSeries.zeroLineY !== undefined) {
+                zero = (1.0 - ((singleSeries.zeroLineY) - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+            } else {
+                if (bounds.minY <= 0 && bounds.maxY >= 0) {
+                    zero = (1.0 - (0 - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
+                } else {
+                    zero = this._sizing.renderHeight;
+                }
+            }
                 
             const boundsChanged = !this._lastBounds || 
                 bounds.minY !== this._lastBounds.minY || 
@@ -452,7 +487,7 @@ export default class GraphBodyRenderer extends Eventable {
 
             if (singleSeries.cutoffTime) {
                 shadowParams.cutoffIndex = cutoffIndex;
-                shadowParams.cutoffOpacity = 0.35;
+                shadowParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
                 shadowParams.originalData = cutoffData;
                 shadowParams.renderCutoffGradient = cutoffIndex >= 0; 
                 shadowParams.isPreview = this === this._stateController.rangeGraphRenderer; 
@@ -524,6 +559,7 @@ export default class GraphBodyRenderer extends Eventable {
             dashPattern: singleSeries.dashPattern,
             highlighted,
             showIndividualPoints: shouldShowIndividualPoints,
+            pointRadius: singleSeries.pointRadius,
             getIndividualPoints,
             getRanges: singleSeries.rangeKey ? getRanges : null,
             rendering: singleSeries.rendering  // Pass rendering type for all charts
@@ -536,7 +572,7 @@ export default class GraphBodyRenderer extends Eventable {
         
         if (singleSeries.cutoffTime) {
             drawParams.cutoffIndex = cutoffIndex;
-            drawParams.cutoffOpacity = 0.35;
+            drawParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
             drawParams.originalData = cutoffData;
             drawParams.renderCutoffGradient = cutoffIndex >= 0;
             drawParams.currentBounds = bounds;

@@ -422,9 +422,14 @@ export default class ShadowProgram {
         params.color,
         cutoffOpacity
       );
+      const translucentGradient = applyReducedOpacityToGradient(
+        params.gradient,
+        cutoffOpacity
+      );
       this.draw(individualPoints, {
         ...params,
         color: reducedOpacityColor,
+        gradient: translucentGradient,
         renderCutoffGradient: false,
       });
     } else {

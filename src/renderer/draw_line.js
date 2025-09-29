@@ -3,7 +3,7 @@ import pathsFrom from './paths_from';
 import { applyReducedOpacity } from "../helpers/colors";
 
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, getIndividualPoints, getRanges, cutoffIndex, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, getIndividualPoints, getRanges, cutoffIndex, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -340,16 +340,22 @@ export default function drawLine(dataInRenderSpace, {
             }
             
             if (isPreview) {
-                const firstTime = originalData[0][0] instanceof Date ? originalData[0][0].getTime() : originalData[0][0];
-                const lastTime = originalData[originalData.length - 1][0] instanceof Date ? 
-                    originalData[originalData.length - 1][0].getTime() : originalData[originalData.length - 1][0];
-                const timeRatio = (cutoffTime - firstTime) / (lastTime - firstTime);
+                const visibleMinTime = selectionBounds.minX instanceof Date ? selectionBounds.minX.getTime() : selectionBounds.minX;
+                const visibleMaxTime = selectionBounds.maxX instanceof Date ? selectionBounds.maxX.getTime() : selectionBounds.maxX;
                 
                 for (let i = 0; i < individualPoints.length; i++) {
                     const [x, y] = individualPoints[i];
                     
-                    const pointRatio = i / (individualPoints.length - 1);
-                    const isBeforeCutoff = pointRatio < timeRatio;
+                    let isBeforeCutoff = false;
+                    if (cutoffTime < visibleMinTime) {
+                        isBeforeCutoff = false;
+                    } else if (cutoffTime > visibleMaxTime) {
+                        isBeforeCutoff = (rendering !== 'shadow');
+                    } else {
+                        const visibleCutoffRatio = (cutoffTime - visibleMinTime) / (visibleMaxTime - visibleMinTime);
+                        const cutoffPixelX = visibleCutoffRatio * context.canvas.width;
+                        isBeforeCutoff = x < cutoffPixelX;
+                    }
                     
                     if (isBeforeCutoff) {
                         const reducedOpacityColor = applyReducedOpacity(color, cutoffOpacity);
@@ -359,7 +365,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     context.beginPath();
-                    context.arc(x, y, width + 4, 0, 2 * Math.PI, false);
+                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
                     context.fill();
                 }
             } else if (!selectionBounds) {
@@ -367,7 +373,7 @@ export default function drawLine(dataInRenderSpace, {
                     const [x, y] = individualPoints[i];
                     context.fillStyle = color;
                     context.beginPath();
-                    context.arc(x, y, width + 4, 0, 2 * Math.PI, false);
+                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
                     context.fill();
                 }
             } else {
@@ -396,7 +402,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     context.beginPath();
-                    context.arc(x, y, width + 4, 0, 2 * Math.PI, false);
+                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
                     context.fill();
                 }
             }
@@ -405,7 +411,7 @@ export default function drawLine(dataInRenderSpace, {
                 const [x, y] = individualPoints[i];
                 context.fillStyle = color;
                 context.beginPath();
-                context.arc(x, y, width + 4, 0, 2 * Math.PI, false);
+                context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
                 context.fill();
             }
         }

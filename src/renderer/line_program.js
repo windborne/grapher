@@ -122,7 +122,8 @@ export default class LineProgram {
 
             gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'width'), width);
             gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'height'), height);
-            gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'pointSize'), 2*(thickness+6));
+            const pointSize = parameters.pointRadius ? parameters.pointRadius * 2 * DPI_INCREASE : 2*(thickness+6);
+            gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'pointSize'), pointSize);
 
             const individualPoints = parameters.getIndividualPoints();
 
@@ -150,14 +151,14 @@ export default class LineProgram {
                 const postCutoffPoints = [];
 
                 if (parameters.isPreview) {
-                    const firstTime = originalData[0][0] instanceof Date ? originalData[0][0].getTime() : originalData[0][0];
-                    const lastTime = originalData[originalData.length - 1][0] instanceof Date ? 
-                        originalData[originalData.length - 1][0].getTime() : originalData[originalData.length - 1][0];
-                    const timeRatio = (cutoffTime - firstTime) / (lastTime - firstTime);
+                    const visibleMinTime = parameters.selectionBounds.minX instanceof Date ? parameters.selectionBounds.minX.getTime() : parameters.selectionBounds.minX;
+                    const visibleMaxTime = parameters.selectionBounds.maxX instanceof Date ? parameters.selectionBounds.maxX.getTime() : parameters.selectionBounds.maxX;
+                    const timeRatio = (cutoffTime - visibleMinTime) / (visibleMaxTime - visibleMinTime);
+                    const cutoffPixelX = timeRatio * width;
                     
                     for (let i = 0; i < individualPoints.length; i++) {
-                        const pointRatio = i / (individualPoints.length - 1);
-                        if (pointRatio < timeRatio) {
+                        const [pixelX, pixelY] = individualPoints[i];
+                        if (pixelX < cutoffPixelX) {
                             preCutoffPoints.push(individualPoints[i]);
                         } else {
                             postCutoffPoints.push(individualPoints[i]);
@@ -252,10 +253,10 @@ export default class LineProgram {
         }
 
         if (parameters.isPreview) {
-            const firstTime = originalData[0][0] instanceof Date ? originalData[0][0].getTime() : originalData[0][0];
-            const lastTime = originalData[originalData.length - 1][0] instanceof Date ? 
-                originalData[originalData.length - 1][0].getTime() : originalData[originalData.length - 1][0];
-            const timeRatio = (cutoffTime - firstTime) / (lastTime - firstTime);
+            const gl = this._gl;
+            const visibleMinTime = selectionBounds.minX instanceof Date ? selectionBounds.minX.getTime() : selectionBounds.minX;
+            const visibleMaxTime = selectionBounds.maxX instanceof Date ? selectionBounds.maxX.getTime() : selectionBounds.maxX;
+            const timeRatio = (cutoffTime - visibleMinTime) / (visibleMaxTime - visibleMinTime);
             
             if (timeRatio < 0) {
                 this.draw(dataInRenderSpace, { ...parameters, renderCutoffGradient: false });
@@ -267,7 +268,6 @@ export default class LineProgram {
                     renderCutoffGradient: false 
                 });
             } else {
-                const gl = this._gl;
                 gl.enable(gl.BLEND);
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
                 

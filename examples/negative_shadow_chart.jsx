@@ -12,7 +12,7 @@ const series = [
         width: 2,
         showIndividualPoints: true,
         zeroLineWidth: 3,
-        zeroLineColor: '#fff'
+        zeroLineColor: '#fff',
     },
 ];
 

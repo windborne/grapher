@@ -30,6 +30,7 @@ module.exports = [
         pages: [
             'spiky_graph',
             'dense_graph',
+            'dense_graph2',
             'lots_of_lines_graph',
             'spiky_graph2',
             'flat_graph',
@@ -67,6 +68,7 @@ module.exports = [
             'custom_tooltips_graph',
             'combined_tooltips_graph',
             'mark_now_graph',
+            'min_point_spacing_graph',
         ]
     },
     {

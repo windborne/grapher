@@ -214,7 +214,7 @@ Grapher supports multiple data formats within a series:
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
-| **x** | `number` | **✓** | X-coordinate position where the line should appear. |
+| **x** | `number \| Date` | **✓** | X-coordinate position where the line should appear. Can be a numeric value or a Date object. |
 | color | `string` | ✗ | Optional line color. |
 | lineTop | `number` | ✗ | Optional value to specify the top position of the line. |
 | width | `number` | ✗ | Optional line width. |
