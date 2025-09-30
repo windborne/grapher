@@ -8,11 +8,6 @@ const series = [
         data: [0, 1, 4, 10, 0],
         showIndividualPoints: true,
         defaultAlwaysTooltipped: true
-    },
-    {
-        data: [2, 4, 6],
-        showIndividualPoints: true,
-        defaultAlwaysTooltipped: true
     }
 ];
 
@@ -20,7 +15,6 @@ renderPage(
     <ExamplePage page="values_graph">
         <Grapher
             series={series}
-            theme="day"
         />
     </ExamplePage>
 );
