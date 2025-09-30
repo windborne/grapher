@@ -38,6 +38,7 @@ export interface SeriesData {
   gradient?: string[] | [number, string][];
   rangeKey?: string;
   cutoffTime?: number | Date | 'now';
+  cutoffOpacity?: number;
 }
 
 export interface TooltipOptions {

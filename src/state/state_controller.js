@@ -889,6 +889,7 @@ export default class StateController extends Eventable {
                     shadowColor: 'transparent',
                     shadowBlur: 0,
                     width: 1,
+                    showIndividualPoints: false,
                     bounds: rangeGraphBounds,
                     globalBounds: rangeGraphBounds,
                     inRenderSpaceAreaBottom: singleSeries.inRenderSpaceRangeGraphAreaBottom

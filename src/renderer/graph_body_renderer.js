@@ -535,7 +535,10 @@ export default class GraphBodyRenderer extends Eventable {
             }
         }
 
-        const shouldShowIndividualPoints = typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints;
+        const isRangeGraph = this === this._stateController.rangeGraphRenderer;
+        const shouldShowIndividualPoints = isRangeGraph 
+            ? false 
+            : (typeof singleSeries.showIndividualPoints === 'boolean' ? singleSeries.showIndividualPoints : showIndividualPoints);
 
         if (!bounds) {
             bounds = singleSeries.axis?.currentBounds || globalBounds;
