@@ -612,6 +612,19 @@ export default class GraphBodyRenderer extends Eventable {
             zeroColor: singleSeries.zeroLineColor
         };
         
+        if (this._webgl && singleSeries.rendering === 'shadow' && singleSeries.cutoffTime && (width > 0 || shouldShowIndividualPoints)) {
+            drawParams.cutoffIndex = cutoffIndex;
+            drawParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
+            drawParams.originalData = cutoffData;
+            drawParams.renderCutoffGradient = cutoffIndex >= 0;
+            
+            const selection = this === this._stateController.rangeGraphRenderer 
+                ? this._stateController._bounds 
+                : (this._stateController._selection || this._stateController._bounds);
+            drawParams.selectionBounds = selection || bounds;
+            drawParams.currentBounds = bounds;
+        }
+        
 
         if (!inRenderSpace) {
             console.error('inRenderSpace is null for line rendering');

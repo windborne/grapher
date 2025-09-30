@@ -351,9 +351,27 @@ export default function drawLine(dataInRenderSpace, {
     if (showIndividualPoints) {
         const individualPoints = getIndividualPoints();
 
-        if (renderCutoffGradient && cutoffIndex !== undefined && originalData) {
+        if (renderCutoffGradient && cutoffIndex !== undefined && originalData && selectionBounds) {
+            const visibleBounds = selectionBounds;
+            let firstTime, lastTime;
+            
+            if (visibleBounds && visibleBounds.minX !== undefined && visibleBounds.maxX !== undefined) {
+                firstTime = visibleBounds.minX instanceof Date ? visibleBounds.minX.getTime() : visibleBounds.minX;
+                lastTime = visibleBounds.maxX instanceof Date ? visibleBounds.maxX.getTime() : visibleBounds.maxX;
+            } else {
+                const firstItem = originalData[0];
+                const lastItem = originalData[originalData.length - 1];
+                const firstX = firstItem[0];
+                const lastX = lastItem[0];
+                
+                firstTime = firstX instanceof Date ? firstX.getTime() : firstX;
+                lastTime = lastX instanceof Date ? lastX.getTime() : lastX;
+            }
+            
             let cutoffTime;
-            if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
+            if (typeof cutoffIndex === 'string' && cutoffIndex === 'now') {
+                cutoffTime = Date.now();
+            } else if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
                 const baseIndex = Math.floor(cutoffIndex);
                 const fraction = cutoffIndex - baseIndex;
                 
@@ -369,6 +387,38 @@ export default function drawLine(dataInRenderSpace, {
                 }
             } else {
                 cutoffTime = cutoffIndex; 
+            }
+            
+            if (cutoffTime !== null) {
+                const timeDiff = cutoffTime - firstTime;
+                const totalTime = lastTime - firstTime;
+                const timeRatio = timeDiff / totalTime;
+                
+                if (timeRatio > 1) {
+                    const spacedPoints = applyPointSpacing(individualPoints, minPointSpacing);
+                    for (let i = 0; i < spacedPoints.length; i++) {
+                        const [x, y] = spacedPoints[i];
+                        
+                        let pointColor = color;
+                        if (negativeColor && hasNegatives) {
+                            if (y === zero && zeroColor) {
+                                pointColor = zeroColor;
+                            } else if (y < zero) {
+                                pointColor = color;
+                            } else {
+                                pointColor = negativeColor;
+                            }
+                        }
+                        
+                        const { applyReducedOpacity } = require("../helpers/colors");
+                        const reducedOpacityColor = applyReducedOpacity(pointColor, cutoffOpacity);
+                        context.fillStyle = reducedOpacityColor;
+                        context.beginPath();
+                        context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                        context.fill();
+                    }
+                    return;
+                }
             }
             
             if (isPreview) {
@@ -417,7 +467,6 @@ export default function drawLine(dataInRenderSpace, {
                 for (let i = 0; i < spacedPoints.length; i++) {
                     const [x, y] = spacedPoints[i];
                     
-                    // Determine point color based on position relative to zero
                     let pointColor = color;
                     if (negativeColor && hasNegatives) {
                         if (y === zero && zeroColor) {
