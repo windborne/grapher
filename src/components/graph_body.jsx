@@ -21,7 +21,7 @@ import binarySearch from '../helpers/binary_search';
 
 export default React.memo(GraphBody);
 
-function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled, showTooltips, tooltipOptions, checkIntersection, draggablePoints, onPointDrag, onDraggablePointsDoubleClick, verticalLines, clockStyle, timeZone, onPointClick }) {
+function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled, showTooltips, showContextMenu=true, tooltipOptions, checkIntersection, draggablePoints, onPointDrag, onDraggablePointsDoubleClick, verticalLines, clockStyle, timeZone, onPointClick }) {
     const canvasEl = useCallback((el) => {
         if (stateController.primaryRenderer) {
             stateController.primaryRenderer.dispose();
@@ -278,11 +278,13 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
     
     const onContextMenu = (event) => {
         event.preventDefault();
-        stateController.setContextMenuMousePosition({
-            clientX: event.clientX,
-            clientY: event.clientY,
-            showing: true
-        });
+        if (showContextMenu !== false) {
+            stateController.setContextMenuMousePosition({
+                clientX: event.clientX,
+                clientY: event.clientY,
+                showing: true
+            });
+        }
     };
 
     return (

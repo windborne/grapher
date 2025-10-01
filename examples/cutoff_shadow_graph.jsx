@@ -821,6 +821,7 @@ renderPage(
         <Grapher
             series={series}
             webgl={true}
+            showContextMenu={false}
         />
     </ExamplePage>
 );

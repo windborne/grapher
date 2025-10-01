@@ -131,6 +131,7 @@ export interface GrapherProps {
   showRangeSelectors?: boolean;
   showSeriesKey?: boolean;
   showTooltips?: boolean;
+  showContextMenu?: boolean;
   showGrid?: boolean;
   showAxisColors?: boolean;
   bigLabels?: boolean;

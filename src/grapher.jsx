@@ -239,6 +239,7 @@ function Grapher(props) {
                                 bodyHeight={props.bodyHeight}
                                 boundsSelectionEnabled={props.boundsSelectionEnabled}
                                 showTooltips={props.showTooltips}
+                                showContextMenu={props.showContextMenu}
                                 tooltipOptions={props.tooltipOptions}
                                 checkIntersection={props.checkIntersection}
                                 draggablePoints={props.draggablePoints}

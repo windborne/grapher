@@ -29,6 +29,12 @@ export default function drawLine(dataInRenderSpace, {
         return;
     }
     
+    // Check if this is a WebGL context instead of 2D context
+    if (!context.setLineDash) {
+        console.error('drawLine called with WebGL context instead of 2D context');
+        return;
+    }
+    
     if (highlighted) {
         width += 2;
     }

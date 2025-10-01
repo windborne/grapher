@@ -96,6 +96,12 @@ export default class GraphBodyRenderer extends Eventable {
     clear() {
         if (this._webgl) {
             this._lineProgram.clear();
+            // Also clear the overlay canvas if it exists (for multi shadow charts)
+            if (this._overlayContext) {
+                this._overlayContext.clearRect(0, 0, this._overlayCanvas.width, this._overlayCanvas.height);
+            }
+            // Reset the initialization flag so canvas can be resized if needed
+            this._overlayCanvasInitialized = false;
         } else {
             this._context.clearRect(0, 0, this._context.canvas.width, this._context.canvas.height);
         }
@@ -564,8 +570,8 @@ export default class GraphBodyRenderer extends Eventable {
         // since WebGL and 2D contexts can't coexist on the same canvas
         let drawContext = this._context;
         
-        if (this._webgl && singleSeries.rendering === 'shadow' && (width > 0 || shouldShowIndividualPoints)) {
-            // Only create overlay if we're actually drawing lines or points
+        if (this._webgl && singleSeries.rendering === 'shadow') {
+            // Always create overlay for shadow charts since they need 2D context for drawLine
             if (!this._overlayCanvas) {
                 this._overlayCanvas = document.createElement('canvas');
                 this._overlayCanvas.style.position = 'absolute';
@@ -576,19 +582,28 @@ export default class GraphBodyRenderer extends Eventable {
                 this._canvas.parentNode.insertBefore(this._overlayCanvas, this._canvas.nextSibling);
             }
             
-            // Size the overlay canvas to match the main canvas
-            this._overlayCanvas.width = this._canvas.width;
-            this._overlayCanvas.height = this._canvas.height;
-            this._overlayCanvas.style.width = this._canvas.style.width;
-            this._overlayCanvas.style.height = this._canvas.style.height;
-            
-            // Clear the overlay before drawing
-            this._overlayContext.clearRect(0, 0, this._overlayCanvas.width, this._overlayCanvas.height);
-            
+            // Size the overlay canvas to match the main canvas (only once when creating)
+            if (!this._overlayCanvasInitialized) {
+                this._overlayCanvas.width = this._canvas.width;
+                this._overlayCanvas.height = this._canvas.height;
+                this._overlayCanvas.style.width = this._canvas.style.width;
+                this._overlayCanvas.style.height = this._canvas.style.height;
+                this._overlayCanvasInitialized = true;
+            }
             drawContext = this._overlayContext;
         } else if (this._context2d) {
             // For non-WebGL or non-shadow charts with 2D context
             drawContext = this._context2d;
+        } else if (this._webgl) {
+            // Fallback for WebGL: create a temporary context for drawing lines
+            console.warn('Creating fallback 2D context for WebGL shadow chart');
+            if (!this._fallbackContext) {
+                const fallbackCanvas = document.createElement('canvas');
+                fallbackCanvas.width = this._canvas.width;
+                fallbackCanvas.height = this._canvas.height;
+                this._fallbackContext = fallbackCanvas.getContext('2d');
+            }
+            drawContext = this._fallbackContext;
         }
 
         const drawParams = {
