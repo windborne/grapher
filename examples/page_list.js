@@ -67,6 +67,7 @@ module.exports = [
             'marked_dates_graph',
             'custom_tooltips_graph',
             'combined_tooltips_graph',
+            'combined_tooltips_graph_2',
             'mark_now_graph',
             'min_point_spacing_graph',
         ]

@@ -5,10 +5,10 @@ import ExamplePage from './example_page.jsx';
 
 const series = [
     {
-        data: [0, 1, 4, 10, 0],
+        data: [2, -3, -1, -2, 1, 0, -3, -4, 0, 1, 0],
         showIndividualPoints: true,
         defaultAlwaysTooltipped: true
-    }
+    },
 ];
 
 renderPage(

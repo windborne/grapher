@@ -66,10 +66,18 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             continue;
         }
 
-        const dataMinX = data[0][0];
-        const dataMaxX = data[data.length - 1][0];
+        let dataMinX = data[0][0];
+        let dataMaxX = data[data.length - 1][0];
+        
+        if (dataMinX instanceof Date) {
+            dataMinX = dataMinX.getTime();
+        }
+        if (dataMaxX instanceof Date) {
+            dataMaxX = dataMaxX.getTime();
+        }
+        
         const dataRange = dataMaxX - dataMinX;
-        const padding = Math.max(dataRange * 0.05, (bounds.maxX - bounds.minX) * 0.02); 
+        const padding = 0; 
 
         if (trueX < dataMinX - padding || trueX > dataMaxX + padding) {
             continue;
