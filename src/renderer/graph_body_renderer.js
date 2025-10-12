@@ -393,6 +393,7 @@ export default class GraphBodyRenderer extends Eventable {
 
         if (singleSeries.cutoffTime) {
             areaParams.cutoffIndex = cutoffIndex;
+            areaParams.cutoffTimeValue = cutoffTime;
             areaParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
             areaParams.originalData = cutoffData;
             areaParams.renderCutoffGradient = cutoffIndex >= 0; 
@@ -481,6 +482,7 @@ export default class GraphBodyRenderer extends Eventable {
 
             if (singleSeries.cutoffTime) {
                 shadowParams.cutoffIndex = cutoffIndex;
+                shadowParams.cutoffTimeValue = cutoffTime;
                 shadowParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
                 shadowParams.originalData = cutoffData;
                 shadowParams.renderCutoffGradient = cutoffIndex >= 0; 
@@ -629,6 +631,7 @@ export default class GraphBodyRenderer extends Eventable {
         
         if (this._webgl && singleSeries.rendering === 'shadow' && singleSeries.cutoffTime && (width > 0 || shouldShowIndividualPoints)) {
             drawParams.cutoffIndex = cutoffIndex;
+            drawParams.cutoffTimeValue = cutoffTime;
             drawParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
             drawParams.originalData = cutoffData;
             drawParams.renderCutoffGradient = cutoffIndex >= 0;
@@ -648,6 +651,7 @@ export default class GraphBodyRenderer extends Eventable {
         
         if (singleSeries.cutoffTime) {
             drawParams.cutoffIndex = cutoffIndex;
+            drawParams.cutoffTimeValue = cutoffTime; 
             drawParams.cutoffOpacity = singleSeries.cutoffOpacity !== undefined ? singleSeries.cutoffOpacity : 0.35;
             drawParams.originalData = cutoffData;
             drawParams.renderCutoffGradient = cutoffIndex >= 0;
@@ -657,7 +661,7 @@ export default class GraphBodyRenderer extends Eventable {
             const selection = this === this._stateController.rangeGraphRenderer 
                 ? this._stateController._bounds 
                 : (this._stateController._selection || this._stateController._bounds);
-            drawParams.selectionBounds = selection || bounds;    
+            drawParams.selectionBounds = selection || bounds;
         }
         
         // For shadow rendering, always use 2D canvas for lines/points even with WebGL

@@ -414,16 +414,16 @@ export default class ShadowProgram {
    */
   drawShadowWithCutoff(individualPoints, params) {
 
-    const { cutoffIndex, cutoffOpacity, originalData, selectionBounds, zero } =
+    const { cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, selectionBounds, zero } =
       params;
 
     this._lastIndividualPoints = null;
     this._lastParams = null;
 
-    // All cutoff data is now in tuple format [x, y] from graph_body_renderer
     let cutoffTime;
-    
-    if (Array.isArray(originalData[0]) && originalData[0].length === 2) {
+    if (cutoffTimeValue !== undefined && cutoffTimeValue !== null) {
+      cutoffTime = cutoffTimeValue;
+    } else if (Array.isArray(originalData[0]) && originalData[0].length === 2) {
       const baseIndex = Math.floor(cutoffIndex);
       const fraction = cutoffIndex - baseIndex;
 

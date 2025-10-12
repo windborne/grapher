@@ -803,7 +803,7 @@ const series = [
         xKey: 'x',
         yKey: 'y',
         rendering: 'shadow',
-        cutoffTime: 'now',
+        cutoffTime: new Date('2025-09-29T18:00:00.000Z'),
         cutoffOpacity: 0.4, 
         color: 'rgb(138, 204, 158)',
         gradient: [

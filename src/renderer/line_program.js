@@ -246,10 +246,12 @@ export default class LineProgram {
     }
 
     drawLineWithCutoff(dataInRenderSpace, parameters) {
-        const { cutoffIndex, cutoffOpacity, originalData, selectionBounds } = parameters;
+        const { cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, selectionBounds } = parameters;
         
         let cutoffTime;
-        if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
+        if (cutoffTimeValue !== undefined && cutoffTimeValue !== null) {
+            cutoffTime = cutoffTimeValue;
+        } else if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
             const baseIndex = Math.floor(cutoffIndex);
             const fraction = cutoffIndex - baseIndex;
             

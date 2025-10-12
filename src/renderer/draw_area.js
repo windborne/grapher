@@ -361,6 +361,7 @@ function drawAreaWithCutoff(
     shadowBlur,
     inRenderSpaceAreaBottom,
     cutoffIndex,
+    cutoffTimeValue,
     cutoffOpacity,
     originalData,
     selectionBounds,
@@ -368,7 +369,9 @@ function drawAreaWithCutoff(
   }
 ) {
   let cutoffTime;
-  if (typeof originalData[0] === "object" && originalData[0].length === 2) {
+  if (cutoffTimeValue !== undefined && cutoffTimeValue !== null) {
+    cutoffTime = cutoffTimeValue;
+  } else if (typeof originalData[0] === "object" && originalData[0].length === 2) {
     const baseIndex = Math.floor(cutoffIndex);
     const fraction = cutoffIndex - baseIndex;
 

@@ -22,7 +22,7 @@ function applyPointSpacing(points, minSpacing) {
 }
 
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -56,7 +56,9 @@ export default function drawLine(dataInRenderSpace, {
     for (let path of paths) {
         if (renderCutoffGradient && cutoffIndex !== undefined && originalData) {
             let cutoffTime;
-            if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
+            if (cutoffTimeValue !== undefined && cutoffTimeValue !== null) {
+                cutoffTime = cutoffTimeValue;
+            } else if (typeof originalData[0] === 'object' && originalData[0].length === 2) {
                 const baseIndex = Math.floor(cutoffIndex);
                 const fraction = cutoffIndex - baseIndex;
                 
@@ -210,30 +212,48 @@ export default function drawLine(dataInRenderSpace, {
                 context.strokeStyle = color;
             } else {
                 const timeRatio = (cutoffTime - visibleMinTime) / (visibleMaxTime - visibleMinTime);
-                const renderCutoffIndex = timeRatio * path.length;
+                const canvasWidth = context.canvas.width;
+                const cutoffPixelX = timeRatio * canvasWidth;
+                
+                // Find the path segment that contains this x position
+                let renderCutoffIndex = -1;
+                let ghostPoint = null;
+                
+                for (let i = 0; i < path.length - 1; i++) {
+                    const [x1] = path[i];
+                    const [x2] = path[i + 1];
+                    
+                    if (x1 <= cutoffPixelX && cutoffPixelX <= x2) {
+                        const xFraction = (cutoffPixelX - x1) / (x2 - x1);
+                        renderCutoffIndex = i + xFraction;
+                        
+                        // Create ghost point at exact cutoff x position
+                        const [, y1] = path[i];
+                        const [, y2] = path[i + 1];
+                        ghostPoint = [
+                            cutoffPixelX,
+                            y1 + xFraction * (y2 - y1)
+                        ];
+                        break;
+                    }
+                }
+                
+                // If cutoff is beyond the data range, check if we should still draw the full line
+                if (renderCutoffIndex === -1) {
+                    const lastDataTime = originalData[originalData.length - 1][0];
+                    const lastDataTimeMs = lastDataTime instanceof Date ? lastDataTime.getTime() : lastDataTime;
+                    
+                    if (cutoffPixelX >= path[path.length - 1][0]) {
+                        // Cutoff is after the last point - draw all as pre-cutoff (reduced opacity)
+                        renderCutoffIndex = path.length - 1;
+                    } else if (cutoffPixelX < path[0][0]) {
+                        // Cutoff is before the first point - draw all as post-cutoff (full opacity)
+                        renderCutoffIndex = 0;
+                    }
+                }
             
             const preCutoffPath = [];
             const postCutoffPath = [];
-            let ghostPoint = null;
-            
-            if (renderCutoffIndex > 0 && renderCutoffIndex < path.length - 1) {
-                const beforeIndex = Math.floor(renderCutoffIndex);
-                const afterIndex = Math.ceil(renderCutoffIndex);
-                
-                if (beforeIndex !== afterIndex) {
-                    const fraction = renderCutoffIndex - beforeIndex;
-                    const beforePoint = path[beforeIndex];
-                    const afterPoint = path[afterIndex];
-                    
-                    ghostPoint = [
-                        beforePoint[0] + fraction * (afterPoint[0] - beforePoint[0]),
-                        beforePoint[1] + fraction * (afterPoint[1] - beforePoint[1])
-                    ];
-                    
-                } else {
-                    ghostPoint = path[renderCutoffIndex];
-                }
-            }
             
             for (let i = 0; i < path.length; i++) {
                 if (i < renderCutoffIndex) {
