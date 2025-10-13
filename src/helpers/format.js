@@ -48,7 +48,7 @@ const DATE_TIME_FORMATTERS = {};
  * @param {Date} sampleDate - a date to use in the conversions, since it can be time-of-year dependent with Daylight Savings Time
  * @return {number|null}
  */
-function timezoneToOffsetMS(timeZone, sampleDate) {
+export function timezoneToOffsetMS(timeZone, sampleDate) {
     try { // formats are finicky, so give up rather than abort rendering
         let datetimeFormatter = DATE_TIME_FORMATTERS[timeZone];
         if (!datetimeFormatter) {

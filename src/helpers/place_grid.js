@@ -1,4 +1,4 @@
-import {startOfDayInTimezone} from './format';
+import {startOfDayInTimezone, timezoneToOffsetMS} from './format';
 
 function placeTick(trueValue, {scale, min, max, inverted, totalSize, precision, formatter, dates, justTime, justDate, formatOptions={} }, opts={}) {
     let scaledValue = trueValue;
@@ -284,17 +284,39 @@ function placeTimeOnlyGrid({ min, max, precision, expectedLabelSize, labelPaddin
     let currentDate = new Date(min);
     
     if (unit === 'h') {
-        currentDate.setMinutes(0, 0, 0);
         if (amount === 24) {
-            currentDate.setHours(0);
-        } else if (amount === 12) {
-            const currentHour = currentDate.getHours();
-            const alignedHour = currentHour < 12 ? 0 : 12;
-            currentDate.setHours(alignedHour);
+            currentDate = startOfDayInTimezone(currentDate, formatOptions.timeZone);
         } else {
-            const currentHour = currentDate.getHours();
-            const alignedHour = Math.floor(currentHour / amount) * amount;
-            currentDate.setHours(alignedHour);
+            const offset = formatOptions.timeZone ? timezoneToOffsetMS(formatOptions.timeZone, currentDate) : 0;
+            const localOffset = timezoneToOffsetMS('local', currentDate);
+            
+            if (offset !== null && localOffset !== null) {
+                const adjustedDate = new Date(currentDate.valueOf() + offset - localOffset);
+                adjustedDate.setMinutes(0, 0, 0);
+                
+                if (amount === 12) {
+                    const currentHour = adjustedDate.getHours();
+                    const alignedHour = currentHour < 12 ? 0 : 12;
+                    adjustedDate.setHours(alignedHour);
+                } else {
+                    const currentHour = adjustedDate.getHours();
+                    const alignedHour = Math.floor(currentHour / amount) * amount;
+                    adjustedDate.setHours(alignedHour);
+                }
+                
+                currentDate = new Date(adjustedDate.valueOf() - offset + localOffset);
+            } else {
+                currentDate.setMinutes(0, 0, 0);
+                if (amount === 12) {
+                    const currentHour = currentDate.getHours();
+                    const alignedHour = currentHour < 12 ? 0 : 12;
+                    currentDate.setHours(alignedHour);
+                } else {
+                    const currentHour = currentDate.getHours();
+                    const alignedHour = Math.floor(currentHour / amount) * amount;
+                    currentDate.setHours(alignedHour);
+                }
+            }
         }
     } else if (unit === 'm') {
         currentDate.setSeconds(0, 0);
@@ -363,17 +385,9 @@ function placeDateOnlyGrid({ min, max, precision, expectedLabelSize, labelPaddin
     const spanMultipleYears = minYear !== maxYear;
 
     const customDateFormatter = (date, options) => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const d = new Date(date);
-        const month = monthNames[d.getMonth()];
-        const day = d.getDate();
-        const year = d.getFullYear();
-        
-        if (spanMultipleYears) {
-            return `${month} ${day} ${year}`;
-        } else {
-            return `${month} ${day}`;
-        }
+        const timeZone = formatOptions.timeZone;
+        const result = formatter(date, { ...options, dates: true, justMonthAndDay: !spanMultipleYears, justDate: spanMultipleYears, timeZone });
+        return result;
     };
     
     const placementParams = { scale, min, max, inverted, totalSize, precision, formatter: customDateFormatter, formatOptions, dates: true };
@@ -409,7 +423,6 @@ function placeDateOnlyGrid({ min, max, precision, expectedLabelSize, labelPaddin
         currentDate.setDate(1);
     } else if (unit === 'd') {
         currentDate = startOfDayInTimezone(currentDate, formatOptions.timeZone);
-        currentDate.setHours(0, 0, 0, 0);
     }
     
     while (currentDate < max) {

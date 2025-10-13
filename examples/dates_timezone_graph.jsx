@@ -9,14 +9,14 @@ const series = [
     { data: [] }
 ];
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 4000; i++) {
     series[0].data.push([
-        new Date(Date.now() + i*1000),
+        new Date(Date.now() + i*1000000),
         Math.cos(i/100)
     ]);
 
     series[1].data.push([
-        new Date(Date.now() + i*1000),
+        new Date(Date.now() + i*1000000),
         -Math.cos(i/500)
     ]);
 }
@@ -101,7 +101,7 @@ renderPage(
             series={series}
             defaultBoundsCalculator="lastHour"
             clockStyle="12h"
-            timeZone="America/New_York"
+            timeZone="Australia/Perth"
         />
 
         <table className="table">
