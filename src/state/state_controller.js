@@ -613,14 +613,35 @@ export default class StateController extends Eventable {
             }
 
             const simpleData = this._seriesToSimpleData(singleSeries);
-            singleSeries.inDataSpace = simpleSeriesToDataSpace({
+            const dataSpaceResult = simpleSeriesToDataSpace({
                 ...singleSeries,
                 data: simpleData
             }, {
                 stateController: this
             });
+            
+            let inDataSpace, rangeValues;
+            if (Array.isArray(dataSpaceResult)) {
+                inDataSpace = dataSpaceResult;
+                rangeValues = [];
+            } else {
+                inDataSpace = dataSpaceResult.data;
+                rangeValues = dataSpaceResult.rangeValues || [];
+            }
+            
+            singleSeries.inDataSpace = inDataSpace;
             singleSeries.simpleDataSliceStart = simpleData.length;
-            singleSeries.dataBounds = calculateDataBounds(singleSeries.inDataSpace);
+            singleSeries._rangeValues = rangeValues;
+            const allYValues = [...inDataSpace.map(([x, y]) => y).filter(y => typeof y === 'number'), ...rangeValues];
+            const extendedDataSpace = inDataSpace.map(([x, y]) => [x, y]);
+            for (let rangeValue of rangeValues) {
+                extendedDataSpace.push([null, rangeValue]);
+            }
+            
+            singleSeries.dataBounds = calculateDataBounds(extendedDataSpace, { 
+                rangeValues: rangeValues 
+            });
+            
             if (singleSeries.rendering === 'bar') {
                 singleSeries.dataBounds = expandBounds(singleSeries.dataBounds, { extendXForNBars: singleSeries.inDataSpace.length, expandYWith: singleSeries.expandYWith });
             }
@@ -778,7 +799,55 @@ export default class StateController extends Eventable {
                     axis.targetBounds = axis.targetBounds.byAxis[axis.axisIndex];
                 }
 
-                axis.currentBounds = axis.targetBounds;
+                const expandYWith = [];
+                for (let singleSeries of axis.series) {
+                    if (singleSeries._rangeValues && singleSeries._rangeValues.length > 0) {
+                        const visibleRangeValues = [];
+                        
+                        for (let i = 0; i < singleSeries.inDataSpace.length; i++) {
+                            const [x, y] = singleSeries.inDataSpace[i];
+                            let xValue = x;
+                            let minXValue = axis.targetBounds.minX;
+                            let maxXValue = axis.targetBounds.maxX;
+                            
+                            if (x instanceof Date) {
+                                xValue = x.valueOf();
+                            }
+                            if (minXValue instanceof Date) {
+                                minXValue = minXValue.valueOf();
+                            }
+                            if (maxXValue instanceof Date) {
+                                maxXValue = maxXValue.valueOf();
+                            }
+                            
+                            if (minXValue !== null && maxXValue !== null && 
+                                xValue >= minXValue && xValue <= maxXValue) {
+                                const rangeIndex = i * 2;
+                                if (rangeIndex < singleSeries._rangeValues.length) {
+                                    visibleRangeValues.push(singleSeries._rangeValues[rangeIndex]);
+                                    if (rangeIndex + 1 < singleSeries._rangeValues.length) {
+                                        visibleRangeValues.push(singleSeries._rangeValues[rangeIndex + 1]);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (visibleRangeValues.length > 0) {
+                            expandYWith.push(...visibleRangeValues);
+                        }
+                    }
+                }
+
+                if (expandYWith.length > 0) {
+                    const validRangeValues = expandYWith.filter(y => typeof y === 'number');
+                    axis.currentBounds = {
+                        ...axis.targetBounds,
+                        minY: axis.targetBounds.minY === null ? Math.min(...validRangeValues) : axis.targetBounds.minY,
+                        maxY: axis.targetBounds.maxY === null ? Math.max(...validRangeValues) : axis.targetBounds.maxY
+                    };
+                } else {
+                    axis.currentBounds = axis.targetBounds;
+                }
                 continue;
             }
 
@@ -794,6 +863,42 @@ export default class StateController extends Eventable {
 
                 if (singleSeries.rendering === 'bar') {
                     expandYWith.push(singleSeries.selectedBounds.minY, singleSeries.selectedBounds.maxY);
+                }
+
+                if (singleSeries._rangeValues && singleSeries._rangeValues.length > 0) {
+                    const visibleRangeValues = [];
+                    
+                    for (let i = 0; i < singleSeries.inDataSpace.length; i++) {
+                        const [x, y] = singleSeries.inDataSpace[i];
+                        let xValue = x;
+                        let minXValue = singleSeries.selectedBounds.minX;
+                        let maxXValue = singleSeries.selectedBounds.maxX;
+                        
+                        if (x instanceof Date) {
+                            xValue = x.valueOf();
+                        }
+                        if (minXValue instanceof Date) {
+                            minXValue = minXValue.valueOf();
+                        }
+                        if (maxXValue instanceof Date) {
+                            maxXValue = maxXValue.valueOf();
+                        }
+                        
+                        if (minXValue !== null && maxXValue !== null && 
+                            xValue >= minXValue && xValue <= maxXValue) {
+                            const rangeIndex = i * 2;
+                            if (rangeIndex < singleSeries._rangeValues.length) {
+                                visibleRangeValues.push(singleSeries._rangeValues[rangeIndex]);
+                                if (rangeIndex + 1 < singleSeries._rangeValues.length) {
+                                    visibleRangeValues.push(singleSeries._rangeValues[rangeIndex + 1]);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (visibleRangeValues.length > 0) {
+                        expandYWith.push(...visibleRangeValues);
+                    }
                 }
             }
 

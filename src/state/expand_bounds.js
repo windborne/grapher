@@ -31,8 +31,9 @@ export default function expandBounds(bounds, {expandYWith = [], extendXForNBars=
 
     const range = expandedBounds.maxY - expandedBounds.minY;
     const midpoint = expandedBounds.minY + range/2;
-    expandedBounds.minY = midpoint - 1.05*range/2;
-    expandedBounds.maxY = midpoint + 1.05*range/2;
+    expandedBounds.minY = Math.min(expandedBounds.minY, midpoint - 1.05*range/2);
+    expandedBounds.maxY = Math.max(expandedBounds.maxY, midpoint + 1.05*range/2);
+    
 
     if (expandedBounds.minY === expandedBounds.maxY && expandedBounds.minY !== null) {
         if (expandedBounds.minY > 0) {

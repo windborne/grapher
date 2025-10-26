@@ -14,11 +14,21 @@ export default function simpleSeriesToDataSpace(singleSeries, options={}) {
         throw new Error(`Cannot normalize ${type} (expected a simple type)`);
     }
 
-    const inDataSpace = {
+    const result = {
         tuples: tuplesToDataSpace,
         values: valuesToDataSpace,
         objects: objectsToDataSpace
     }[type](options.data || singleSeries.simpleData || singleSeries.data, singleSeries, options);
+
+    let inDataSpace;
+    let rangeValues = [];
+
+    if (Array.isArray(result)) {
+        inDataSpace = result;
+    } else {
+        inDataSpace = result.data;
+        rangeValues = result.rangeValues || [];
+    }
 
     if (singleSeries.square) {
         const square = [];
@@ -56,6 +66,13 @@ export default function simpleSeriesToDataSpace(singleSeries, options={}) {
                 tuple[0] = new Date(tuple[0]*1000);
             }
         }
+    }
+
+    if (rangeValues.length > 0) {
+        return {
+            data: inDataSpace,
+            rangeValues: rangeValues
+        };
     }
 
     return inDataSpace;
@@ -166,6 +183,7 @@ function objectsToDataSpace(data, series, options) {
     }
 
     const inDataSpace = [];
+    const rangeValues = []; 
 
     for (let point of data) {
         if (point.buffer instanceof ArrayBuffer) {
@@ -222,7 +240,26 @@ function objectsToDataSpace(data, series, options) {
             }
 
             inDataSpace.push([xValue, yValue]);
+
+            if (series.rangeKey && point[series.rangeKey]) {
+                const range = point[series.rangeKey];
+                if (typeof range === 'object' && range.min !== undefined && range.max !== undefined) {
+                    if (typeof range.min === 'number') {
+                        rangeValues.push(range.min);
+                    }
+                    if (typeof range.max === 'number') {
+                        rangeValues.push(range.max);
+                    }
+                }
+            }
         }
+    }
+
+    if (rangeValues.length > 0) {
+        return {
+            data: inDataSpace,
+            rangeValues: rangeValues
+        };
     }
 
     return inDataSpace;

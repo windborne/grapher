@@ -141,7 +141,7 @@ Grapher supports multiple data formats within a series:
 | width | `number` | ✗ | Line width. |
 | axis | `string \| object` | ✗ | Axis specification for the series. |
 | rangeSelectorWidth | `number` | ✗ | Width of the range selector for this series. |
-| expandYWith | `number[]` | ✗ | Values to include when calculating y-axis range. |
+| expandYWith | `(number | null)[] | null` | ✗ | Values to include when calculating y-axis range. |
 | defaultAlwaysTooltipped | `boolean` | ✗ | Whether to always show tooltip for this series. |
 | square | `boolean` | ✗ | Whether to render the series with square points. |
 | shiftXBy | `number` | ✗ | Value to shift x-coordinates by. |

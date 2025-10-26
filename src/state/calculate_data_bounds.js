@@ -2,8 +2,8 @@ function finalizeBounds(bounds, { dates }) {
     const initial = (bounds.minX === null && bounds.maxX === null) || bounds.minY === null || bounds.maxY === null;
 
     for (let key of Object.keys(bounds)) {
-        if (typeof bounds[key] !== 'number') {
-            bounds[key] = 0;
+        if (typeof bounds[key] !== 'number' && bounds[key] !== null) {
+            bounds[key] = null;
         }
     }
 
@@ -13,7 +13,7 @@ function finalizeBounds(bounds, { dates }) {
     return bounds;
 }
 
-function percentileBounds(inDataSpace, bounds, {percentile=100, percentileAsymmetry=0}={}) {
+function percentileBounds(inDataSpace, bounds, {percentile=100, percentileAsymmetry=0, rangeValues=[]}={}) {
     let dates = false;
 
     bounds.minX = inDataSpace[0][0];
@@ -32,6 +32,13 @@ function percentileBounds(inDataSpace, bounds, {percentile=100, percentileAsymme
         .filter(([_x, y]) => typeof y === 'number')
         .sort(([_x1, y1], [_x2, y2]) => y1 - y2);
 
+    for (let rangeValue of rangeValues) {
+        if (typeof rangeValue === 'number') {
+            sortedByY.push([null, rangeValue]);
+        }
+    }
+    sortedByY.sort(([_x1, y1], [_x2, y2]) => y1 - y2);
+
     if (!sortedByY.length) {
         return finalizeBounds(bounds, {dates});
     }
@@ -49,7 +56,7 @@ function percentileBounds(inDataSpace, bounds, {percentile=100, percentileAsymme
     return finalizeBounds(bounds, {dates});
 }
 
-export default function calculateDataBounds(inDataSpace, {percentile=100, percentileAsymmetry=0}={}) {
+export default function calculateDataBounds(inDataSpace, {percentile=100, percentileAsymmetry=0, rangeValues=[]}={}) {
     let bounds = {
         minX: null,
         maxX: null,
@@ -59,13 +66,17 @@ export default function calculateDataBounds(inDataSpace, {percentile=100, percen
     };
 
     if (percentile !== 100 && inDataSpace.length) {
-        return percentileBounds(inDataSpace, bounds, {percentile, percentileAsymmetry});
+        return percentileBounds(inDataSpace, bounds, {percentile, percentileAsymmetry, rangeValues});
     }
 
     let dates = false;
     let prevX = null;
 
     for (let [x, y] of inDataSpace) {
+        if (x === null) {
+            continue;
+        }
+        
         if (x instanceof Date) {
             x = x.valueOf();
             dates = true;
@@ -100,5 +111,16 @@ export default function calculateDataBounds(inDataSpace, {percentile=100, percen
         }
     }
 
+    for (let rangeValue of rangeValues) {
+        if (typeof rangeValue === 'number') {
+            if (typeof bounds.minY !== 'number' || rangeValue < bounds.minY) {
+                bounds.minY = rangeValue;
+            }
+            if (typeof bounds.maxY !== 'number' || rangeValue > bounds.maxY) {
+                bounds.maxY = rangeValue;
+            }
+        }
+    }
+    
     return finalizeBounds(bounds, {dates});
 }

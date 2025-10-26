@@ -19,23 +19,23 @@ export default function mergeBounds(boundsList) {
         }
         mergedBounds.initial = false;
 
-        if (mergedBounds.minX === null || minX < mergedBounds.minX) {
+        if (minX !== null && (mergedBounds.minX === null || minX < mergedBounds.minX)) {
             mergedBounds.minX = minX;
         }
 
-        if (mergedBounds.maxX === null || maxX > mergedBounds.maxX) {
+        if (maxX !== null && (mergedBounds.maxX === null || maxX > mergedBounds.maxX)) {
             mergedBounds.maxX = maxX;
         }
 
-        if (mergedBounds.closestSpacing === null || closestSpacing < mergedBounds.closestSpacing) {
+        if (closestSpacing !== null && (mergedBounds.closestSpacing === null || closestSpacing < mergedBounds.closestSpacing)) {
             mergedBounds.closestSpacing = closestSpacing;
         }
 
-        if (mergedBounds.minY === null || minY < mergedBounds.minY) {
+        if (minY !== null && (mergedBounds.minY === null || minY < mergedBounds.minY)) {
             mergedBounds.minY = minY;
         }
 
-        if (mergedBounds.maxY === null || maxY > mergedBounds.maxY) {
+        if (maxY !== null && (mergedBounds.maxY === null || maxY > mergedBounds.maxY)) {
             mergedBounds.maxY = maxY;
         }
     }

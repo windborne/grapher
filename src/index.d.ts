@@ -16,7 +16,7 @@ export interface SeriesData {
   width?: number;
   rangeSelectorWidth?: number;
   axis?: string | object;
-  expandYWith?: number[];
+  expandYWith?: (number | null)[] | null;
   defaultAlwaysTooltipped?: boolean;
   square?: boolean;
   shiftXBy?: number;

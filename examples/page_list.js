@@ -22,7 +22,8 @@ module.exports = [
             'vertical_line_graph',
             'enum_graph',
             'bool_graph',
-            'coloured_background_graph'
+            'coloured_background_graph',
+            'range_key_graph'
         ]
     },
     {
