@@ -649,6 +649,11 @@
     }
   }
 
+  .wind-arrows {
+    color: $axis-text-color;
+    opacity: 0.7;
+  }
+
   .range-selection-graph {
     width: 100%;
     background-color: $range-graph-selection-background-color;

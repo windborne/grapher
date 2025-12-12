@@ -22,12 +22,16 @@ export default function simpleSeriesToDataSpace(singleSeries, options={}) {
 
     let inDataSpace;
     let rangeValues = [];
+    let windDirections = null;
+    let windData = null;
 
     if (Array.isArray(result)) {
         inDataSpace = result;
     } else {
         inDataSpace = result.data;
         rangeValues = result.rangeValues || [];
+        windDirections = result.windDirections || null;
+        windData = result.windData || null;
     }
 
     if (singleSeries.square) {
@@ -68,10 +72,12 @@ export default function simpleSeriesToDataSpace(singleSeries, options={}) {
         }
     }
 
-    if (rangeValues.length > 0) {
+    if (rangeValues.length > 0 || windDirections) {
         return {
             data: inDataSpace,
-            rangeValues: rangeValues
+            rangeValues: rangeValues,
+            windDirections: windDirections,
+            windData: windData
         };
     }
 
@@ -174,16 +180,20 @@ function readBinaryFormatValue(view, offset, index) {
  * @return {Array<Array<Number|Date|null>>}
  */
 function objectsToDataSpace(data, series, options) {
+    const hasWindKeys = series.windXKey && series.windYKey;
+
     if (!series.xKey || typeof series.xKey !== 'string') {
         throw new Error('xKey must be provided in the series');
     }
 
-    if (!series.yKey || typeof series.yKey !== 'string') {
-        throw new Error('yKey must be provided in the series');
+    if (!hasWindKeys && (!series.yKey || typeof series.yKey !== 'string')) {
+        throw new Error('yKey must be provided in the series (or both windXKey and windYKey)');
     }
 
     const inDataSpace = [];
-    const rangeValues = []; 
+    const rangeValues = [];
+    const windDirections = hasWindKeys ? [] : null;
+    const windData = hasWindKeys ? [] : null;
 
     for (let point of data) {
         if (point.buffer instanceof ArrayBuffer) {
@@ -194,7 +204,7 @@ function objectsToDataSpace(data, series, options) {
             for (let offset of point.offsets) {
                 inDataSpace.push([readBinaryFormatValue(view, offset, xIndex), readBinaryFormatValue(view, offset, yIndex)]);
             }
-        } else if (Array.isArray(point[series.yKey])) {
+        } else if (!hasWindKeys && Array.isArray(point[series.yKey])) {
             if (point[series.yKey].length && !Array.isArray(point[series.yKey][0]) && typeof point[series.yKey][0] === 'object') {
                 for (let subpoint of point[series.yKey]) {
                     let yValue = subpoint[series.yKey];
@@ -221,22 +231,37 @@ function objectsToDataSpace(data, series, options) {
                 inDataSpace.push(...point[series.yKey]);
             }
         } else {
-            let yValue = point[series.yKey];
-            if (yValue === undefined) {
-                yValue = null;
+            let yValue;
+            if (hasWindKeys) {
+                const windX = point[series.windXKey];
+                const windY = point[series.windYKey];
+                if (windX != null && windY != null) {
+                    yValue = Math.sqrt(windX * windX + windY * windY);
+                    windDirections.push(Math.atan2(windY, windX));
+                    windData.push({ x: windX, y: windY });
+                } else {
+                    yValue = null;
+                    windDirections.push(null);
+                    windData.push(null);
+                }
+            } else {
+                yValue = point[series.yKey];
+                if (yValue === undefined) {
+                    yValue = null;
+                }
+
+                if (typeof yValue === 'string') {
+                    yValue = options.stateController.enumToNumber(yValue, series);
+                }
+
+                if (typeof yValue === 'boolean') {
+                    yValue = +yValue;
+                }
             }
 
             let xValue = point[series.xKey];
             if (typeof xValue === 'string') {
                 xValue = new Date(xValue);
-            }
-
-            if (typeof yValue === 'string') {
-                yValue = options.stateController.enumToNumber(yValue, series);
-            }
-
-            if (typeof yValue === 'boolean') {
-                yValue = +yValue;
             }
 
             inDataSpace.push([xValue, yValue]);
@@ -255,10 +280,12 @@ function objectsToDataSpace(data, series, options) {
         }
     }
 
-    if (rangeValues.length > 0) {
+    if (rangeValues.length > 0 || windDirections) {
         return {
             data: inDataSpace,
-            rangeValues: rangeValues
+            rangeValues: rangeValues,
+            windDirections: windDirections,
+            windData: windData
         };
     }
 

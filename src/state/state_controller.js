@@ -620,16 +620,22 @@ export default class StateController extends Eventable {
                 stateController: this
             });
             
-            let inDataSpace, rangeValues;
+            let inDataSpace, rangeValues, windDirections, windData;
             if (Array.isArray(dataSpaceResult)) {
                 inDataSpace = dataSpaceResult;
                 rangeValues = [];
+                windDirections = null;
+                windData = null;
             } else {
                 inDataSpace = dataSpaceResult.data;
                 rangeValues = dataSpaceResult.rangeValues || [];
+                windDirections = dataSpaceResult.windDirections || null;
+                windData = dataSpaceResult.windData || null;
             }
             
             singleSeries.inDataSpace = inDataSpace;
+            singleSeries.windDirections = windDirections;
+            singleSeries.windData = windData;
             singleSeries.simpleDataSliceStart = simpleData.length;
             singleSeries._rangeValues = rangeValues;
             const allYValues = [...inDataSpace.map(([x, y]) => y).filter(y => typeof y === 'number'), ...rangeValues];

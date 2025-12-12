@@ -177,10 +177,12 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             color = singleSeries.zeroLineColor;
         }
 
+        const useMouseY = singleSeries.followingMouseTooltip && alwaysTooltipped.has(singleSeries);
+        
         tooltips.push({
             pixelWidth: sizing.elementWidth,
             pixelX: pixelX,
-            pixelY: isNaN(pixelY) ? sizing.elementHeight/2 : pixelY,
+            pixelY: useMouseY ? mouseY : (isNaN(pixelY) ? sizing.elementHeight/2 : pixelY),
             x,
             y,
             color,

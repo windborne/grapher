@@ -5,6 +5,7 @@ import GraphBody from './components/graph_body.jsx';
 import './grapher.scss';
 import XAxis from './components/x_axis.jsx';
 import YAxis from './components/y_axis.jsx';
+import WindArrows from './components/wind_arrows.jsx';
 import RangeSelection from './components/range_selection.jsx';
 import RangeGraph from './components/range_graph.jsx';
 import SeriesKey from './components/series_key.jsx';
@@ -250,6 +251,8 @@ function Grapher(props) {
                                 clockStyle={props.clockStyle}
                                 timeZone={props.timeZone}
                             />
+
+                            <WindArrows stateController={stateController} />
 
                             <XAxis
                                 showGrid={showGrid}

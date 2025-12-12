@@ -5,6 +5,9 @@ export interface SeriesData {
   type?: 'values' | 'tuples' | 'objects' | 'tuple_observable' | 'object_observable' | 'infer';
   xKey?: string;
   yKey?: string;
+  windXKey?: string;
+  windYKey?: string;
+  windComp?: React.ComponentType<{ windX: number; windY: number; speed: number; speedPercentile: number }>;
   xUnixDates?: boolean;
   color?: string | number;
   name?: string;
@@ -18,6 +21,7 @@ export interface SeriesData {
   axis?: string | object;
   expandYWith?: (number | null)[] | null;
   defaultAlwaysTooltipped?: boolean;
+  followingMouseTooltip?: boolean;
   square?: boolean;
   shiftXBy?: number;
   graph?: number;

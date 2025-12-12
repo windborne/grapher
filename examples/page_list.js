@@ -171,5 +171,12 @@ module.exports = [
             'cutoff_out_of_bounds_graph',
             'cutoff_dynamic_bottom_area'
         ]
+    },
+    {
+        name: 'Native weather charts',
+        pages: [
+            'wind_arrows_graph',
+            'wind_arrows_graph_2'
+        ]
     }
 ];

@@ -65,6 +65,7 @@ Grapher supports multiple data formats within a series:
 3. **Array of objects**: Objects with properties for x and y values (as per the xKey and yKey properties)
 4. **Observable**: Object with an observe method, which may emit tuples or objects
 5. **Generator function**: Function that generates an array data points as a function of zoom
+6. **Wind data**: Objects with wind x/y components (via windXKey and windYKey). The y-value becomes wind speed and direction arrows are displayed above the x-axis.
 
 ### <a id="grapherprops"></a>Schema `GrapherProps`
 
@@ -129,6 +130,9 @@ Grapher supports multiple data formats within a series:
 | type | `'values' \| 'tuples' \| 'objects' \| 'tuple_observable' \| 'object_observable' \| 'infer'` | ✗ | Data type or 'infer' to automatically detect. |
 | xKey | `string` | ✗ | Property name for x-values when using object data. |
 | yKey | `string` | ✗ | Property name for y-values when using object data. |
+| windXKey | `string` | ✗ | Property name for wind x-component. When both windXKey and windYKey are provided, y-value is calculated as wind speed (magnitude). |
+| windYKey | `string` | ✗ | Property name for wind y-component. Used with windXKey for wind data visualization. |
+| windComp | `React.ComponentType` | ✗ | Custom component for wind direction arrows. Receives props: `windX`, `windY`, `speed`, `speedPercentile` (0-1 based on min/max speed). |
 | xUnixDates | `boolean` | ✗ | Whether x-values are Unix timestamps. |
 | color | `string \| number` | ✗ | Series color (string or number). |
 | name | `string` | ✗ | Series name for display in legend. |
@@ -143,6 +147,7 @@ Grapher supports multiple data formats within a series:
 | rangeSelectorWidth | `number` | ✗ | Width of the range selector for this series. |
 | expandYWith | `(number | null)[] | null` | ✗ | Values to include when calculating y-axis range. |
 | defaultAlwaysTooltipped | `boolean` | ✗ | Whether to always show tooltip for this series. |
+| followingMouseTooltip | `boolean` | ✗ | When true and defaultAlwaysTooltipped is also true, the tooltip follows the mouse y-position. |
 | square | `boolean` | ✗ | Whether to render the series with square points. |
 | shiftXBy | `number` | ✗ | Value to shift x-coordinates by. |
 | graph | `number` | ✗ | Affects which graph this series belongs to in multigrapher. |

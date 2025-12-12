@@ -46,6 +46,9 @@ const SingleSeries = PropTypes.shape({
     ]),
     xKey: PropTypes.string,
     yKey: PropTypes.string,
+    windXKey: PropTypes.string,
+    windYKey: PropTypes.string,
+    windComp: PropTypes.elementType,
     xUnixDates: PropTypes.bool,
     color: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.string,
@@ -59,6 +62,7 @@ const SingleSeries = PropTypes.shape({
     axis: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     expandYWith: PropTypes.arrayOf(PropTypes.number),
     defaultAlwaysTooltipped: PropTypes.bool,
+    followingMouseTooltip: PropTypes.bool,
     square: PropTypes.bool,
     shiftXBy: PropTypes.number,
     graph: PropTypes.number, // affects multigrapher only
