@@ -113,7 +113,7 @@ export default class Tooltip extends React.PureComponent {
         };
 
         const preparedTooltips = this.props.tooltips.map((tooltip) => {
-            const { x, y, pixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
+            const { x, y, pixelY, tooltipPixelY, pixelX, series, index, xLabel, yLabel, fullYPrecision } = tooltip;
 
             if (typeof pixelX !== 'number') {
                 return null;
@@ -155,7 +155,8 @@ export default class Tooltip extends React.PureComponent {
                 return null;
             }
 
-            const transform = `translate(${pixelX},${pixelY})`;
+            const markerTransform = `translate(${pixelX},${pixelY})`;
+            const tooltipTransform = `translate(${pixelX},${tooltipPixelY ?? pixelY})`;
 
             const commonLabelProps = {
                 fullYPrecision: fullYPrecision || this.props.maxPrecision,
@@ -203,7 +204,8 @@ export default class Tooltip extends React.PureComponent {
                 fixedPosition,
                 multiplier,
                 textLeft,
-                transform,
+                markerTransform,
+                tooltipTransform,
                 commonLabelProps,
                 textTop,
                 height,
@@ -285,11 +287,11 @@ export default class Tooltip extends React.PureComponent {
                 <svg>
                     {
                         preparedTooltips.map((tooltip, i) => {
-                            const { color, fixedPosition, width, transform, baseLeft, commonLabelProps, yTranslation, multiplier, textLeft, textTop } = tooltip;
+                            const { color, fixedPosition, width, markerTransform, tooltipTransform, baseLeft, commonLabelProps, yTranslation, multiplier, textLeft, textTop } = tooltip;
 
                             if (this.props.customTooltip || groupedTooltips) {
                                 return (
-                                    <g key={i} transform={transform} className="tooltip-item">
+                                    <g key={i} transform={markerTransform} className="tooltip-item">
                                         <circle r={4} fill={color}/>
                                     </g>
                                 );
@@ -299,7 +301,7 @@ export default class Tooltip extends React.PureComponent {
                             if (fixedPosition) {
                                 return (
                                     <g key={i} className="tooltip-item tooltip-item-fixed">
-                                        <circle r={4} fill={color} transform={transform} />
+                                        <circle r={4} fill={color} transform={markerTransform} />
 
                                         <g transform={`translate(${baseLeft}, ${yTranslation})`}>
                                             <path stroke={color} d={`M0,0 V-${halfHeight} h${width} V${halfHeight} h${-width} V0`} />
@@ -314,15 +316,17 @@ export default class Tooltip extends React.PureComponent {
                             }
 
                             return (
-                                <g key={i} transform={transform} className="tooltip-item">
-                                    <circle r={4} fill={color} />
+                                <g key={i} className="tooltip-item">
+                                    <circle r={4} fill={color} transform={markerTransform} />
 
-                                    <path stroke={color} d={`M${multiplier*caretPadding},0 L${multiplier*caretSize*2},-${caretSize} V-${halfHeight} h${multiplier*width} V${halfHeight} h${multiplier*-width} V${caretSize} L${multiplier*caretPadding},0`} />
+                                    <g transform={tooltipTransform}>
+                                        <path stroke={color} d={`M${multiplier*caretPadding},0 L${multiplier*caretSize*2},-${caretSize} V-${halfHeight} h${multiplier*width} V${halfHeight} h${multiplier*-width} V${caretSize} L${multiplier*caretPadding},0`} />
 
-                                    <TooltipLabel
-                                        textLeft={textLeft} textTop={textTop}
-                                        {...commonLabelProps}
-                                    />
+                                        <TooltipLabel
+                                            textLeft={textLeft} textTop={textTop}
+                                            {...commonLabelProps}
+                                        />
+                                    </g>
                                 </g>
                             );
                         })

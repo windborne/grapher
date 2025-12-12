@@ -15,7 +15,8 @@ const series = [
         windXKey: 'wind_x',
         windYKey: 'wind_y',
         xKey: 'timestamp',
-        defaultAlwaysTooltipped: true
+        defaultAlwaysTooltipped: true,
+        followingMouseTooltip: true
     }
 ];
 
