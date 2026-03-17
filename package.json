@@ -1,6 +1,6 @@
 {
   "name": "@windborne/grapher",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "description": "Graphing library",
   "main": "src/index.js",
   "module": "dist/bundle.esm.js",
@@ -31,7 +31,7 @@
     "dev": "webpack-dev-server --config webpack.dev.config.cjs",
     "build": "rm -rf dist && mkdir -p dist && rm -f *.wasm && webpack --config webpack.prod.config.cjs && touch src/rust/pkg/.npmignore",
     "analyze-size": "webpack --config webpack.prod.config.cjs --json | webpack-bundle-size-analyzer",
-    "test": "mocha-webpack --webpack-config webpack.test.config.cjs --require test/setup.js --recursive --glob \"*.test.js\" test",
+    "test": "mochapack --webpack-config webpack.test.config.cjs --require test/setup.js --recursive --glob \"*.test.js\" test",
     "coverage": "NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm run test"
   },
   "repository": {
@@ -69,12 +69,12 @@
     "eslint-plugin-react": "^7.17.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.0",
-    "istanbul-instrumenter-loader": "^3.0.1",
+    "babel-plugin-istanbul": "^7.0.0",
     "jsdom": "^16.3.0",
     "jsdom-global": "^3.0.2",
     "kefir": "^3.8.6",
     "mocha": "^7.2.0",
-    "mocha-webpack": "^2.0.0-beta.0",
+    "mochapack": "^2.1.4",
     "nyc": "^15.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",

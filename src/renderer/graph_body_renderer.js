@@ -352,11 +352,19 @@ export default class GraphBodyRenderer extends Eventable {
         }
 
         if (singleSeries.rendering === 'bar') {
+            const barSeriesInAxis = singleSeries.axis.series.filter(s => s.rendering === 'bar');
+            let barClosestSpacing = null;
+            for (const s of barSeriesInAxis) {
+                const sp = s.dataBounds?.closestSpacing;
+                if (sp != null && sp > 0 && (barClosestSpacing === null || sp < barClosestSpacing)) {
+                    barClosestSpacing = sp;
+                }
+            }
             let barParams = {
                 ...commonCPUParams,
-                indexInAxis: singleSeries.axis.series.indexOf(singleSeries),
-                axisSeriesCount: singleSeries.axis.series.length,
-                closestSpacing: globalBounds.closestSpacing,
+                indexInAxis: barSeriesInAxis.indexOf(singleSeries),
+                axisSeriesCount: barSeriesInAxis.length,
+                closestSpacing: barClosestSpacing || globalBounds.closestSpacing,
                 bounds
             };
 

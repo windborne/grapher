@@ -22,11 +22,6 @@ module.exports = {
     },
     module: {
         rules: [
-            isCoverage ? {
-                test: /\.(js|ts)/,
-                include: path.resolve('src'),
-                loader: 'istanbul-instrumenter-loader'
-            } : [],
             {
                 test:/\.s?css$/,
                 exclude: /(node_modules|bower_components|build)/,
@@ -38,7 +33,8 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ["@babel/preset-env", "@babel/preset-react"]
+                        presets: ["@babel/preset-env", "@babel/preset-react"],
+                        plugins: isCoverage ? [["istanbul", { include: ["src/**/*.js", "src/**/*.jsx"] }]] : []
                     }
                 }
             },
@@ -46,7 +42,7 @@ module.exports = {
                 test: /\.(vert|frag|glsl)$/,
                 use: 'webpack-glsl-loader'
             }
-        ].flat()
+        ]
     },
     plugins: [
         new WasmPackPlugin({
