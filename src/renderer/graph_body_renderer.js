@@ -356,7 +356,7 @@ export default class GraphBodyRenderer extends Eventable {
             let barClosestSpacing = null;
             for (const s of barSeriesInAxis) {
                 const sp = s.dataBounds?.closestSpacing;
-                if (sp != null && sp > 0 && (barClosestSpacing === null || sp < barClosestSpacing)) {
+                if (sp != null && sp > 0 && (barClosestSpacing === null || sp > barClosestSpacing)) {
                     barClosestSpacing = sp;
                 }
             }
