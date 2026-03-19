@@ -75,8 +75,6 @@ export function getBarWidths({closestSpacing, bounds, sizing, axisSeriesCount}) 
     const barSpacing = fullBarWidth * 0.2;
     const barWidth = totalBarWidth / axisSeriesCount;
 
-    console.log(`[bars] full=${fullBarWidth.toFixed(1)} total=${totalBarWidth.toFixed(1)} bar=${barWidth.toFixed(1)} count=${axisSeriesCount} spacing=${closestSpacing}`);
-
     return {
         barWidth,
         totalBarWidth,
