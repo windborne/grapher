@@ -1,0 +1,3371 @@
+[
+    {
+        "data": [
+            {
+                "x": "2026-03-18T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T19:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T20:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T21:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T22:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T23:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T01:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T02:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T03:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T04:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T05:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T07:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T08:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T09:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T10:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T11:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T13:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T14:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T15:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T16:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T17:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T19:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T20:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T21:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T22:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T23:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T01:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T02:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T03:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T04:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T05:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T07:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T08:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T09:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T10:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T11:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T13:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T14:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T15:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T16:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T17:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T19:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T20:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T21:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T22:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T23:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T01:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T02:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T03:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T04:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T05:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T07:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T08:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T09:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T10:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T11:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T13:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T14:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T15:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T16:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T17:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T19:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T20:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T21:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T22:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T23:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T01:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T02:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T03:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T04:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T05:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T07:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T08:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T09:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T10:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T11:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T13:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T14:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T15:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T16:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T17:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T18:00:00.000Z",
+                "y": 0.01,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T19:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T20:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T21:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T22:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T23:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T01:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T02:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T03:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T04:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T05:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T07:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T08:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T09:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T10:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T11:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T13:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T14:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T15:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T16:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T17:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T18:00:00.000Z",
+                "y": 0.01,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T00:00:00.000Z",
+                "y": 0.03,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T12:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T00:00:00.000Z",
+                "y": 0.01,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T06:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T12:00:00.000Z",
+                "y": 0.02,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T18:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T00:00:00.000Z",
+                "y": 0,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T06:00:00.000Z",
+                "y": 0.02,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T12:00:00.000Z",
+                "y": 0.08,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T18:00:00.000Z",
+                "y": 0.07,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T00:00:00.000Z",
+                "y": 0.01,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T06:00:00.000Z",
+                "y": 0.09,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T12:00:00.000Z",
+                "y": 0.05,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T18:00:00.000Z",
+                "y": 0.09,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T00:00:00.000Z",
+                "y": 0.08,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T06:00:00.000Z",
+                "y": 0.07,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T12:00:00.000Z",
+                "y": 0.05,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T18:00:00.000Z",
+                "y": 0.06,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T00:00:00.000Z",
+                "y": 0.01,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T06:00:00.000Z",
+                "y": 0.05,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T12:00:00.000Z",
+                "y": 0.09,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T18:00:00.000Z",
+                "y": 0.16,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T00:00:00.000Z",
+                "y": 0.14,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T06:00:00.000Z",
+                "y": 0.12,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T12:00:00.000Z",
+                "y": 0.22,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T18:00:00.000Z",
+                "y": 0.22,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T00:00:00.000Z",
+                "y": 0.38,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T06:00:00.000Z",
+                "y": 0.43,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T12:00:00.000Z",
+                "y": 0.55,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T18:00:00.000Z",
+                "y": 0.25,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T00:00:00.000Z",
+                "y": 0.35,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T06:00:00.000Z",
+                "y": 0.39,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T12:00:00.000Z",
+                "y": 0.41,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T18:00:00.000Z",
+                "y": 0.4,
+                "model": "weathermesh_det",
+                "cycleTime": "2026-03-18T18:00:00.000Z",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(19, 168, 120)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "width": 1,
+        "xUnixDates": true,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar"
+    },
+    {
+        "data": [],
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    },
+    {
+        "data": [
+            {
+                "x": "2026-03-18T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T00:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T06:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T12:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T18:00:00.000Z",
+                "y": 0,
+                "model": "aifs",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(190, 47, 222)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    },
+    {
+        "data": [
+            {
+                "x": "2026-03-18T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T19:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T20:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T22:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T23:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T01:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T02:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T04:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T05:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T07:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T08:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T10:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T11:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T13:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T14:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T16:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T17:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T19:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T20:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T22:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T23:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T01:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T02:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T04:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T05:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T07:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T08:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T10:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T11:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T13:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T14:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T16:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T17:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T19:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T20:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T22:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T23:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T01:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T02:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T04:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T05:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T07:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T08:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T10:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T11:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T13:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T14:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T16:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T17:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T19:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T20:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T22:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T23:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T01:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T02:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T04:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T05:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T07:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T08:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T10:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T11:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T13:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T14:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T16:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T17:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T19:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T20:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T22:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T23:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T01:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T02:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T04:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T05:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T07:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T08:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T10:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T11:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T13:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T14:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T16:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T17:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-25T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-26T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T00:00:00.000Z",
+                "y": 0.13,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-27T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-28T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-29T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-30T21:00:00.000Z",
+                "y": 0.02,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T06:00:00.000Z",
+                "y": 0.48,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T09:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T12:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T15:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T18:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-31T21:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T00:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T03:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T06:00:00.000Z",
+                "y": 0,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T09:00:00.000Z",
+                "y": 6.12,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T12:00:00.000Z",
+                "y": 2.6,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T15:00:00.000Z",
+                "y": 0.31,
+                "model": "gfs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-04-01T18:00:00.000Z",
+                "y": 0.92,
+                "model": "gfs",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(57, 120, 252)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    },
+    {
+        "data": [
+            {
+                "x": "2026-03-19T00:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T01:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T02:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T03:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T04:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T05:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T06:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T07:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T08:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T09:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T10:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T11:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T12:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T13:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T14:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T15:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T16:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T17:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T18:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T19:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T20:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T21:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T22:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T23:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T00:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T01:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T02:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T03:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T04:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T05:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T06:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T07:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T08:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T09:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T10:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T11:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T12:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T13:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T14:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T15:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T16:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T17:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T18:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T19:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T20:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T21:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T22:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T23:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T00:00:00.000Z",
+                "y": 0,
+                "model": "hrrr",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(170, 170, 29)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    },
+    {
+        "data": [
+            {
+                "x": "2026-03-18T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-20T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-21T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-22T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-23T21:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T00:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T03:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T06:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T09:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T12:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T15:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-24T18:00:00.000Z",
+                "y": 0,
+                "model": "ifs",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(198, 70, 70)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    },
+    {
+        "data": [
+            {
+                "x": "2026-03-18T18:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T19:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T20:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T21:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T22:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-18T23:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T00:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T01:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T02:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T03:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            },
+            {
+                "x": "2026-03-19T04:53:00.000Z",
+                "y": 0,
+                "model": "metar",
+                "unit": "mm"
+            }
+        ],
+        "color": "rgb(176, 110, 29)",
+        "xKey": "x",
+        "yKey": "y",
+        "type": "objects",
+        "xUnixDates": true,
+        "width": 1,
+        "pointRadius": 5,
+        "defaultAlwaysTooltipped": true,
+        "followingMouseTooltip": true,
+        "showIndividualPoints": true,
+        "cutoffTime": "now",
+        "rendering": "bar",
+        "cutoffOpacity": 0.4
+    }
+]

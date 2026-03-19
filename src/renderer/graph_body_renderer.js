@@ -353,18 +353,15 @@ export default class GraphBodyRenderer extends Eventable {
 
         if (singleSeries.rendering === 'bar') {
             const barSeriesInAxis = singleSeries.axis.series.filter(s => s.rendering === 'bar');
-            let barClosestSpacing = null;
-            for (const s of barSeriesInAxis) {
-                const sp = s.dataBounds?.closestSpacing;
-                if (sp != null && sp > 0 && (barClosestSpacing === null || sp > barClosestSpacing)) {
-                    barClosestSpacing = sp;
-                }
-            }
+            const visibleBarSeries = barSeriesInAxis.filter(s =>
+                s.inDataSpace && s.inDataSpace.length > 0 &&
+                s.dataBounds && s.dataBounds.maxX >= bounds.minX && s.dataBounds.minX <= bounds.maxX
+            );
             let barParams = {
                 ...commonCPUParams,
-                indexInAxis: barSeriesInAxis.indexOf(singleSeries),
-                axisSeriesCount: barSeriesInAxis.length,
-                closestSpacing: barClosestSpacing || globalBounds.closestSpacing,
+                indexInAxis: visibleBarSeries.indexOf(singleSeries),
+                axisSeriesCount: visibleBarSeries.length || 1,
+                closestSpacing: singleSeries.dataBounds?.closestSpacing || globalBounds.closestSpacing,
                 bounds
             };
 

@@ -110,19 +110,15 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
 
         if (singleSeries.rendering === 'bar') {
             const barSeriesInAxis = singleSeries.axis.series.filter(s => s.rendering === 'bar');
-            const indexInAxis = barSeriesInAxis.indexOf(singleSeries);
-            const axisSeriesCount = barSeriesInAxis.length;
-
-            let barClosestSpacing = null;
-            for (const s of barSeriesInAxis) {
-                const sp = s.dataBounds?.closestSpacing;
-                if (sp != null && sp > 0 && (barClosestSpacing === null || sp > barClosestSpacing)) {
-                    barClosestSpacing = sp;
-                }
-            }
+            const visibleBarSeries = barSeriesInAxis.filter(s =>
+                s.inDataSpace && s.inDataSpace.length > 0 &&
+                s.dataBounds && s.dataBounds.maxX >= bounds.minX && s.dataBounds.minX <= bounds.maxX
+            );
+            const indexInAxis = visibleBarSeries.indexOf(singleSeries);
+            const axisSeriesCount = visibleBarSeries.length || 1;
 
             const { totalBarWidth, barWidth } = getBarWidths({
-                closestSpacing: barClosestSpacing || closestSpacing,
+                closestSpacing: singleSeries.dataBounds?.closestSpacing || closestSpacing,
                 bounds,
                 sizing,
                 axisSeriesCount

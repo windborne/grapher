@@ -33,7 +33,7 @@ export default function drawBars(individualPoints, {
     context.fillStyle = color;
 
     const {barWidth, totalBarWidth} = getBarWidths({ closestSpacing, bounds, sizing, axisSeriesCount });
-    const barBottom = hasNegatives ? zero : sizing.renderHeight;
+    const barBottom = Math.min(zero, sizing.renderHeight);
 
     if (renderCutoffGradient && cutoffIndex !== undefined && originalData) {
         drawBarsWithCutoff(individualPoints, {
@@ -74,6 +74,8 @@ export function getBarWidths({closestSpacing, bounds, sizing, axisSeriesCount}) 
     const totalBarWidth = fullBarWidth * 0.8;
     const barSpacing = fullBarWidth * 0.2;
     const barWidth = totalBarWidth / axisSeriesCount;
+
+    console.log(`[bars] full=${fullBarWidth.toFixed(1)} total=${totalBarWidth.toFixed(1)} bar=${barWidth.toFixed(1)} count=${axisSeriesCount} spacing=${closestSpacing}`);
 
     return {
         barWidth,
