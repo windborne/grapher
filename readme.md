@@ -86,7 +86,8 @@ Grapher supports multiple data formats within a series:
 | stateControllerInitialization | `object` | ✗ | Options for initializing the internal state controller. |
 | syncPool | `SyncPool` | ✗ | For synchronizing with other grapher instances. |
 | dragPositionYOffset | `number` | ✗ | Y-offset for drag positioning, used in multigrapher. |
-| theme | `'day' \| 'night' \| 'export'` | ✗ | Sets the theme of grapher. You can also override any CSS property directly in a stylesheet. |
+| preset | `'simple'` | ✗ | Applies a named bundle of Grapher props. Explicit props override preset values. |
+| theme | `'day' \| 'night' \| 'export' \| 'simple'` | ✗ | Sets the theme of grapher. You can also override any CSS property directly in a stylesheet. |
 | title | `string` | ✗ | Sets the title text for the graph. |
 | fullscreen | `boolean` | ✗ | If true, displays the graph in fullscreen mode. |
 | bodyHeight | `number` | ✗ | Sets the height of the graph body (i.e., excluding range graph, series controls, etc.). |
@@ -102,6 +103,8 @@ Grapher supports multiple data formats within a series:
 | bigLabels | `boolean` | ✗ | If true, uses larger text for labels. |
 | xTickUnit | `'year'` | ✗ | Specifies the unit for x-axis ticks. Currently supports 'year'. |
 | formatXAxisLabel | `(value: any) => string` | ✗ | A custom function to format the x-axis labels. This function should take a single argument (the raw x-value) and return a string to display as the label. |
+| xAxisTicks | `'auto' \| 'compact-time' \| XAxisTick[] \| XAxisTicksCalculator` | ✗ | Controls x-axis tick generation. `'compact-time'` uses concise time/day labels for date axes. |
+| yAxisTicks | `'auto' \| 'temperature-f' \| 'temperature-c' \| YAxisTick[] \| YAxisTicksCalculator` | ✗ | Controls y-axis tick generation. The temperature modes use degree labels and unit-appropriate weather intervals. |
 | xAxisIntegersOnly | `boolean` | ✗ | If true, only displays integer values on the x-axis. |
 | clockStyle | `'12h' \| '24h'` | ✗ | Format for displaying time, either '12h' or '24h'. |
 | timeZone | `string` | ✗ | Time zone for date/time display. Can be 'local', 'utc', or a full timezone string. |
@@ -117,10 +120,13 @@ Grapher supports multiple data formats within a series:
 | defaultShowIndividualPoints | `boolean` | ✗ | Default setting for showing individual data points. |
 | defaultShowSidebar | `boolean` | ✗ | Default visibility of the sidebar. |
 | defaultLineWidth | `number` | ✗ | Default width of the lines in the graph. |
+| roundedLines | `boolean` | ✗ | If true, line charts render with round canvas line caps and joins. |
 | tooltipOptions | [TooltipOptions](#tooltipoptions) | ✗ | Configures tooltip appearance and behavior with various options. |
 | annotations | [Annotation](#annotation)`[]` | ✗ | Array of annotation objects to display on the graph with position, content, and series targeting. |
 | draggablePoints | [DraggablePoint](#draggablepoint)`[]` | ✗ | Array of interactive point objects with position, styling, and event handlers. |
 | verticalLines | [VerticalLine](#verticalline)`[]` | ✗ | Array of vertical line objects to display on the graph with position, styling, and text options. |
+| markCurrentTime | `boolean \| Partial<VerticalLine>` | ✗ | Adds a generated current-time vertical line, optionally overridden with vertical line settings. |
+| currentTime | `number \| Date` | ✗ | Timestamp used by `markCurrentTime`; defaults to live time and updates once a minute. |
 
 ### <a id="seriesdata"></a>Schema `SeriesData`
 
@@ -136,6 +142,7 @@ Grapher supports multiple data formats within a series:
 | xUnixDates | `boolean` | ✗ | Whether x-values are Unix timestamps. |
 | color | `string \| number` | ✗ | Series color (string or number). |
 | name | `string` | ✗ | Series name for display in legend. |
+| unitText | `string` | ✗ | Display suffix used by simple tooltips. |
 | xLabel | `string` | ✗ | Label for x-axis. |
 | yLabel | `string` | ✗ | Label for y-axis. |
 | rendering | `'line' \| 'bar' \| 'area' \| 'shadow'` | ✗ | Visual representation (defaults to 'line'). The 'shadow' option creates an area chart with individual point-based trapezoid gradients extending downward. |
@@ -180,9 +187,10 @@ Grapher supports multiple data formats within a series:
 | floating | `boolean` | ✗ | Whether tooltip floats or is fixed position. |
 | alwaysFixedPosition | `boolean` | ✗ | Forces tooltip to always use fixed position. |
 | floatPosition | `'top' \| 'bottom'` | ✗ | Placement of floating tooltip. |
+| mode | `'nearest' \| 'interpolate'` | ✗ | Tooltip lookup behavior. `'interpolate'` shows interpolated values for all visible series at the hovered x position. |
 | floatDelta | `number` | ✗ | Pixel offset for floating tooltip positioning. |
 | savingDisabled | `boolean` | ✗ | Prevents tooltip settings from being saved. |
-| customTooltip | `React.ComponentType<any>` | ✗ | A react component to use as a custom tooltip. If used in conjunction with `combineTooltips`, see combined tooltips examples. |
+| customTooltip | `React.ComponentType<any> \| 'simple'` | ✗ | A react component or built-in tooltip name to use as a custom tooltip. If used in conjunction with `combineTooltips`, see combined tooltips examples. |
 | combineTooltips | `boolean \| number` | ✗ | If true, combines multiple tooltips into one when multiple series are shown. Can alternatively be set to a threshold in pixels for how close values need to be in order to be combined. |
 
 ### <a id="customboundsselector"></a>Schema `CustomBoundsSelector`
@@ -229,10 +237,15 @@ Grapher supports multiple data formats within a series:
 | style | `object` | ✗ | Optional styling object for the line. |
 | markerStyle | `object` | ✗ | Optional styling object for the marker. |
 | text | `string` | ✗ | Optional text to display alongside the line. |
+| textPosition | `'top' \| 'bottom'` | ✗ | Places text at a standard vertical position when `textTop` is not supplied. |
 | textTop | `number` | ✗ | Optional value to specify the vertical position of the text. |
+| textHeight | `number` | ✗ | Text height used when calculating a gap around vertical line text. |
+| textGapPadding | `number` | ✗ | Padding around text when `lineGapAroundText` is true. |
+| lineGapAroundText | `boolean` | ✗ | Splits the vertical line so it does not run through its text label. |
 | textStyle | `object` | ✗ | Optional styling object for the text. |
 | minPixelX | `number` | ✗ | If the x position of the line in pixels is less than this value, the line will be hidden. |
 | maxPixelX | `number` | ✗ | If the x position of the line in pixels is greater than this value, the line will be hidden. |
+| datesOnly | `boolean` | ✗ | If true, the vertical line only renders on date-based axes. |
 | onRangeGraph | `boolean \| object` | ✗ | If true, will show the line on the range graph as well. This may also be an object with any of the above options to adjust the styling. |
 | onRangeGraphOnly | `boolean` | ✗ | If true, the vertical line will only appear on the range graph and not the primary graph. |
 

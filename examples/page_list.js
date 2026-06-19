@@ -176,6 +176,8 @@ module.exports = [
     {
         name: 'Native weather charts',
         pages: [
+            'simple_weather_next_week_graph',
+            'simple_weather_one_day_graph',
             'wind_arrows_graph',
             'wind_arrows_graph_2'
         ]

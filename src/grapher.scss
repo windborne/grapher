@@ -980,3 +980,92 @@
 .grapher-export {
   @include grapher-theme-export();
 }
+
+.grapher-simple {
+  @include grapher-theme-day();
+
+  background: #f9f9f7;
+  padding: 0;
+
+  .graph-body canvas {
+    background: transparent;
+  }
+
+  .y-axis .axis-item path {
+    stroke: rgba(141, 137, 133, 0.2);
+  }
+
+  .x-axis .axis-item path:not(.axis-tick) {
+    stroke: rgba(141, 137, 133, 0.18);
+  }
+
+  .axis-line,
+  .axis-tick {
+    stroke: rgba(141, 137, 133, 0.36);
+  }
+
+  .axis.x-axis text,
+  .axis.y-axis text {
+    fill: #8d8985;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .axis.x-axis text.x-axis-custom-text {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .x-axis .axis-tick {
+    display: none;
+  }
+
+  .grapher-tooltip .line {
+    border-left-color: rgba(22, 22, 30, 0.28);
+  }
+
+  .grapher-simple-tooltip {
+    min-width: 160px;
+    border: 1px solid rgba(141, 137, 133, 0.3);
+    border-radius: 6px;
+    background: rgba(249, 249, 247, 0.94);
+    box-shadow: 0 8px 24px rgba(22, 22, 30, 0.14);
+    color: #16161e;
+    font-size: 13px;
+    line-height: 1.25;
+    padding: 8px 10px;
+    pointer-events: none;
+  }
+
+  .grapher-simple-tooltip-time {
+    color: #8d8985;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .grapher-simple-tooltip-row {
+    align-items: center;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .grapher-simple-tooltip-swatch {
+    border-radius: 999px;
+    height: 7px;
+    width: 7px;
+  }
+
+  .grapher-simple-tooltip-label {
+    color: #8d8985;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .grapher-simple-tooltip-value {
+    color: #16161e;
+    font-weight: 650;
+  }
+}

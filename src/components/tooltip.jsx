@@ -74,6 +74,96 @@ TooltipLabel.propTypes = {
     ...CustomPropTypes.TooltipOptionsRaw
 };
 
+function formatSimpleTooltipX(value, formatXOptions, dates) {
+    if (dates) {
+        return formatX(value instanceof Date ? value : new Date(value), {
+            ...formatXOptions,
+            dates: true,
+            precision: 'm'
+        });
+    }
+
+    return formatX(value, formatXOptions);
+}
+
+function formatSimpleTooltipValue(value, unitText) {
+    if (typeof value !== 'number') {
+        return value === null || value === undefined ? '' : value.toString();
+    }
+
+    const digits = Math.abs(value) >= 100 ? 0 : 1;
+    const formatted = value.toLocaleString('en-US', {
+        maximumFractionDigits: digits,
+        minimumFractionDigits: 0
+    });
+
+    return unitText ? `${formatted}${unitText}` : formatted;
+}
+
+function SimpleTooltip(props) {
+    const tooltips = props.tooltips || [props];
+    if (!tooltips.length) {
+        return null;
+    }
+
+    const firstTooltip = tooltips[0];
+    const dates = firstTooltip.x instanceof Date || firstTooltip.series?.axis?.currentBounds?.dates;
+
+    return (
+        <div className="grapher-simple-tooltip">
+            <div className="grapher-simple-tooltip-time">
+                {formatSimpleTooltipX(firstTooltip.x, props.formatXOptions || {}, dates)}
+            </div>
+
+            {
+                tooltips.map((tooltip, index) => (
+                    <div className="grapher-simple-tooltip-row" key={`${tooltip.label || 'series'}-${index}`}>
+                        <span
+                            className="grapher-simple-tooltip-swatch"
+                            style={{ backgroundColor: tooltip.color }}
+                        />
+                        <span className="grapher-simple-tooltip-label">
+                            {tooltip.series?.name || tooltip.label || 'Value'}
+                        </span>
+                        <span className="grapher-simple-tooltip-value">
+                            {formatSimpleTooltipValue(tooltip.y, tooltip.series?.unitText)}
+                        </span>
+                    </div>
+                ))
+            }
+        </div>
+    );
+}
+
+SimpleTooltip.propTypes = {
+    tooltips: PropTypes.array,
+    formatXOptions: PropTypes.object
+};
+
+function getCustomTooltipStyle({ tooltip, floating, floatPosition, floatDelta, elementHeight }) {
+    if (!floating) {
+        return {
+            top: tooltip.pixelY,
+            left: tooltip.pixelX
+        };
+    }
+
+    const delta = floatDelta || 0;
+    if (floatPosition === 'bottom') {
+        return {
+            top: elementHeight - 8 + delta,
+            left: tooltip.pixelX,
+            transform: 'translate(-50%, -100%)'
+        };
+    }
+
+    return {
+        top: 8 + delta,
+        left: tooltip.pixelX,
+        transform: 'translateX(-50%)'
+    };
+}
+
 export default class Tooltip extends React.PureComponent {
 
     render() {
@@ -217,7 +307,9 @@ export default class Tooltip extends React.PureComponent {
             };
         }).filter(Boolean);
 
-        const CustomTooltipComponent = this.props.customTooltip;
+        const CustomTooltipComponent = this.props.customTooltip === 'simple' ? SimpleTooltip : this.props.customTooltip;
+        const hasCustomTooltip = !!CustomTooltipComponent;
+        const customTooltipFloating = hasCustomTooltip && this.props.floating;
 
         let groupedTooltips;
         if (this.props.combineTooltips) {
@@ -284,12 +376,23 @@ export default class Tooltip extends React.PureComponent {
 
         return (
             <div className="grapher-tooltip">
+                {
+                    this.props.mode === 'interpolate' && preparedTooltips.length > 0 &&
+                    <div
+                        className="line tooltip-interpolate-line"
+                        style={{
+                            left: this.props.mouseX,
+                            height: this.props.elementHeight
+                        }}
+                    />
+                }
+
                 <svg>
                     {
                         preparedTooltips.map((tooltip, i) => {
                             const { color, fixedPosition, width, markerTransform, tooltipTransform, baseLeft, commonLabelProps, yTranslation, multiplier, textLeft, textTop } = tooltip;
 
-                            if (this.props.customTooltip || groupedTooltips) {
+                            if (hasCustomTooltip || groupedTooltips) {
                                 return (
                                     <g key={i} transform={markerTransform} className="tooltip-item">
                                         <circle r={4} fill={color}/>
@@ -333,7 +436,7 @@ export default class Tooltip extends React.PureComponent {
                     }
 
                     {
-                        !this.props.customTooltip && groupedTooltips &&
+                        !hasCustomTooltip && groupedTooltips &&
                         groupedTooltips.map(({ tooltips, pixelX, pixelY, halfHeight, multiplier, color, width }, i) =>
                             <g key={i} transform={`translate(${pixelX},${pixelY})`} className="tooltip-item">
                                 <path stroke={color} d={`M${multiplier*caretPadding},0 L${multiplier*caretSize*2},-${caretSize} V-${halfHeight} h${multiplier*width} V${halfHeight} h${multiplier*-width} V${caretSize} L${multiplier*caretPadding},0`} />
@@ -354,14 +457,20 @@ export default class Tooltip extends React.PureComponent {
                 </svg>
 
                 {
-                    this.props.customTooltip &&
+                    hasCustomTooltip &&
                     (groupedTooltips || preparedTooltips).map((tooltip, i) =>
                         <div
                             key={i}
-                            className="custom-tooltip-container"
-                            style={{top: tooltip.pixelY, left: tooltip.pixelX}}
+                            className={`custom-tooltip-container${customTooltipFloating ? ' custom-tooltip-container-floating' : ''}`}
+                            style={getCustomTooltipStyle({
+                                tooltip,
+                                floating: this.props.floating,
+                                floatPosition: this.props.floatPosition,
+                                floatDelta: this.props.floatDelta,
+                                elementHeight: this.props.elementHeight
+                            })}
                         >
-                            <CustomTooltipComponent {...tooltip} />
+                            <CustomTooltipComponent {...tooltip} formatXOptions={formatXOptions} />
                         </div>
                     )
                 }

@@ -18,9 +18,10 @@ const DISTANCE_THRESHOLD = 20;
  * @param {Array<Object>} savedTooltips
  * @param {Boolean} [allTooltipped]
  * @param {Number} closestSpacing
+ * @param {Object} tooltipOptions
  * @return {{mouseX: *, mouseY: *, elementWidth: number, elementHeight: number, tooltips: any[]}}
  */
-export default function calculateTooltipState({mousePresent, mouseX, mouseY, sizing, series, alwaysTooltipped, savedTooltips, allTooltipped, closestSpacing }) {
+export default function calculateTooltipState({mousePresent, mouseX, mouseY, sizing, series, alwaysTooltipped, savedTooltips, allTooltipped, closestSpacing, tooltipOptions={} }) {
     // filter out saved tooltips for nonexistent series
     savedTooltips = savedTooltips.filter((tooltip) => tooltip.series.axis);
 
@@ -41,6 +42,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
     const tooltips = [];
 
     let minDistance = Infinity;
+    const interpolateMode = tooltipOptions.mode === 'interpolate';
 
     for (let i = 0; i < series.length; i++) {
         const singleSeries = series[i];
@@ -90,7 +92,16 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             continue;
         }
 
-        const [x, y] = closestPoint;
+        let [x, y] = closestPoint;
+
+        if (interpolateMode && singleSeries.rendering !== 'bar') {
+            const interpolatedPoint = interpolatePointAtX(data, trueX, closestIndex, { dates: bounds.dates });
+            if (!interpolatedPoint) {
+                continue;
+            }
+
+            [x, y] = interpolatedPoint;
+        }
 
         if (x === null) {
             continue;
@@ -103,7 +114,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             continue;
         }
 
-        const ignoreYDistanceCheck = alwaysTooltipped.has(singleSeries) || allTooltipped;
+        const ignoreYDistanceCheck = interpolateMode || alwaysTooltipped.has(singleSeries) || allTooltipped;
         let xDistanceThreshold = DISTANCE_THRESHOLD;
         let yDistanceThreshold = DISTANCE_THRESHOLD;
         let distanceThreshold = DISTANCE_THRESHOLD;
@@ -217,6 +228,54 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
         unsavedTooltipsCount: unsavedTooltips.length,
         tooltips: [...savedTooltips, ...unsavedTooltips]
     };
+}
+
+function numberForX(value) {
+    return value instanceof Date ? value.getTime() : value;
+}
+
+function interpolatePointAtX(data, trueX, closestIndex, { dates=false }={}) {
+    if (closestIndex < 0) {
+        return null;
+    }
+
+    const beforeIndex = binarySearch(data, trueX, { searchType: 'before', returnIndex: true });
+    const afterIndex = binarySearch(data, trueX, { searchType: 'after', returnIndex: true });
+
+    if (beforeIndex === -1 || afterIndex === -1) {
+        const point = data[closestIndex];
+        if (!point) {
+            return null;
+        }
+
+        return [dates ? new Date(numberForX(point[0])) : numberForX(point[0]), point[1]];
+    }
+
+    const before = data[beforeIndex];
+    const after = data[afterIndex];
+    if (!before || !after) {
+        return null;
+    }
+
+    const beforeX = numberForX(before[0]);
+    const afterX = numberForX(after[0]);
+    const beforeY = before[1];
+    const afterY = after[1];
+
+    if (typeof beforeY !== 'number' || typeof afterY !== 'number') {
+        const point = data[closestIndex];
+        return point ? [dates ? new Date(numberForX(point[0])) : numberForX(point[0]), point[1]] : null;
+    }
+
+    if (afterX === beforeX) {
+        return [dates ? new Date(beforeX) : beforeX, beforeY];
+    }
+
+    const t = (trueX - beforeX)/(afterX - beforeX);
+    return [
+        dates ? new Date(trueX) : trueX,
+        beforeY + t*(afterY - beforeY)
+    ];
 }
 
 /**

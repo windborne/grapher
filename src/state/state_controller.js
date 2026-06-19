@@ -22,7 +22,7 @@ import RustAPI, {RustAPIPromise} from './rust_api';
 
 export default class StateController extends Eventable {
 
-    constructor({ defaultBoundsCalculator, customBoundsSelectors, requireWASM, defaultShowIndividualPoints, defaultShowSidebar, defaultShowAnnotations, defaultShowOptions, syncPool, grapherID, sharedDataCache, sharedSubscriptions, fullscreen }) {
+    constructor({ defaultBoundsCalculator, customBoundsSelectors, requireWASM, defaultShowIndividualPoints, defaultShowSidebar, defaultShowAnnotations, defaultShowOptions, syncPool, grapherID, sharedDataCache, sharedSubscriptions, fullscreen, tooltipOptions }) {
         super();
 
         this._requireWASM = requireWASM;
@@ -55,6 +55,7 @@ export default class StateController extends Eventable {
         this._showingAnnotations = defaultShowAnnotations || false;
         this._grapherID = grapherID;
         this._fullscreen = fullscreen || false;
+        this._roundedLines = false;
 
         this._alwaysTooltipped = new Set();
         this._tooltipState = {
@@ -65,6 +66,7 @@ export default class StateController extends Eventable {
             elementHeight: 0,
             tooltips: []
         };
+        this._tooltipOptions = tooltipOptions || {};
         this._contextMenuPosition = {
             x: 0,
             y: 0,
@@ -549,7 +551,8 @@ export default class StateController extends Eventable {
             alwaysTooltipped: this._alwaysTooltipped,
             savedTooltips: this._savedTooltips,
             allTooltipped: this._tooltipAllNext,
-            closestSpacing: this._globalBounds.closestSpacing
+            closestSpacing: this._globalBounds.closestSpacing,
+            tooltipOptions: this._tooltipOptions
         });
         this._tooltipAllNext = false;
         this.deferredEmit('tooltip_state_changed', this._tooltipState, this._tooltipStateArg);
@@ -971,6 +974,7 @@ export default class StateController extends Eventable {
             const shadowColor = singleSeries.shadowColor || {
                 day: 'white',
                 export: 'transparent',
+                simple: 'transparent',
                 night: 'black'
             }[this._theme] || 'black';
 
@@ -984,6 +988,7 @@ export default class StateController extends Eventable {
                 shadowColor,
                 shadowBlur,
                 defaultLineWidth: this._defaultLineWidth,
+                roundedLines: this._roundedLines,
                 globalBounds: this._globalBounds,
                 inRenderSpaceAreaBottom: singleSeries.inRenderSpacePrimaryAreaBottom
             });
@@ -1000,6 +1005,7 @@ export default class StateController extends Eventable {
                     shadowColor: 'transparent',
                     shadowBlur: 0,
                     width: 1,
+                    roundedLines: this._roundedLines,
                     showIndividualPoints: false,
                     bounds: rangeGraphBounds,
                     globalBounds: rangeGraphBounds,
@@ -1414,6 +1420,11 @@ export default class StateController extends Eventable {
     get tooltipState() {
         return this._tooltipState;
     }
+
+    set tooltipOptions(tooltipOptions) {
+        this._tooltipOptions = tooltipOptions || {};
+        this._recalculateTooltips();
+    }
     
     get contextMenuState() {
         return this._contextMenuPosition;
@@ -1561,6 +1572,12 @@ export default class StateController extends Eventable {
 
     set defaultLineWidth(value) {
         this._defaultLineWidth = value;
+        this._mustRerender = true;
+        this._markDirty();
+    }
+
+    set roundedLines(value) {
+        this._roundedLines = !!value;
         this._mustRerender = true;
         this._markDirty();
     }

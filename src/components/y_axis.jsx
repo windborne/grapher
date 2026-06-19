@@ -11,7 +11,75 @@ import CustomPropTypes from '../helpers/custom_prop_types';
 
 export default React.memo(YAxis);
 
-function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideIndex, bodyHeight, theme, grapherID, dragPositionYOffset=0, bigLabels, showAxisColors }) {
+const PREDEFINED_TICK_INTERVALS = {
+    'temperature-f': [5, 10, 20, 25, 50],
+    'temperature-c': [1, 2, 5, 10, 20]
+};
+
+function tickCountForInterval(minY, maxY, interval) {
+    return Math.floor(maxY / interval) - Math.ceil(minY / interval) + 1;
+}
+
+function getPredefinedTicks({ yAxisTicks, minY, maxY }) {
+    const intervals = PREDEFINED_TICK_INTERVALS[yAxisTicks];
+    if (!intervals) {
+        return null;
+    }
+
+    const lowerBound = Math.min(minY, maxY);
+    const upperBound = Math.max(minY, maxY);
+    const interval = intervals.find((candidateInterval) => (
+        tickCountForInterval(lowerBound, upperBound, candidateInterval) <= 7
+    )) || intervals[intervals.length - 1];
+
+    const ticks = [];
+    const firstTick = Math.ceil(lowerBound / interval) * interval;
+    for (let tick = firstTick; tick <= upperBound; tick += interval) {
+        ticks.push({
+            y: tick,
+            label: `${tick}\u00b0`
+        });
+    }
+
+    return ticks;
+}
+
+function getCustomTicks({ yAxisTicks, minY, maxY, scale, axis, elementHeight }) {
+    if (!yAxisTicks || yAxisTicks === 'auto' || (scale && scale !== 'linear') || minY === maxY) {
+        return null;
+    }
+
+    let ticks;
+    const predefinedTicks = getPredefinedTicks({ yAxisTicks, minY, maxY });
+    if (predefinedTicks) {
+        ticks = predefinedTicks;
+    } else if (typeof yAxisTicks === 'function') {
+        ticks = yAxisTicks({ minY, maxY, axis });
+    } else {
+        ticks = yAxisTicks;
+    }
+
+    if (!Array.isArray(ticks)) {
+        return null;
+    }
+
+    const customTicks = ticks.map((tick) => {
+        const value = typeof tick === 'number' ? tick : tick.y;
+        const label = typeof tick === 'number' ? tick : tick.label;
+        const pixelValue = elementHeight * (1 - (value - minY) / (maxY - minY));
+
+        return {
+            label,
+            pixelValue,
+            size: 'major',
+            skipGrid: typeof tick === 'number' ? false : tick.skipGrid
+        };
+    }).filter(({ pixelValue }) => pixelValue >= 0 && pixelValue <= elementHeight);
+
+    return customTicks.length ? customTicks : null;
+}
+
+function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideIndex, bodyHeight, theme, grapherID, dragPositionYOffset=0, bigLabels, showAxisColors, yAxisTicks }) {
     if (!showAxes && !showGrid) {
         return null;
     }
@@ -25,7 +93,7 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
     minY = scaledBounds.minY;
     maxY = scaledBounds.maxY;
 
-    const ticks = placeGrid({
+    const defaultTicks = placeGrid({
         min: minY,
         max: maxY,
         totalSize: elementHeight,
@@ -36,6 +104,15 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
         expectedLabelSize: bigLabels ? 20 : 10,
         labelPadding: 30
     });
+    const customTicks = getCustomTicks({
+        yAxisTicks,
+        minY,
+        maxY,
+        scale,
+        axis,
+        elementHeight
+    });
+    const ticks = customTicks || defaultTicks;
 
     const colorBoxSize = 10;
     const colorBoxPadding = 4;
@@ -95,8 +172,9 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
         stateController.markDragStart();
     };
 
-    const highlightedOpacity = theme === 'day' ? 1.0 : 0.5;
-    const unhighlightedOpacity = theme === 'day' ? 0.8 : 0.3;
+    const highlightedOpacity = (theme === 'day' || theme === 'simple') ? 1.0 : 0.5;
+    const unhighlightedOpacity = (theme === 'day' || theme === 'simple') ? 0.8 : 0.3;
+    const axisLineBottom = theme === 'simple' ? elementHeight + 3 : elementHeight;
 
     return (
         <svg className={`axis y-axis y-axis-${side}`}
@@ -132,7 +210,7 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
 
             {
                 showAxes &&
-                <path d={`M${side === 'left' ? Y_AXIS_WIDTH-1 : 1},3 V${elementHeight}`} className="axis-line" />
+                <path d={`M${side === 'left' ? Y_AXIS_WIDTH-1 : 1},3 V${axisLineBottom}`} className="axis-line" />
             }
 
             {
@@ -230,5 +308,6 @@ YAxis.propTypes = {
     theme: PropTypes.string,
     grapherID: PropTypes.string,
     dragPositionYOffset: PropTypes.number,
-    bigLabels: PropTypes.bool
+    bigLabels: PropTypes.bool,
+    yAxisTicks: CustomPropTypes.YAxisTicks
 };

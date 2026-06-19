@@ -22,7 +22,7 @@ function applyPointSpacing(points, minSpacing) {
 }
 
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor, roundedLines=false
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -41,6 +41,8 @@ export default function drawLine(dataInRenderSpace, {
 
     context.strokeStyle = color;
     context.lineWidth = width;
+    context.lineCap = roundedLines ? 'round' : 'butt';
+    context.lineJoin = roundedLines ? 'round' : 'miter';
     context.shadowColor = shadowColor;
     context.shadowBlur = shadowBlur;
 

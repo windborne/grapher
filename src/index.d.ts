@@ -11,6 +11,7 @@ export interface SeriesData {
   xUnixDates?: boolean;
   color?: string | number;
   name?: string;
+  unitText?: string;
   xLabel?: string;
   yLabel?: string;
   ignoreDiscontinuities?: boolean;
@@ -54,9 +55,10 @@ export interface TooltipOptions {
   floating?: boolean;
   alwaysFixedPosition?: boolean;
   floatPosition?: 'top' | 'bottom';
+  mode?: 'nearest' | 'interpolate';
   floatDelta?: number;
   savingDisabled?: boolean;
-  customTooltip?: React.ComponentType<any>;
+  customTooltip?: React.ComponentType<any> | 'simple';
   combineTooltips?: boolean | number;
 }
 
@@ -95,13 +97,46 @@ export interface VerticalLine {
   style?: object;
   markerStyle?: object;
   text?: string;
+  textPosition?: 'top' | 'bottom';
   textTop?: number;
+  textHeight?: number;
+  textGapPadding?: number;
+  lineGapAroundText?: boolean;
   textStyle?: object;
   minPixelX?: number;
   maxPixelX?: number;
+  datesOnly?: boolean;
   onRangeGraph?: boolean | object;
   onRangeGraphOnly?: boolean;
 }
+
+export interface XAxisTick {
+  x: number | Date;
+  label: React.ReactNode;
+  skipGrid?: boolean;
+}
+
+export type XAxisTicksCalculator = (args: {
+  minX: number;
+  maxX: number;
+  dates: boolean;
+  elementWidth: number;
+  elementHeight: number;
+  clockStyle?: '12h' | '24h';
+  timeZone?: string;
+}) => XAxisTick[];
+
+export type YAxisTick = number | {
+  y: number;
+  label: React.ReactNode;
+  skipGrid?: boolean;
+};
+
+export type YAxisTicksCalculator = (args: {
+  minY: number;
+  maxY: number;
+  axis: any;
+}) => YAxisTick[];
 
 export interface GrapherProps {
   series: SeriesData[];
@@ -123,7 +158,8 @@ export interface GrapherProps {
   syncPool?: any;
   dragPositionYOffset?: number;
 
-  theme?: 'day' | 'night' | 'export';
+  preset?: 'simple';
+  theme?: 'day' | 'night' | 'export' | 'simple';
   title?: string;
   fullscreen?: boolean;
   bodyHeight?: number;
@@ -142,6 +178,8 @@ export interface GrapherProps {
 
   xTickUnit?: 'year';
   formatXAxisLabel?: (value: any) => string;
+  xAxisTicks?: 'auto' | 'compact-time' | XAxisTick[] | XAxisTicksCalculator;
+  yAxisTicks?: 'auto' | 'temperature-f' | 'temperature-c' | YAxisTick[] | YAxisTicksCalculator;
   xAxisIntegersOnly?: boolean;
   clockStyle?: '12h' | '24h';
   timeZone?: string;
@@ -159,11 +197,14 @@ export interface GrapherProps {
   defaultShowIndividualPoints?: boolean;
   defaultShowSidebar?: boolean;
   defaultLineWidth?: number;
+  roundedLines?: boolean;
 
   tooltipOptions?: TooltipOptions;
   annotations?: Annotation[];
   draggablePoints?: DraggablePoint[];
   verticalLines?: VerticalLine[];
+  markCurrentTime?: boolean | Partial<VerticalLine>;
+  currentTime?: number | Date;
 }
 
 export interface MultiGrapherProps extends GrapherProps {
@@ -197,4 +238,4 @@ export const AVAILABLE_COLORS: string[];
 export const BUILT_IN_BOUND_CALCULATORS: Record<string, (globalBounds?: any) => any>;
 
 export { Grapher, MultiGrapher, RangeSelection, SyncPool };
-export default Grapher; 
+export default Grapher;

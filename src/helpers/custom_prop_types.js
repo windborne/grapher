@@ -52,6 +52,7 @@ const SingleSeries = PropTypes.shape({
     xUnixDates: PropTypes.bool,
     color: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.string,
+    unitText: PropTypes.string,
     xLabel: PropTypes.string,
     yLabel: PropTypes.string,
     ignoreDiscontinuities: PropTypes.bool,
@@ -114,9 +115,13 @@ const TooltipOptionsRaw = {
     floating: PropTypes.bool,
     alwaysFixedPosition: PropTypes.bool,
     floatPosition: PropTypes.oneOf(['top', 'bottom']),
+    mode: PropTypes.oneOf(['nearest', 'interpolate']),
     floatDelta: PropTypes.number,
     savingDisabled: PropTypes.bool,
-    customTooltip: PropTypes.func,
+    customTooltip: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.oneOf(['simple'])
+    ]),
     combineTooltips: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
 };
 
@@ -153,10 +158,15 @@ const VerticalLine = PropTypes.shape({
     style: PropTypes.object,
     markerStyle: PropTypes.object,
     text: PropTypes.string,
+    textPosition: PropTypes.oneOf(['top', 'bottom']),
     textTop: PropTypes.number,
+    textHeight: PropTypes.number,
+    textGapPadding: PropTypes.number,
+    lineGapAroundText: PropTypes.bool,
     textStyle: PropTypes.object,
     minPixelX: PropTypes.number,
     maxPixelX: PropTypes.number,
+    datesOnly: PropTypes.bool,
     onRangeGraph: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.object // anything that can be passed into the overall vertical line
@@ -164,6 +174,31 @@ const VerticalLine = PropTypes.shape({
     onRangeGraphOnly: PropTypes.bool
 });
 const VerticalLines = PropTypes.arrayOf(VerticalLine);
+
+const XAxisTick = PropTypes.shape({
+    x: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]).isRequired,
+    label: PropTypes.node.isRequired,
+    skipGrid: PropTypes.bool
+});
+const XAxisTicks = PropTypes.oneOfType([
+    PropTypes.oneOf(['auto', 'compact-time']),
+    PropTypes.arrayOf(XAxisTick),
+    PropTypes.func
+]);
+
+const YAxisTick = PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.shape({
+        y: PropTypes.number.isRequired,
+        label: PropTypes.node.isRequired,
+        skipGrid: PropTypes.bool
+    })
+]);
+const YAxisTicks = PropTypes.oneOfType([
+    PropTypes.oneOf(['auto', 'temperature-f', 'temperature-c']),
+    PropTypes.arrayOf(YAxisTick),
+    PropTypes.func
+]);
 
 const CustomPropTypes = {
     Data,
@@ -179,7 +214,11 @@ const CustomPropTypes = {
     DraggablePoint,
     DraggablePoints,
     VerticalLine,
-    VerticalLines
+    VerticalLines,
+    XAxisTick,
+    XAxisTicks,
+    YAxisTick,
+    YAxisTicks
 };
 
 

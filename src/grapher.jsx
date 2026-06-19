@@ -17,6 +17,52 @@ import {useDraggingY, useLeftAxes, useRightAxes, useShowingSidebar, useTheme} fr
 import Sidebar from './components/sidebar.jsx';
 import SyncPool from './state/sync_pool.js';
 import BOUND_CALCULATORS from './state/bound_calculators.js';
+import useCurrentTimeLine from './helpers/use_current_time_line.js';
+
+const SIMPLE_PRESET_PROPS = {
+    theme: 'simple',
+    showAxes: true,
+    showGrid: true,
+    showAxisColors: false,
+    showSeriesKey: false,
+    showRangeGraph: false,
+    showRangeSelectors: false,
+    showContextMenu: false,
+    sidebarEnabled: false,
+    defaultShowAnnotations: false,
+    defaultShowOptions: false,
+    defaultShowSidebar: false,
+    defaultLineWidth: 4,
+    roundedLines: true,
+    clockStyle: '12h',
+    xAxisTicks: 'compact-time',
+    markCurrentTime: true,
+    tooltipOptions: {
+        mode: 'interpolate',
+        customTooltip: 'simple',
+        combineTooltips: Infinity,
+        floating: true,
+        floatPosition: 'top',
+        savingDisabled: true,
+        includeXLabel: false,
+        includeYLabel: false
+    }
+};
+
+function resolvePresetProps(props) {
+    if (props.preset !== 'simple') {
+        return props;
+    }
+
+    return {
+        ...SIMPLE_PRESET_PROPS,
+        ...props,
+        tooltipOptions: {
+            ...SIMPLE_PRESET_PROPS.tooltipOptions,
+            ...(props.tooltipOptions || {})
+        }
+    };
+}
 
 function calculateClassNamesAndStyles(props, { draggingY, theme }) {
     const { fullscreen, height, width } = props;
@@ -71,7 +117,7 @@ const grapherDefaultProps = {
 };
 
 function Grapher(props) {
-    props = {...grapherDefaultProps, ...props};
+    props = {...grapherDefaultProps, ...resolvePresetProps(props)};
 
     const stateController = useMemo(() => new StateController({
         grapherID: props.id,
@@ -92,6 +138,10 @@ function Grapher(props) {
     useEffect(() => {
         props.exportStateController && props.exportStateController(stateController);
     }, [stateController, props.exportStateController]);
+
+    useEffect(() => {
+        stateController.tooltipOptions = props.tooltipOptions;
+    }, [stateController, props.tooltipOptions]);
 
     useEffect(() => {
         stateController.timingFrameCount = props.timingFrameCount;
@@ -120,6 +170,10 @@ function Grapher(props) {
     useEffect(() => {
         stateController.defaultLineWidth = defaultLineWidth;
     }, [stateController, defaultLineWidth]);
+
+    useEffect(() => {
+        stateController.roundedLines = props.roundedLines;
+    }, [stateController, props.roundedLines]);
 
     useEffect(() => {
         stateController.percentile = props.percentile;
@@ -159,6 +213,17 @@ function Grapher(props) {
     const showAxisColors = typeof props.showAxisColors === 'boolean' ? props.showAxisColors : (theme !== 'export');
     const showGrid = typeof props.showGrid === 'boolean' ? props.showGrid : true;
     const showAxes = typeof props.showAxes === 'boolean' ? props.showAxes : false;
+    const currentTimeLine = useCurrentTimeLine({
+        markCurrentTime: props.markCurrentTime,
+        currentTime: props.currentTime
+    });
+    const effectiveVerticalLines = useMemo(() => {
+        if (!currentTimeLine) {
+            return props.verticalLines;
+        }
+
+        return [currentTimeLine, ...(props.verticalLines || [])];
+    }, [currentTimeLine, props.verticalLines]);
 
     const commonYAxisProps = {
         stateController,
@@ -170,7 +235,8 @@ function Grapher(props) {
         grapherID: props.id,
         dragPositionYOffset: props.dragPositionYOffset,
         showAxisColors,
-        bigLabels
+        bigLabels,
+        yAxisTicks: props.yAxisTicks
     };
 
     return (
@@ -247,7 +313,7 @@ function Grapher(props) {
                                 onPointDrag={props.onPointDrag}
                                 onDraggablePointsDoubleClick={props.onDraggablePointsDoubleClick}
                                 onPointClick={props.onPointClick}
-                                verticalLines={props.verticalLines}
+                                verticalLines={effectiveVerticalLines}
                                 clockStyle={props.clockStyle}
                                 timeZone={props.timeZone}
                             />
@@ -264,6 +330,7 @@ function Grapher(props) {
                                 timeZone={props.timeZone}
                                 integersOnly={props.xAxisIntegersOnly}
                                 formatXAxisLabel={props.formatXAxisLabel}
+                                xAxisTicks={props.xAxisTicks}
                             />
 
                             {
@@ -275,7 +342,7 @@ function Grapher(props) {
                                         checkIntersection={props.checkIntersection}
                                         markDates={props.markRangeGraphDates}
                                         timeZone={props.timeZone}
-                                        verticalLines={props.verticalLines}
+                                        verticalLines={effectiveVerticalLines}
                                     />
                                 </div>
                             }
@@ -327,7 +394,8 @@ Grapher.propTypes = {
     id: PropTypes.string,
     dragPositionYOffset: PropTypes.number,
 
-    theme: PropTypes.oneOf(['day', 'night', 'export']),
+    preset: PropTypes.oneOf(['simple']),
+    theme: PropTypes.oneOf(['day', 'night', 'export', 'simple']),
     title: PropTypes.string,
     fullscreen: PropTypes.bool,
     bodyHeight: PropTypes.number,
@@ -344,6 +412,8 @@ Grapher.propTypes = {
     bigLabels: PropTypes.bool,
     xTickUnit: PropTypes.oneOf(['year']),
     formatXAxisLabel: PropTypes.func,
+    xAxisTicks: CustomPropTypes.XAxisTicks,
+    yAxisTicks: CustomPropTypes.YAxisTicks,
     xAxisIntegersOnly: PropTypes.bool,
     clockStyle: PropTypes.oneOf(['12h', '24h']),
     timeZone: PropTypes.string, // local, utc, or a full timezone string
@@ -358,6 +428,7 @@ Grapher.propTypes = {
     defaultShowSidebar: PropTypes.bool,
     defaultShowAnnotations: PropTypes.bool,
     defaultLineWidth: PropTypes.number,
+    roundedLines: PropTypes.bool,
 
     tooltipOptions: CustomPropTypes.TooltipOptions,
 
@@ -370,6 +441,11 @@ Grapher.propTypes = {
     onPointDrag: PropTypes.func,
     onDraggablePointsDoubleClick: PropTypes.func,
     verticalLines: CustomPropTypes.VerticalLines,
+    markCurrentTime: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.object
+    ]),
+    currentTime: PropTypes.oneOfType([PropTypes.number, PropTypes.instanceOf(Date)]),
     onPointClick: PropTypes.func
 };
 

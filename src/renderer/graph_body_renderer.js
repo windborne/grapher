@@ -107,7 +107,7 @@ export default class GraphBodyRenderer extends Eventable {
         }
     }
 
-    render(singleSeries, inRenderSpace, { highlighted, showIndividualPoints, shadowColor, shadowBlur, width, defaultLineWidth, bounds, globalBounds, inRenderSpaceAreaBottom }) {
+    render(singleSeries, inRenderSpace, { highlighted, showIndividualPoints, shadowColor, shadowBlur, width, defaultLineWidth, roundedLines, bounds, globalBounds, inRenderSpaceAreaBottom }) {
         if (!this._initialized || !this._context || !this._canvas) {
             console.warn('GraphBodyRenderer: Cannot render - not initialized, missing context, or missing canvas');
             return;
@@ -617,6 +617,7 @@ export default class GraphBodyRenderer extends Eventable {
             color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
             context: drawContext,
             width: width || singleSeries.width || defaultLineWidth,
+            roundedLines,
             shadowColor,
             shadowBlur,
             dashed: singleSeries.dashed,

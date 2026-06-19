@@ -42,12 +42,17 @@ function VerticalLines({ stateController, verticalLines, isRangeGraph, bounds, e
                             };
                         }
 
+                        if (line.datesOnly && !bounds.dates) {
+                            return null;
+                        }
+
                         const xT = (line.x - bounds.minX)/(bounds.maxX - bounds.minX);
 
                         if (xT < 0 || xT > 1) {
                             return null;
                         }
 
+                        const svgHeight = elementHeight || sizing.elementHeight;
                         const pixelX = xT * (elementWidth || sizing.elementWidth);
                         if (typeof line.minPixelX === 'number' && pixelX < line.minPixelX) {
                             return null;
@@ -89,17 +94,32 @@ function VerticalLines({ stateController, verticalLines, isRangeGraph, bounds, e
                         let textTop = 5;
                         if (typeof line.textTop === 'number') {
                             textTop = line.textTop;
+                        } else if (line.textPosition === 'bottom') {
+                            textTop = svgHeight - 18;
                         }
+
+                        const textHeight = typeof line.textHeight === 'number' ? line.textHeight : parseFloat(textStyle.fontSize) || 12;
+                        const textGapPadding = typeof line.textGapPadding === 'number' ? line.textGapPadding : 3;
+                        const textGapTop = textTop - textGapPadding;
+                        const textGapBottom = textTop + textHeight + textGapPadding;
+                        const lineSegments = line.lineGapAroundText && line.text ? [
+                            [lineTop, Math.max(lineTop, textGapTop)],
+                            [Math.min(svgHeight, textGapBottom), svgHeight]
+                        ].filter(([start, end]) => end > start) : [[lineTop, svgHeight]];
+                        const lineElements = lineSegments.map(([start, end], segmentIndex) => (
+                            <line
+                                key={segmentIndex}
+                                x1={pixelX}
+                                y1={start}
+                                x2={pixelX}
+                                y2={end}
+                                style={lineStyle}
+                            />
+                        ));
 
                         return (
                             <React.Fragment key={index}>
-                                <line
-                                    x1={pixelX}
-                                    y1={lineTop}
-                                    x2={pixelX}
-                                    y2={(elementHeight || sizing.elementHeight)}
-                                    style={lineStyle}
-                                />
+                                {lineElements}
 
                                 {
                                     line.markTop &&
