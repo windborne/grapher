@@ -7,7 +7,7 @@ export const LINE_COLORS = [
   "#61e0ed",
   "#ed6d2c",
   "#ed13c6",
-  "#bbed59",
+  "#bbed59"
 ];
 
 export default function getColor(seriesColor, i, multigrapherSeriesIndex) {

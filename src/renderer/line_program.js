@@ -172,7 +172,7 @@ export default class LineProgram {
                     const cutoffPixelX = timeRatio * width;
                     
                     for (let i = 0; i < individualPoints.length; i++) {
-                        const [pixelX, pixelY] = individualPoints[i];
+                        const [pixelX] = individualPoints[i];
                         if (pixelX < cutoffPixelX) {
                             preCutoffPoints.push(individualPoints[i]);
                         } else {
@@ -200,8 +200,8 @@ export default class LineProgram {
                     const renderWidth = this._gl.canvas.width;
                     const cutoffPixelX = visibleCutoffRatio * renderWidth;
                     
-                    individualPoints.forEach((point, index) => {
-                        const [pixelX, pixelY] = point;
+                    individualPoints.forEach((point) => {
+                        const [pixelX] = point;
                         
                         if (pixelX < cutoffPixelX) {
                             preCutoffPoints.push(point);

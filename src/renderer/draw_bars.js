@@ -110,7 +110,7 @@ export function getBarWidths({closestSpacing, bounds, sizing, axisSeriesCount}) 
  * @private
  */
 function drawBarsWithCutoff(individualPoints, {
-    color, context, sizing, indexInAxis, axisSeriesCount, zero, hasNegatives, negativeColor, zeroColor, zeroWidth, closestSpacing, bounds, cutoffIndex, cutoffOpacity, originalData, selectionBounds, barWidth, totalBarWidth, barBottom
+    color, context, sizing, indexInAxis, zero, hasNegatives, negativeColor, zeroColor, zeroWidth, cutoffIndex, cutoffOpacity, originalData, barWidth, totalBarWidth, barBottom
 }) {
     let cutoffTime;
     if (typeof originalData[0] === 'object' && originalData[0].length === 2) {

@@ -47,7 +47,7 @@ module.exports = [
             'simultaneous_observable_graph',
             'empty_data_graph',
             'observable_with_background_graph',
-            'change_at_end_graph',
+            'change_at_end_graph'
         ]
     },
     {
@@ -70,7 +70,7 @@ module.exports = [
             'combined_tooltips_graph',
             'combined_tooltips_graph_2',
             'mark_now_graph',
-            'min_point_spacing_graph',
+            'min_point_spacing_graph'
         ]
     },
     {
@@ -158,7 +158,7 @@ module.exports = [
             'shadow_chart',
             'negative_shadow_chart',
             'multi_shadow_chart',
-            'default_gradient_shadow_chart',
+            'default_gradient_shadow_chart'
         ]
     },
     {

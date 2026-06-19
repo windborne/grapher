@@ -82,7 +82,7 @@ export default class ShadowProgram {
         [x1, y1],
         [x2, y2],
         [x2, bottomY2],
-        [x1, bottomY1],
+        [x1, bottomY1]
       ];
 
       const bounds = [x1, y1, x2, y2];
@@ -112,7 +112,7 @@ export default class ShadowProgram {
       positions: new Float32Array(positions),
       trapezoidBounds: new Float32Array(trapezoidBounds),
       trapezoidBottom: new Float32Array(trapezoidBottom),
-      indices: new Uint32Array(indices),
+      indices: new Uint32Array(indices)
     };
   }
 
@@ -134,11 +134,11 @@ export default class ShadowProgram {
           Math.floor(fallbackColorVec[0] * 255),
           Math.floor(fallbackColorVec[1] * 255),
           Math.floor(fallbackColorVec[2] * 255),
-          Math.floor(fallbackColorVec[3] * 255),
+          Math.floor(fallbackColorVec[3] * 255)
         ]),
         textureWidth: 2,
         gradientCount: 1,
-        fallbackColor: fallbackColorVec,
+        fallbackColor: fallbackColorVec
       };
     }
 
@@ -179,7 +179,7 @@ export default class ShadowProgram {
       textureData,
       textureWidth,
       gradientCount: colors.length,
-      fallbackColor: colorToVector(fallbackColor),
+      fallbackColor: colorToVector(fallbackColor)
     };
   }
 
@@ -212,7 +212,7 @@ export default class ShadowProgram {
     const trapezoids = [];
     const positiveTrapezoids = [];
     const negativeTrapezoids = [];
-    const { zero, inRenderSpaceAreaBottom, negativeGradient, hasNegatives } = params;
+    const { zero, negativeGradient, hasNegatives } = params;
 
 
     for (let i = 0; i < individualPoints.length - 1; i++) {
@@ -240,7 +240,7 @@ export default class ShadowProgram {
             x2: xCross,
             y2: yCross,
             bottomY1,
-            bottomY2: zero,
+            bottomY2: zero
           };
           trapezoids.push(trap);
           
@@ -261,7 +261,7 @@ export default class ShadowProgram {
             x2,
             y2,
             bottomY1: zero,
-            bottomY2,
+            bottomY2
           };
           trapezoids.push(trap);
           
@@ -414,7 +414,7 @@ export default class ShadowProgram {
    */
   drawShadowWithCutoff(individualPoints, params) {
 
-    const { cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, selectionBounds, zero } =
+    const { cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData } =
       params;
 
     this._lastIndividualPoints = null;
@@ -479,14 +479,13 @@ export default class ShadowProgram {
         ...params,
         color: reducedOpacityColor,
         gradient: translucentGradient,
-        renderCutoffGradient: false,
+        renderCutoffGradient: false
       });
     } else {
       this.drawSplitShadowTrapezoids(
         individualPoints,
         { ...params, selectionBounds: params.selectionBounds },
-        timeRatio,
-        cutoffTime
+        timeRatio
       );
     }
   }
@@ -496,10 +495,9 @@ export default class ShadowProgram {
    * @param {Array} individualPoints - Points defining the line
    * @param {Object} params - Rendering parameters
    * @param {number} timeRatio - Position of cutoff in visible range (0-1)
-   * @param {number} cutoffTime - Cutoff timestamp
    */
-  drawSplitShadowTrapezoids(individualPoints, params, timeRatio, cutoffTime) {
-    const { zero, cutoffOpacity, selectionBounds } = params;
+  drawSplitShadowTrapezoids(individualPoints, params, timeRatio) {
+    const { cutoffOpacity } = params;
     const gl = this._gl;
 
     const renderWidth = gl.canvas.width;
@@ -509,7 +507,7 @@ export default class ShadowProgram {
     const postCutoffPoints = [];
     
     for (let i = 0; i < individualPoints.length; i++) {
-        const [pixelX, pixelY] = individualPoints[i];
+        const [pixelX] = individualPoints[i];
         
         if (pixelX < cutoffPixelX) {
             preCutoffPoints.push(individualPoints[i]);
@@ -557,7 +555,7 @@ export default class ShadowProgram {
         ...params,
         color: reducedOpacityColor,
         gradient: translucentGradient,
-        renderCutoffGradient: false,
+        renderCutoffGradient: false
       });
     } else {
     }
@@ -565,7 +563,7 @@ export default class ShadowProgram {
     if (postCutoffPoints.length >= 2) {
       this.draw(postCutoffPoints, {
         ...params,
-        renderCutoffGradient: false,
+        renderCutoffGradient: false
       });
     } else {
     }

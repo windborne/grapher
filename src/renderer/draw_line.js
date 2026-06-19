@@ -22,7 +22,7 @@ function applyPointSpacing(points, minSpacing) {
 }
 
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor, roundedLines=false
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor, roundedLines=false
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -242,9 +242,6 @@ export default function drawLine(dataInRenderSpace, {
                 
                 // If cutoff is beyond the data range, check if we should still draw the full line
                 if (renderCutoffIndex === -1) {
-                    const lastDataTime = originalData[originalData.length - 1][0];
-                    const lastDataTimeMs = lastDataTime instanceof Date ? lastDataTime.getTime() : lastDataTime;
-                    
                     if (cutoffPixelX >= path[path.length - 1][0]) {
                         // Cutoff is after the last point - draw all as pre-cutoff (reduced opacity)
                         renderCutoffIndex = path.length - 1;

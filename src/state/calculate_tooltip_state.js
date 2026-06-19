@@ -78,7 +78,6 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             dataMaxX = dataMaxX.getTime();
         }
         
-        const dataRange = dataMaxX - dataMinX;
         const padding = 0; 
 
         if (trueX < dataMinX - padding || trueX > dataMaxX + padding) {

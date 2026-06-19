@@ -641,7 +641,6 @@ export default class StateController extends Eventable {
             singleSeries.windData = windData;
             singleSeries.simpleDataSliceStart = simpleData.length;
             singleSeries._rangeValues = rangeValues;
-            const allYValues = [...inDataSpace.map(([x, y]) => y).filter(y => typeof y === 'number'), ...rangeValues];
             const extendedDataSpace = inDataSpace.map(([x, y]) => [x, y]);
             for (let rangeValue of rangeValues) {
                 extendedDataSpace.push([null, rangeValue]);
@@ -814,7 +813,7 @@ export default class StateController extends Eventable {
                         const visibleRangeValues = [];
                         
                         for (let i = 0; i < singleSeries.inDataSpace.length; i++) {
-                            const [x, y] = singleSeries.inDataSpace[i];
+                            const [x] = singleSeries.inDataSpace[i];
                             let xValue = x;
                             let minXValue = axis.targetBounds.minX;
                             let maxXValue = axis.targetBounds.maxX;
@@ -878,7 +877,7 @@ export default class StateController extends Eventable {
                     const visibleRangeValues = [];
                     
                     for (let i = 0; i < singleSeries.inDataSpace.length; i++) {
-                        const [x, y] = singleSeries.inDataSpace[i];
+                        const [x] = singleSeries.inDataSpace[i];
                         let xValue = x;
                         let minXValue = singleSeries.selectedBounds.minX;
                         let maxXValue = singleSeries.selectedBounds.maxX;

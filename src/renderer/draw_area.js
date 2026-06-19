@@ -51,7 +51,7 @@ export default function drawArea(
     originalData,
     renderCutoffGradient,
     selectionBounds,
-    isPreview,
+    isPreview
   }
 ) {
   if (!context) {
@@ -102,7 +102,7 @@ export default function drawArea(
     inRenderSpaceAreaBottom && pathsFrom(inRenderSpaceAreaBottom, shouldSplitAreaPaths ? { splitAtY: zero } : undefined);
 
   const linePaths = pathsFrom(dataInRenderSpace, {
-    splitAtY: zero,
+    splitAtY: zero
   });
 
   if (renderCutoffGradient && cutoffIndex !== undefined && originalData) {
@@ -132,7 +132,7 @@ export default function drawArea(
         cutoffOpacity,
         originalData,
         selectionBounds,
-        isPreview,
+        isPreview
       }
     );
     return;
@@ -221,13 +221,13 @@ export default function drawArea(
       color,
       zero,
       zeroColor,
-      zeroWidth,
+      zeroWidth
     });
   }
 
   if (showIndividualPoints && !renderCutoffGradient) {
     // Apply point spacing for individual point circles only
-    function applyPointSpacing(points, minSpacing) {
+    const applyPointSpacing = (points, minSpacing) => {
       if (!minSpacing || points.length <= 1) {
           return points;
       }
@@ -244,7 +244,7 @@ export default function drawArea(
       }
       
       return spacedPoints;
-    }
+    };
 
     const pointsToRender = applyPointSpacing(individualPoints, minPointSpacing);
     for (let [x, y] of pointsToRender) {
@@ -314,7 +314,7 @@ function drawAreaWithCutoff(
     cutoffOpacity,
     originalData,
     selectionBounds,
-    isPreview,
+    isPreview
   }
 ) {
   let cutoffTime;
@@ -368,7 +368,7 @@ function drawAreaWithCutoff(
         highlighted,
         shadowColor,
         shadowBlur,
-        inRenderSpaceAreaBottom,
+        inRenderSpaceAreaBottom
       });
     }
   } else if (timeRatio > 1) {
@@ -391,7 +391,7 @@ function drawAreaWithCutoff(
         highlighted,
         shadowColor,
         shadowBlur,
-        inRenderSpaceAreaBottom,
+        inRenderSpaceAreaBottom
       });
     }
   } else {
@@ -451,7 +451,7 @@ function drawAreaWithCutoff(
             highlighted,
             shadowColor,
             shadowBlur,
-            inRenderSpaceAreaBottom,
+            inRenderSpaceAreaBottom
           });
         }
 
@@ -496,7 +496,7 @@ function drawAreaWithCutoff(
               highlighted,
               shadowColor,
               shadowBlur,
-              inRenderSpaceAreaBottom,
+              inRenderSpaceAreaBottom
             }
           );
         }
@@ -511,7 +511,7 @@ function drawAreaWithCutoff(
           zero,
           width,
           highlighted,
-          cutoffOpacity,
+          cutoffOpacity
         });
       }
 
@@ -528,7 +528,7 @@ function drawAreaWithCutoff(
           zero,
           zeroColor,
           pointRadius,
-          cutoffOpacity,
+          cutoffOpacity
         });
       }
     } else {
@@ -549,7 +549,7 @@ function drawAreaWithCutoff(
             highlighted,
             shadowColor,
             shadowBlur,
-            inRenderSpaceAreaBottom,
+            inRenderSpaceAreaBottom
           });
         }
       } else {
@@ -580,7 +580,7 @@ function drawAreaWithCutoff(
               highlighted,
               shadowColor,
               shadowBlur,
-              inRenderSpaceAreaBottom,
+              inRenderSpaceAreaBottom
             });
           }
         } else if (cutoffTime > visibleMaxTime) {
@@ -604,7 +604,7 @@ function drawAreaWithCutoff(
               highlighted,
               shadowColor,
               shadowBlur,
-              inRenderSpaceAreaBottom,
+              inRenderSpaceAreaBottom
             });
           }
         } else {
@@ -631,7 +631,7 @@ function drawAreaWithCutoff(
               const [x2, y2] = path[splitIndex + 1];
               ghostPoint = [
                 x1 + fraction * (x2 - x1),
-                y1 + fraction * (y2 - y1),
+                y1 + fraction * (y2 - y1)
               ];
             }
 
@@ -653,7 +653,7 @@ function drawAreaWithCutoff(
                   zero,
                   hasNegatives,
                   gradient,
-                  areaBottomPaths,
+                  areaBottomPaths
                 }
               );
             }
@@ -675,7 +675,7 @@ function drawAreaWithCutoff(
                   zero,
                   hasNegatives,
                   gradient,
-                  areaBottomPaths,
+                  areaBottomPaths
                 }
               );
             }
@@ -705,7 +705,7 @@ function drawAreaWithCutoff(
             hasNegatives,
             negativeColor,
             width,
-            highlighted,
+            highlighted
           });
         } else if (cutoffTime > visibleMaxTime) {
           // cutoff after visible range - draw lines with reduced opacity (to match area)
@@ -719,7 +719,7 @@ function drawAreaWithCutoff(
             hasNegatives,
             negativeColor: reducedNegativeColor,
             width,
-            highlighted,
+            highlighted
           });
         } else {
           // cutoff within visible range - split lines at cutoff
@@ -733,7 +733,7 @@ function drawAreaWithCutoff(
             zero,
             width,
             highlighted,
-            cutoffOpacity,
+            cutoffOpacity
           });
         }
       } else {
@@ -744,7 +744,7 @@ function drawAreaWithCutoff(
           hasNegatives,
           negativeColor,
           width,
-          highlighted,
+          highlighted
         });
       }
     } else if (!isPreview) {
@@ -755,7 +755,7 @@ function drawAreaWithCutoff(
         hasNegatives,
         negativeColor,
         width,
-        highlighted,
+        highlighted
       });
     }
 
@@ -768,7 +768,7 @@ function drawAreaWithCutoff(
         color,
         zero,
         zeroColor,
-        zeroWidth,
+        zeroWidth
       });
     }
 
@@ -794,7 +794,7 @@ function drawAreaWithCutoff(
               hasNegatives,
               zero,
               zeroColor,
-              pointRadius,
+              pointRadius
             });
           } else if (cutoffTime > visibleMaxTime) {
             // cutoff after visible range - draw points with reduced opacity
@@ -812,7 +812,7 @@ function drawAreaWithCutoff(
               hasNegatives,
               zero,
               zeroColor: reducedZeroColor,
-              pointRadius,
+              pointRadius
             });
           } else {
             // cutoff within visible range - split points at cutoff
@@ -826,7 +826,7 @@ function drawAreaWithCutoff(
               zero,
               zeroColor,
               pointRadius,
-              cutoffOpacity,
+              cutoffOpacity
             });
           }
         } else {
@@ -838,7 +838,7 @@ function drawAreaWithCutoff(
             hasNegatives,
             zero,
             zeroColor,
-            pointRadius,
+            pointRadius
           });
         }
       } else {
@@ -850,7 +850,7 @@ function drawAreaWithCutoff(
           hasNegatives,
           zero,
           zeroColor,
-          pointRadius,
+          pointRadius
         });
       }
     } 
@@ -866,7 +866,7 @@ function renderEntireArea(
     sizing,
     zero,
     hasNegatives,
-    gradient,
+    gradient
   }
 ) {
   context.fillStyle = color;
@@ -1085,10 +1085,9 @@ function drawLinesWithCutoff(
     context,
     hasNegatives,
     negativeColor,
-    zero,
     width,
     highlighted,
-    cutoffOpacity,
+    cutoffOpacity
   }
 ) {
   if (!linePaths || !Array.isArray(linePaths)) {
@@ -1110,14 +1109,12 @@ function drawLinesWithCutoff(
     const prePath = [];
     const postPath = [];
     let ghostPoint = null;
-    let splitIndex = -1;
 
     for (let i = 0; i < path.length; i++) {
       const [x, y] = path[i];
       
       if (x < cutoffPixelX) {
         prePath.push([x, y]);
-        splitIndex = i;
       } else {
         postPath.push([x, y]);
       }
@@ -1198,7 +1195,7 @@ function drawPointsWithCutoffByRatio(
     zero,
     zeroColor,
     pointRadius,
-    cutoffOpacity,
+    cutoffOpacity
   }
 ) {
   if (!individualPoints || !Array.isArray(individualPoints)) {

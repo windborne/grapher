@@ -174,19 +174,11 @@ export default class GraphBodyRenderer extends Eventable {
                 
                 const individualPoints = [];
                 const { yValues, nullMask } = inRenderSpace;
-                const threshold = yValues.length / 2;
-                let pastThreshold = 0;
-                const samples = [];
                 
                 for (let pixelX = 0; pixelX < yValues.length; pixelX++) {
                     if (nullMask[pixelX] === 0) {
                         const xCoord = pixelX * DPI_INCREASE;
                         individualPoints.push([xCoord, yValues[pixelX]]);
-                        
-                        if (pixelX > threshold) {
-                            pastThreshold++;
-                            if (samples.length < 3) samples.push({pixelX, xCoord, nullMask: nullMask[pixelX]});
-                        }
                     }
                 }
                 

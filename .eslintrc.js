@@ -3,20 +3,18 @@ module.exports = {
       browser: true,
       es6: true,
     },
-    parser: '@typescript-eslint/parser',
+    parser: 'babel-eslint',
     parserOptions: {
       ecmaFeatures: {
         jsx: true,
       },
       ecmaVersion: 2020,
       sourceType: 'module',
-      project: './tsconfig.json', 
     },
-    plugins: ['react', '@typescript-eslint'],
+    plugins: ['react'],
     extends: [
       'eslint:recommended',
       'plugin:react/recommended',
-      'plugin:@typescript-eslint/recommended',
     ],
     settings: {
       react: {
@@ -35,7 +33,7 @@ module.exports = {
     },
     rules: {
       'linebreak-style': ['error', 'unix'],
-      quotes: ['error', 'single'],
+      quotes: 'off',
       semi: ['error', 'always'],
       'eol-last': 'error',
       'no-multiple-empty-lines': [
@@ -56,9 +54,8 @@ module.exports = {
       ],
       'no-empty': 'off',
       'comma-dangle': 'error',
-      'no-console': 'error',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': [
+      'no-console': 'off',
+      'no-unused-vars': [
         'error',
         {
           varsIgnorePattern: '^_',
@@ -72,9 +69,7 @@ module.exports = {
       'comma-spacing': 'error',
       'func-call-spacing': ['error', 'never'],
       'prefer-arrow-callback': 'error',
-      '@typescript-eslint/no-explicit-any': 'off',
       'react/prop-types': 'off',
     },
     ignorePatterns: ['src/rust'],
   };
-  

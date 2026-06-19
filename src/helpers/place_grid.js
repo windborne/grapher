@@ -259,7 +259,6 @@ function placeTimeOnlyGrid({ min, max, precision, expectedLabelSize, labelPaddin
     let unit, amount;
     
     const hourSpan = span / (60 * 60 * 1000);
-    const minuteSpan = span / (60 * 1000);
     
     if (hourSpan <= desiredCount * 8) {
         unit = 'h';
