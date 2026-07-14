@@ -92,6 +92,10 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
+export function main_js() {
+    wasm.main_js();
+}
+
 function passArray8ToWasm0(arg, malloc) {
     const ptr = malloc(arg.length * 1, 1) >>> 0;
     getUint8ArrayMemory0().set(arg, ptr / 1);
@@ -201,10 +205,6 @@ export function get_point_number(null_mask, y_values, min_y_values, max_y_values
     const len3 = WASM_VECTOR_LEN;
     const ret = wasm.get_point_number(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, dashed, dash0, dash1);
     return ret;
-}
-
-export function main_js() {
-    wasm.main_js();
 }
 
 /**
