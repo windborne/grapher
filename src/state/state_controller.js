@@ -115,6 +115,11 @@ export default class StateController extends Eventable {
     }
 
     dispose() {
+        if (this.disposed) {
+            return;
+        }
+        this.disposed = true;
+
         this.emit('dispose', this);
 
         this.clearListeners();
@@ -126,15 +131,16 @@ export default class StateController extends Eventable {
             this._subscriptions.clear();
         }
 
-        for (let singleSeries of this._series) {
+        // Iterate a copy: _removeSeries mutates axis.series, and disposing
+        // over the live array can skip entries.
+        for (let singleSeries of [...this._series]) {
             this._removeSeries(singleSeries);
         }
+        this._series.splice(0);
 
         if (this._syncPool) {
             this._syncPool.remove(this);
         }
-
-        this.disposed = true;
     }
 
     setSeries(series) {
@@ -1285,6 +1291,11 @@ export default class StateController extends Eventable {
         this._seriesFromOriginalSeries.delete(singleSeries.originalSeries);
 
         const { axis, data } = singleSeries;
+        if (!axis) {
+            // Already unwired (e.g. removed once during dispose after an
+            // earlier removal reset its axis) — nothing left to detach.
+            return;
+        }
         axis.series.splice(axis.series.indexOf(singleSeries), 1);
         const sameDataSet = this._observablesToSeries.get(data);
         if (sameDataSet) {

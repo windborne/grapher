@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import CustomPropTypes from './helpers/custom_prop_types';
 import GraphBody from './components/graph_body.jsx';
@@ -125,13 +125,27 @@ function Grapher(props) {
         ...props.stateControllerInitialization
     }), []);
 
+    const disposeTimerRef = useRef(null);
+
     useEffect(() => {
         if (process.env.NODE_ENV === 'development') {
             window.stateController = stateController;
         }
 
+        // A remount that reuses this memoized controller (e.g. React
+        // StrictMode's mount → unmount → remount of the same component)
+        // must cancel the dispose the previous cleanup scheduled, or the
+        // remounted graph runs on a disposed controller and renders blank.
+        if (disposeTimerRef.current) {
+            clearTimeout(disposeTimerRef.current);
+            disposeTimerRef.current = null;
+        }
+
         return () => {
-            stateController.dispose();
+            disposeTimerRef.current = setTimeout(() => {
+                stateController.dispose();
+                disposeTimerRef.current = null;
+            }, 0);
         };
     }, [stateController]);
 
