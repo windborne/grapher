@@ -41,7 +41,10 @@ function MultiGrapher(props) {
         // and re-key the child Graphers so the whole tree rebuilds against
         // the new shared state.
         if (multigraphStateController.disposed) {
-            setControllerState(({ controllerGeneration }) => createControllerState(controllerGeneration + 1));
+            // Create outside the updater: updaters must be pure (StrictMode
+            // double-invokes them), and this one constructs a controller and
+            // sync pool.
+            setControllerState(createControllerState(controllerGeneration + 1));
             return;
         }
 

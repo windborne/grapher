@@ -137,10 +137,14 @@ function Grapher(props) {
         // the retained controller is already disposed and cannot be revived —
         // replace it, and let every effect and child re-key off the new one.
         if (stateController.disposed) {
-            setControllerState(({ controllerGeneration }) => ({
-                stateController: createStateController(),
+            // Create outside the updater: updaters must be pure (StrictMode
+            // double-invokes them), and the constructor side-effects into
+            // syncPool.add.
+            const nextStateController = createStateController();
+            setControllerState({
+                stateController: nextStateController,
                 controllerGeneration: controllerGeneration + 1
-            }));
+            });
             return;
         }
 

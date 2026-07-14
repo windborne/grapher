@@ -214,7 +214,11 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
             window.removeEventListener('touchend', onGlobalTouchEnd);
             window.removeEventListener('touchcancel', onGlobalTouchEnd);
         };
-    }, []);
+        // stateController must be a dependency: when Grapher replaces a
+        // disposed controller after a preserved-state remount, these global
+        // listeners have to re-bind to the new instance or tooltips stay
+        // wired to the dead one.
+    }, [stateController, showTooltips]);
 
     const onMouseLeave = () => {
         stateController.setContextMenuMousePosition({
