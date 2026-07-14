@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import CustomPropTypes from './helpers/custom_prop_types';
 import GraphBody from './components/graph_body.jsx';
@@ -119,13 +119,32 @@ const grapherDefaultProps = {
 function Grapher(props) {
     props = {...grapherDefaultProps, ...resolvePresetProps(props)};
 
-    const stateController = useMemo(() => new StateController({
+    const createStateController = () => new StateController({
         grapherID: props.id,
         ...props,
         ...props.stateControllerInitialization
-    }), []);
+    });
+
+    const [{ stateController, controllerGeneration }, setControllerState] = useState(() => ({
+        stateController: createStateController(),
+        controllerGeneration: 0
+    }));
 
     useEffect(() => {
+        // A preserved-state remount (StrictMode dev, <Activity> re-show) lands
+        // here with the controller already disposed and unrevivable — replace
+        // it and re-key dependent children off the new generation.
+        if (stateController.disposed) {
+            // Constructed outside the updater: updaters must stay pure under
+            // StrictMode, and the constructor side-effects into syncPool.add.
+            const nextStateController = createStateController();
+            setControllerState({
+                stateController: nextStateController,
+                controllerGeneration: controllerGeneration + 1
+            });
+            return;
+        }
+
         if (process.env.NODE_ENV === 'development') {
             window.stateController = stateController;
         }
@@ -136,6 +155,10 @@ function Grapher(props) {
     }, [stateController]);
 
     useEffect(() => {
+        if (stateController.disposed) {
+            // Replacement is scheduled; this re-runs with the fresh instance.
+            return;
+        }
         props.exportStateController && props.exportStateController(stateController);
     }, [stateController, props.exportStateController]);
 
@@ -337,6 +360,7 @@ function Grapher(props) {
                                 props.showRangeGraph &&
                                 <div className="range-graph-container">
                                     <RangeGraph
+                                        key={controllerGeneration}
                                         stateController={stateController}
                                         webgl={props.webgl}
                                         checkIntersection={props.checkIntersection}

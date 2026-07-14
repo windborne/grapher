@@ -78,7 +78,7 @@ Grapher supports multiple data formats within a series:
 | checkIntersection | `boolean` | ✗ | Controls intersection observer usage for performance optimization. |
 | onAxisChange | `(axes: any) => void` | ✗ | Called every time the axes change. Receives an array of objects with the `axis` property set to {left, right}-{index}. Useful for saving state between reloads. |
 | onRenderTime | `(time: number) => void` | ✗ | Called every time the grapher renders with diagnostic information about how long rendering took. |
-| exportStateController | `(controller: any) => void` | ✗ | Callback that receives the state controller instance for external manipulation. |
+| exportStateController | `(controller: any) => void` | ✗ | Callback that receives the state controller instance for external manipulation. Grapher owns the controller's lifecycle: it disposes it on unmount and may call this callback again with a fresh instance after a remount (e.g. React StrictMode's dev double-invoke), so always use the latest instance and don't call `dispose()` yourself. |
 | onPointDrag | `(point: any) => void` | ✗ | Callback function that fires when draggable points are moved. |
 | onDraggablePointsDoubleClick | `(point: any) => void` | ✗ | Callback function that fires when draggable points are double-clicked. |
 | onPointClick | `(point: any) => void` | ✗ | Click handler for data points. |

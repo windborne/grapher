@@ -115,6 +115,11 @@ export default class StateController extends Eventable {
     }
 
     dispose() {
+        if (this.disposed) {
+            return;
+        }
+        this.disposed = true;
+
         this.emit('dispose', this);
 
         this.clearListeners();
@@ -129,15 +134,21 @@ export default class StateController extends Eventable {
         for (let singleSeries of this._series) {
             this._removeSeries(singleSeries);
         }
+        // Empty _series so post-dispose reads see terminal state.
+        this._series.splice(0);
 
         if (this._syncPool) {
             this._syncPool.remove(this);
         }
-
-        this.disposed = true;
     }
 
     setSeries(series) {
+        if (this.disposed) {
+            // A disposed controller must stay inert: re-adding series would
+            // re-subscribe observables that no future dispose() will release.
+            return;
+        }
+
         const userSeries = this._series.filter((singleSeries) => singleSeries.userCreated);
         const propsSeries = this._series.filter((singleSeries) => !singleSeries.userCreated);
 
@@ -1285,7 +1296,21 @@ export default class StateController extends Eventable {
         this._seriesFromOriginalSeries.delete(singleSeries.originalSeries);
 
         const { axis, data } = singleSeries;
-        axis.series.splice(axis.series.indexOf(singleSeries), 1);
+        if (!axis || !axis.series) {
+            // Already unwired — reachable when the same series object appears
+            // in _series twice (a caller passed duplicate entries) and the
+            // first removal reset its axis to originalAxis, which is
+            // undefined or a string like 'right-0', never a live axis.
+            return;
+        }
+
+        const axisSeriesIndex = axis.series.indexOf(singleSeries);
+        if (axisSeriesIndex !== -1) {
+            // Hidden series keep their axis reference but were already
+            // removed from axis.series by _hideSeries; splicing indexOf's -1
+            // here would silently delete the wrong series from the axis.
+            axis.series.splice(axisSeriesIndex, 1);
+        }
         const sameDataSet = this._observablesToSeries.get(data);
         if (sameDataSet) {
             sameDataSet.delete(singleSeries);

@@ -214,7 +214,9 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
             window.removeEventListener('touchend', onGlobalTouchEnd);
             window.removeEventListener('touchcancel', onGlobalTouchEnd);
         };
-    }, []);
+        // stateController in deps: re-bind these global listeners when a
+        // disposed controller is replaced after a preserved-state remount.
+    }, [stateController, showTooltips]);
 
     const onMouseLeave = () => {
         stateController.setContextMenuMousePosition({
