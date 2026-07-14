@@ -3,6 +3,7 @@ const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
 module.exports = [
     {
+        name: 'esm',
         mode: 'production',
         entry: './src/index.js',
         devtool: 'source-map',
@@ -63,6 +64,8 @@ module.exports = [
     },
     // CJS build for backward compatibility
     {
+        name: 'cjs',
+        dependencies: ['esm'],
         mode: 'production',
         entry: './src/index.js',
         devtool: 'source-map',
@@ -111,14 +114,6 @@ module.exports = [
                     use: 'webpack-glsl-loader'
                 }
             ]
-        },
-        plugins: [
-            new WasmPackPlugin({
-                crateDirectory: path.resolve(__dirname, 'src', 'rust'),
-                outDir: path.resolve(__dirname, 'src', 'rust', 'pkg'),
-                extraArgs: '--no-typescript --target web',
-                forceMode: 'production'
-            })
-        ]
+        }
     }
 ];
