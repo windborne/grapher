@@ -158,6 +158,12 @@ function Grapher(props) {
     }, [stateController]);
 
     useEffect(() => {
+        if (stateController.disposed) {
+            // Don't hand consumers a disposed controller during the pass
+            // that schedules its replacement; this effect re-runs with the
+            // fresh instance after the swap.
+            return;
+        }
         props.exportStateController && props.exportStateController(stateController);
     }, [stateController, props.exportStateController]);
 

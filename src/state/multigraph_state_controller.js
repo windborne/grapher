@@ -323,6 +323,7 @@ export default class MultigraphStateController extends Eventable {
         }
 
         this._subscriptions.clear();
+        this._stateControllers.clear();
     }
 
     get stateControllerInitialization() {

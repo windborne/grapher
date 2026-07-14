@@ -11,6 +11,9 @@ export default React.memo(MultiGrapher);
 function MultiGrapher(props) {
     /* eslint-disable react/prop-types */
 
+    // Not defaultProps: React 19 removed defaultProps for function components
+    props = {theme: 'night', ...props};
+
     const multigrapherID = useMemo(() => Math.random().toString(36).slice(2), []);
 
     const createControllerState = (controllerGeneration) => ({
@@ -43,7 +46,10 @@ function MultiGrapher(props) {
         if (multigraphStateController.disposed) {
             // Create outside the updater: updaters must be pure (StrictMode
             // double-invokes them), and this one constructs a controller and
-            // sync pool.
+            // sync pool. The recreate setStates from parent and children
+            // batch into one top-down render, so the key change below
+            // discards the children before any of them could wire into this
+            // disposed parent's cleared shared state.
             setControllerState(createControllerState(controllerGeneration + 1));
             return;
         }
@@ -58,6 +64,12 @@ function MultiGrapher(props) {
     }, [multigraphStateController]);
 
     useEffect(() => {
+        if (multigraphStateController.disposed) {
+            // Don't hand consumers a disposed controller during the pass
+            // that schedules its replacement; this effect re-runs with the
+            // fresh instance after the swap.
+            return;
+        }
         props.exportStateController && props.exportStateController(multigraphStateController);
     }, [multigraphStateController, props.exportStateController]);
 
@@ -111,10 +123,6 @@ function MultiGrapher(props) {
         </div>
     );
 }
-
-MultiGrapher.defaultProps = {
-    theme: 'night'
-};
 
 MultiGrapher.propTypes = Object.assign({}, Grapher.propTypes, {
     syncBounds: PropTypes.bool,

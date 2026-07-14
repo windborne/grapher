@@ -8,6 +8,15 @@ export function useEvent(eventSource, eventName, initialState=null, watch=[]) {
 
     const [value, setValue] = useState(initialState);
 
+    const [prevEventSource, setPrevEventSource] = useState(eventSource);
+    if (eventSource !== prevEventSource) {
+        // The event source was replaced (e.g. a controller recreated after a
+        // preserved-state remount): re-seed from the new source's current
+        // state instead of carrying the old source's last value.
+        setPrevEventSource(eventSource);
+        setValue(initialState);
+    }
+
     useEffect(() => {
         const listener = (updatedValue) => {
             if (typeof updatedValue === 'function') {

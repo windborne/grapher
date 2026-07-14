@@ -1297,10 +1297,11 @@ export default class StateController extends Eventable {
         this._seriesFromOriginalSeries.delete(singleSeries.originalSeries);
 
         const { axis, data } = singleSeries;
-        if (!axis) {
+        if (!axis || !axis.series) {
             // Already unwired — reachable when the same series object appears
             // in _series twice (a caller passed duplicate entries) and the
-            // first removal reset its axis. Nothing left to detach.
+            // first removal reset its axis to originalAxis, which is
+            // undefined or a string like 'right-0', never a live axis.
             return;
         }
 
