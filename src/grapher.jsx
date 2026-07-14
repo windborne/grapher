@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import CustomPropTypes from './helpers/custom_prop_types';
 import GraphBody from './components/graph_body.jsx';
@@ -119,33 +119,37 @@ const grapherDefaultProps = {
 function Grapher(props) {
     props = {...grapherDefaultProps, ...resolvePresetProps(props)};
 
-    const stateController = useMemo(() => new StateController({
+    const createStateController = () => new StateController({
         grapherID: props.id,
         ...props,
         ...props.stateControllerInitialization
-    }), []);
+    });
 
-    const disposeTimerRef = useRef(null);
+    const [{ stateController, controllerGeneration }, setControllerState] = useState(() => ({
+        stateController: createStateController(),
+        controllerGeneration: 0
+    }));
 
     useEffect(() => {
+        // Cleanup disposes the controller on unmount. When the same component
+        // instance mounts again with its state preserved (React StrictMode's
+        // dev-mode double-invoke, an <Activity> boundary being shown again),
+        // the retained controller is already disposed and cannot be revived —
+        // replace it, and let every effect and child re-key off the new one.
+        if (stateController.disposed) {
+            setControllerState(({ controllerGeneration }) => ({
+                stateController: createStateController(),
+                controllerGeneration: controllerGeneration + 1
+            }));
+            return;
+        }
+
         if (process.env.NODE_ENV === 'development') {
             window.stateController = stateController;
         }
 
-        // A remount that reuses this memoized controller (e.g. React
-        // StrictMode's mount → unmount → remount of the same component)
-        // must cancel the dispose the previous cleanup scheduled, or the
-        // remounted graph runs on a disposed controller and renders blank.
-        if (disposeTimerRef.current) {
-            clearTimeout(disposeTimerRef.current);
-            disposeTimerRef.current = null;
-        }
-
         return () => {
-            disposeTimerRef.current = setTimeout(() => {
-                stateController.dispose();
-                disposeTimerRef.current = null;
-            }, 0);
+            stateController.dispose();
         };
     }, [stateController]);
 
@@ -351,6 +355,7 @@ function Grapher(props) {
                                 props.showRangeGraph &&
                                 <div className="range-graph-container">
                                     <RangeGraph
+                                        key={controllerGeneration}
                                         stateController={stateController}
                                         webgl={props.webgl}
                                         checkIntersection={props.checkIntersection}

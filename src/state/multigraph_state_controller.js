@@ -35,6 +35,9 @@ export default class MultigraphStateController extends Eventable {
      * @param {Array<Object>} series
      */
     setSeries(series) {
+        if (this.disposed) {
+            return;
+        }
 
         if (this._prevSeries.length === series.length) {
             let anyDifferent = false;
@@ -308,6 +311,11 @@ export default class MultigraphStateController extends Eventable {
     }
 
     dispose() {
+        if (this.disposed) {
+            return;
+        }
+        this.disposed = true;
+
         this.clearListeners();
 
         for (let listener of this._subscriptions.values()) {

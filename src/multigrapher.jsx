@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import Grapher from './grapher.jsx';
 import MultigraphStateController from './state/multigraph_state_controller.js';
@@ -13,22 +13,38 @@ function MultiGrapher(props) {
 
     const multigrapherID = useMemo(() => Math.random().toString(36).slice(2), []);
 
-    const multigraphStateController = useMemo(() => new MultigraphStateController({
-        id: multigrapherID,
-        ...props
-    }), []);
+    const createControllerState = (controllerGeneration) => ({
+        multigraphStateController: new MultigraphStateController({
+            id: multigrapherID,
+            ...props
+        }),
+        syncPool: new SyncPool({
+            syncBounds: props.syncBounds,
+            syncTooltips: props.syncTooltips,
+            syncDragState: true
+        }),
+        controllerGeneration
+    });
+
+    const [{ multigraphStateController, syncPool, controllerGeneration }, setControllerState] = useState(() => createControllerState(0));
 
     const multiSeries = useMultiSeries(multigraphStateController);
-
-    const syncPool = useMemo(() => new SyncPool({
-        syncBounds: props.syncBounds,
-        syncTooltips: props.syncTooltips,
-        syncDragState: true
-    }), []);
 
     const registerStateController = useMemo(() => multigraphStateController.registerStateController.bind(multigraphStateController), [multigraphStateController]);
 
     useEffect(() => {
+        // Cleanup disposes the controller on unmount. When the same component
+        // instance mounts again with its state preserved (React StrictMode's
+        // dev-mode double-invoke, an <Activity> boundary being shown again),
+        // the retained controller is already disposed and its shared
+        // subscription map is gone — recreate it together with the sync pool,
+        // and re-key the child Graphers so the whole tree rebuilds against
+        // the new shared state.
+        if (multigraphStateController.disposed) {
+            setControllerState(({ controllerGeneration }) => createControllerState(controllerGeneration + 1));
+            return;
+        }
+
         if (process.env.NODE_ENV === 'development') {
             window.multigraphStateController = multigraphStateController;
         }
@@ -71,7 +87,7 @@ function MultiGrapher(props) {
             {
                 multiSeries.map((series, i) =>
                     <Grapher
-                        key={i}
+                        key={`${controllerGeneration}-${i}`}
                         {...props}
                         syncPool={syncPool}
                         stateControllerInitialization={multigraphStateController.stateControllerInitialization}
