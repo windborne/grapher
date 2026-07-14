@@ -134,8 +134,7 @@ export default class StateController extends Eventable {
         for (let singleSeries of this._series) {
             this._removeSeries(singleSeries);
         }
-        // Empty _series so a disposed controller holds no orphaned series
-        // and post-dispose reads (e.g. the series getter) see terminal state.
+        // Empty _series so post-dispose reads see terminal state.
         this._series.splice(0);
 
         if (this._syncPool) {

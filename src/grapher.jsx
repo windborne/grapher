@@ -131,15 +131,12 @@ function Grapher(props) {
     }));
 
     useEffect(() => {
-        // Cleanup disposes the controller on unmount. When the same component
-        // instance mounts again with its state preserved (React StrictMode's
-        // dev-mode double-invoke, an <Activity> boundary being shown again),
-        // the retained controller is already disposed and cannot be revived —
-        // replace it, and let every effect and child re-key off the new one.
+        // A preserved-state remount (StrictMode dev, <Activity> re-show) lands
+        // here with the controller already disposed and unrevivable — replace
+        // it and re-key dependent children off the new generation.
         if (stateController.disposed) {
-            // Create outside the updater: updaters must be pure (StrictMode
-            // double-invokes them), and the constructor side-effects into
-            // syncPool.add.
+            // Constructed outside the updater: updaters must stay pure under
+            // StrictMode, and the constructor side-effects into syncPool.add.
             const nextStateController = createStateController();
             setControllerState({
                 stateController: nextStateController,
@@ -159,9 +156,7 @@ function Grapher(props) {
 
     useEffect(() => {
         if (stateController.disposed) {
-            // Don't hand consumers a disposed controller during the pass
-            // that schedules its replacement; this effect re-runs with the
-            // fresh instance after the swap.
+            // Replacement is scheduled; this re-runs with the fresh instance.
             return;
         }
         props.exportStateController && props.exportStateController(stateController);
