@@ -174,6 +174,12 @@ module.exports = [
         ]
     },
     {
+        name: 'Point styling',
+        pages: [
+            'point_shapes_graph'
+        ]
+    },
+    {
         name: 'Native weather charts',
         pages: [
             'simple_weather_next_week_graph',
