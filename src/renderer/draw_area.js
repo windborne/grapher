@@ -2,6 +2,7 @@ import pathsFrom from "./paths_from";
 import { drawZeroLine } from "./draw_zero_line";
 import { DPI_INCREASE } from "./size_canvas";
 import { applyReducedOpacity, applyReducedOpacityToGradient } from "../helpers/colors";
+import { resolvePointColor, resolvePointShape, tracePointPath } from "./point_shapes";
 
 /**
  * Draws the data on the canvas
@@ -40,6 +41,8 @@ export default function drawArea(
     showIndividualPoints,
     negativeColor,
     pointRadius,
+    pointShape,
+    pointColor: pointColorOption,
     minPointSpacing,
     width,
     highlighted,
@@ -247,9 +250,10 @@ export default function drawArea(
     };
 
     const pointsToRender = applyPointSpacing(individualPoints, minPointSpacing);
-    for (let [x, y] of pointsToRender) {
+    for (const point of pointsToRender) {
+      const [x, y] = point;
       // Determine the color for this point
-      let pointColor = color;
+      let pointColor = resolvePointColor(pointColorOption, point) || color;
       if (negativeColor && hasNegatives) {
         if (y === zero && zeroColor) {
           pointColor = zeroColor;
@@ -262,7 +266,7 @@ export default function drawArea(
       
       context.fillStyle = pointColor;
       context.beginPath();
-      context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+      tracePointPath(context, resolvePointShape(pointShape, point), x, y, pointRadius || 8);
       context.fill();
     }
   }

@@ -242,7 +242,13 @@ export default class GraphBodyRenderer extends Eventable {
                 const xCoord = (xValue - boundsMinX) / (boundsMaxX - boundsMinX) * (renderWidth - 1) * DPI_INCREASE;
                 const yCoord = (1.0 - (y - bounds.minY) / (bounds.maxY - bounds.minY)) * this._sizing.renderHeight;
                 
-                individualPoints.push([xCoord, yCoord]);
+                // Carry the original datum as a non-index property so per-point
+                // options (pointShape) can inspect it. Invisible to destructuring
+                // and to Float32Array packing via .flat().
+                const renderPoint = [xCoord, yCoord];
+                renderPoint.datum = data[i].datum !== undefined ? data[i].datum : data[i];
+                renderPoint.datumIndex = i;
+                individualPoints.push(renderPoint);
             }
 
             if (lastPointBeforeBounds && includeBeyondBounds) {
@@ -380,6 +386,8 @@ export default class GraphBodyRenderer extends Eventable {
                 gradient: singleSeries.gradient,
                 negativeGradient: singleSeries.negativeGradient,
                 pointRadius: singleSeries.pointRadius,
+                pointShape: singleSeries.pointShape,
+                pointColor: singleSeries.pointColor,
                 minPointSpacing: singleSeries.minPointSpacing,
                 highlighted,
                 width: width || singleSeries.width || defaultLineWidth,
@@ -617,6 +625,8 @@ export default class GraphBodyRenderer extends Eventable {
             highlighted,
             showIndividualPoints: shouldShowIndividualPoints,
             pointRadius: singleSeries.pointRadius,
+            pointShape: singleSeries.pointShape,
+            pointColor: singleSeries.pointColor,
             minPointSpacing: singleSeries.minPointSpacing,
             getIndividualPoints,
             getRanges: singleSeries.rangeKey ? getRanges : null,

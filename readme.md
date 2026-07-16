@@ -169,6 +169,8 @@ Grapher supports multiple data formats within a series:
 | zeroLineColor | `string` | ✗ | Color of the zero line, only applies to bar and area rendering. |
 | zeroLineY | `number \| 'bottom'` | ✗ | Y-coordinate of the zero line, only applies to bar and area rendering. Defaults to zero; may also be the string "bottom". |
 | pointRadius | `number` | ✗ | Radius of points, only applies to area rendering. |
+| pointShape | `'circle' \| 'square' \| 'triangle' \| 'diamond' \| (datum, index) => shape` | ✗ | Marker shape for individual points (default `'circle'`). Pass a function to choose the shape per point from its datum — e.g. distinguishing data sources on one line: `(datum) => datum.source === 'satellite' ? 'circle' : 'square'`. The function receives the original data element (tuple or object, as passed in `data`). |
+| pointColor | `string \| (datum, index) => string \| null` | ✗ | Per-point color override for individual points. String applies to every point; a function is called with the original datum and may return `null`/`undefined` to keep the series color. Tooltip/legend always use the series color. |
 | tooltipWidth | `number` | ✗ | Expected width of the tooltip. Will make the tooltip switch sides when this width plus the tooltip left position is greater than the graph width. |
 | hasAreaBottom | `boolean` | ✗ | Read the bottom of the area from data. By default, the bottom of an area will just be zero; this allows changing that via passing in `[[x1, bottom], [x1, top], [x2, bottom], [x2, top]]` to data. |
 | shadowColor | `string` | ✗ | Color of the shadow. |
