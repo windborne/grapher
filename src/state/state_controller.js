@@ -20,6 +20,23 @@ import calculateAnnotationsState from './calculate_annotations_state.js';
 import {selectedSpaceToBackgroundSpace} from './space_conversions/selected_space_to_background_space.js';
 import RustAPI, {RustAPIPromise} from './rust_api';
 
+// Stamps each data-space tuple with the original user datum it came from, so
+// per-point series options (pointShape) can inspect user fields (e.g. a data
+// source tag). Only possible when the conversion was 1:1 — expanding formats
+// (binary buffers, nested y-arrays) skip this and per-point options see the
+// bare [x, y] tuple instead.
+function attachOriginalDatums(inDataSpace, originals) {
+    if (!Array.isArray(originals) || originals.length !== inDataSpace.length) {
+        return;
+    }
+
+    for (let i = 0; i < inDataSpace.length; i++) {
+        if (inDataSpace[i]) {
+            inDataSpace[i].datum = originals[i];
+        }
+    }
+}
+
 export default class StateController extends Eventable {
 
     constructor({ defaultBoundsCalculator, customBoundsSelectors, requireWASM, defaultShowIndividualPoints, defaultShowSidebar, defaultShowAnnotations, defaultShowOptions, syncPool, grapherID, sharedDataCache, sharedSubscriptions, fullscreen }) {
@@ -634,6 +651,7 @@ export default class StateController extends Eventable {
             }
             
             singleSeries.inDataSpace = inDataSpace;
+            attachOriginalDatums(inDataSpace, simpleData);
             singleSeries.windDirections = windDirections;
             singleSeries.windData = windData;
             singleSeries.simpleDataSliceStart = simpleData.length;
@@ -724,6 +742,7 @@ export default class StateController extends Eventable {
                 stateController: this
             });
             newData.set(singleSeries, newDataInDataSpace);
+            attachOriginalDatums(newDataInDataSpace, simpleData.slice(singleSeries.simpleDataSliceStart || 0));
             singleSeries.simpleDataSliceStart = simpleData.length;
 
             if (newDataInDataSpace.length < 32) {

@@ -1,5 +1,7 @@
 import React from 'react';
 
+export type PointShape = 'circle' | 'square' | 'triangle' | 'diamond';
+
 export interface SeriesData {
   data: any[] | { observe: (callback: Function) => void } | Function;
   type?: 'values' | 'tuples' | 'objects' | 'tuple_observable' | 'object_observable' | 'infer';
@@ -36,6 +38,8 @@ export interface SeriesData {
   zeroLineColor?: string;
   zeroLineY?: number | string;
   pointRadius?: number;
+  pointShape?: PointShape | ((datum: unknown, index: number) => PointShape);
+  pointColor?: string | ((datum: unknown, index: number) => string | null | undefined);
   tooltipWidth?: number;
   hasAreaBottom?: boolean;
   shadowColor?: string;

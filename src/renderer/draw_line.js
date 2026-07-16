@@ -1,6 +1,7 @@
 import {DPI_INCREASE} from './size_canvas';
 import pathsFrom from './paths_from';
 import { applyReducedOpacity } from "../helpers/colors";
+import { resolvePointColor, resolvePointShape, tracePointPath } from './point_shapes';
 
 function applyPointSpacing(points, minSpacing) {
     if (!minSpacing || points.length <= 1) {
@@ -22,7 +23,7 @@ function applyPointSpacing(points, minSpacing) {
 }
 
 export default function drawLine(dataInRenderSpace, {
-    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor
+    color, width=1, context, shadowColor='black', shadowBlur=5, dashed=false, dashPattern=null, highlighted=false, showIndividualPoints=false, pointRadius, pointShape, pointColor: pointColorOption, minPointSpacing, getIndividualPoints, getRanges, cutoffIndex, cutoffTimeValue, cutoffOpacity, originalData, renderCutoffGradient, currentBounds, selectionBounds, rendering, isPreview, negativeColor, hasNegatives, zero, zeroColor
 }) {
     if (!context) {
         console.error("Canvas context is null in drawLine");
@@ -425,6 +426,7 @@ export default function drawLine(dataInRenderSpace, {
                         const [x, y] = spacedPoints[i];
                         
                         let pointColor = color;
+                        
                         if (negativeColor && hasNegatives) {
                             if (y === zero && zeroColor) {
                                 pointColor = zeroColor;
@@ -434,12 +436,13 @@ export default function drawLine(dataInRenderSpace, {
                                 pointColor = negativeColor;
                             }
                         }
+                        pointColor = resolvePointColor(pointColorOption, spacedPoints[i]) || pointColor;
                         
                         const { applyReducedOpacity } = require("../helpers/colors");
                         const reducedOpacityColor = applyReducedOpacity(pointColor, cutoffOpacity);
                         context.fillStyle = reducedOpacityColor;
                         context.beginPath();
-                        context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                        tracePointPath(context, resolvePointShape(pointShape, spacedPoints[i]), x, y, pointRadius || 8);
                         context.fill();
                     }
                     return;
@@ -466,6 +469,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     let pointColor = color;
+                    
                     if (negativeColor && hasNegatives) {
                         if (y === zero && zeroColor) {
                             pointColor = zeroColor;
@@ -475,6 +479,7 @@ export default function drawLine(dataInRenderSpace, {
                             pointColor = negativeColor;
                         }
                     }
+                    pointColor = resolvePointColor(pointColorOption, spacedPoints[i]) || pointColor;
                     
                     if (isBeforeCutoff) {
                         const reducedOpacityColor = applyReducedOpacity(pointColor, cutoffOpacity);
@@ -484,7 +489,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     context.beginPath();
-                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                    tracePointPath(context, resolvePointShape(pointShape, spacedPoints[i]), x, y, pointRadius || 8);
                     context.fill();
                 }
             } else if (!selectionBounds) {
@@ -493,6 +498,7 @@ export default function drawLine(dataInRenderSpace, {
                     const [x, y] = spacedPoints[i];
                     
                     let pointColor = color;
+                    
                     if (negativeColor && hasNegatives) {
                         if (y === zero && zeroColor) {
                             pointColor = zeroColor;
@@ -502,10 +508,11 @@ export default function drawLine(dataInRenderSpace, {
                             pointColor = negativeColor;
                         }
                     }
+                    pointColor = resolvePointColor(pointColorOption, spacedPoints[i]) || pointColor;
                     
                     context.fillStyle = pointColor;
                     context.beginPath();
-                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                    tracePointPath(context, resolvePointShape(pointShape, spacedPoints[i]), x, y, pointRadius || 8);
                     context.fill();
                 }
             } else {
@@ -528,6 +535,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     let pointColor = color;
+                    
                     if (negativeColor && hasNegatives) {
                         if (y === zero && zeroColor) {
                             pointColor = zeroColor;
@@ -537,6 +545,7 @@ export default function drawLine(dataInRenderSpace, {
                             pointColor = negativeColor;
                         }
                     }
+                    pointColor = resolvePointColor(pointColorOption, spacedPoints[i]) || pointColor;
                     
                     if (isBeforeCutoff) {
                         const reducedOpacityColor = applyReducedOpacity(pointColor, cutoffOpacity);
@@ -546,7 +555,7 @@ export default function drawLine(dataInRenderSpace, {
                     }
                     
                     context.beginPath();
-                    context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                    tracePointPath(context, resolvePointShape(pointShape, spacedPoints[i]), x, y, pointRadius || 8);
                     context.fill();
                 }
             }
@@ -566,10 +575,11 @@ export default function drawLine(dataInRenderSpace, {
                         pointColor = negativeColor;
                     }
                 }
+                pointColor = resolvePointColor(pointColorOption, spacedPoints[i]) || pointColor;
                 
                 context.fillStyle = pointColor;
                 context.beginPath();
-                context.arc(x, y, pointRadius || 8, 0, 2 * Math.PI, false);
+                tracePointPath(context, resolvePointShape(pointShape, spacedPoints[i]), x, y, pointRadius || 8);
                 context.fill();
             }
         }

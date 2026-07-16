@@ -7,6 +7,7 @@ import extractVertices from './extract_vertices';
 import createGLProgram from './create_gl_program';
 import {DPI_INCREASE} from './size_canvas';
 import { applyReducedOpacity } from "../helpers/colors";
+import { SHAPE_CODES, groupPointsByStyle } from './point_shapes';
 
 export default class LineProgram {
 
@@ -24,6 +25,33 @@ export default class LineProgram {
 
         if (!gl.getExtension('OES_element_index_uint')) {
             console.error('Your browser does not support OES_element_index_uint'); // eslint-disable-line no-console
+        }
+    }
+
+    // Draws point sprites grouped by marker style (see point_shapes.js). One
+    // draw call per distinct (shape, color); a single call when both are
+    // uniform. opacityFactor < 1 dims overridden colors the same way the
+    // caller dimmed the series color (cutoff rendering).
+    _drawPointSprites(points, seriesColor, pointShape, pointColor, opacityFactor = 1) {
+        const gl = this._gl;
+
+        for (const { shape, color, points: stylePoints } of groupPointsByStyle(points, pointShape, pointColor)) {
+            if (!stylePoints.length) {
+                continue;
+            }
+
+            let drawColor = color || seriesColor;
+            if (opacityFactor < 1) {
+                drawColor = applyReducedOpacity(drawColor, opacityFactor);
+            }
+
+            gl.uniform4f(gl.getUniformLocation(this._circleProgram, 'color'), ...colorToVector(drawColor));
+            gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'shape'), SHAPE_CODES[shape]);
+            gl.enableVertexAttribArray(0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._individualPointBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(stylePoints.flat()), gl.STATIC_DRAW);
+            gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.POINTS, 0, stylePoints.length);
         }
     }
 
@@ -213,34 +241,14 @@ export default class LineProgram {
                 }
                 
                 if (preCutoffPoints.length > 0) {
-                    const reducedOpacityColor = applyReducedOpacity(parameters.color, parameters.cutoffOpacity || 0.35);
-                    gl.uniform4f(gl.getUniformLocation(this._circleProgram, 'color'), ...colorToVector(reducedOpacityColor));
-                    
-                    gl.enableVertexAttribArray(0);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this._individualPointBuffer);
-                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(preCutoffPoints.flat()), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-                    gl.drawArrays(gl.POINTS, 0, preCutoffPoints.length);
+                    this._drawPointSprites(preCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor, parameters.cutoffOpacity || 0.35);
                 }
                 
                 if (postCutoffPoints.length > 0) {
-                    gl.uniform4f(gl.getUniformLocation(this._circleProgram, 'color'), ...colorToVector(parameters.color));
-                    
-                    gl.enableVertexAttribArray(0);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this._individualPointBuffer);
-                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(postCutoffPoints.flat()), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-                    gl.drawArrays(gl.POINTS, 0, postCutoffPoints.length);
+                    this._drawPointSprites(postCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor);
                 }
             } else {
-                gl.uniform4f(gl.getUniformLocation(this._circleProgram, 'color'), ...colorToVector(parameters.color));
-
-                gl.enableVertexAttribArray(0);
-                gl.bindBuffer(gl.ARRAY_BUFFER, this._individualPointBuffer);
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(individualPoints.flat()), gl.STATIC_DRAW);
-                gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-                gl.drawArrays(gl.POINTS, 0, individualPoints.length);
+                this._drawPointSprites(individualPoints, parameters.color, parameters.pointShape, parameters.pointColor);
             }
         }
     }
