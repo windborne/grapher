@@ -1545,6 +1545,10 @@ export default class StateController extends Eventable {
         return this._grapherID;
     }
 
+    set grapherID(grapherID) {
+        this._grapherID = grapherID;
+    }
+
     get annotationState() {
         return this._annotationsState;
     }

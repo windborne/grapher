@@ -155,6 +155,12 @@ function Grapher(props) {
     }, [stateController]);
 
     useEffect(() => {
+        // in a multigrapher, a grapher can shift position (and thus id) without
+        // remounting; drag-and-drop target resolution relies on the current id
+        stateController.grapherID = props.id;
+    }, [stateController, props.id]);
+
+    useEffect(() => {
         if (stateController.disposed) {
             // Replacement is scheduled; this re-runs with the fresh instance.
             return;

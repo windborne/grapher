@@ -17,6 +17,8 @@ export default class MultigraphStateController extends Eventable {
         this._stateControllers = new Set();
         this._prevSeries = [];
         this._nextMultigrapherSeriesIndex = 0;
+        this._graphIds = [];
+        this._nextGraphId = 0;
 
         this._dataCache = new Map();
         this._subscriptions = new Map();
@@ -170,7 +172,19 @@ export default class MultigraphStateController extends Eventable {
      * @private
      */
     _renumberGraphs() {
-        this._multiSeries = this._multiSeries.filter((graphSeries) => graphSeries.length);
+        const keptSeries = [];
+        const keptIds = [];
+        for (let i = 0; i < this._multiSeries.length; i++) {
+            if (!this._multiSeries[i].length) {
+                continue;
+            }
+
+            keptSeries.push(this._multiSeries[i]);
+            keptIds.push(this._graphIds[i] !== undefined ? this._graphIds[i] : this._nextGraphId++);
+        }
+        this._multiSeries = keptSeries;
+        this._graphIds = keptIds;
+
         this._graphIndicesToSeries = new Map();
         this._seriesToGraphIndices = new Map();
 
@@ -276,14 +290,17 @@ export default class MultigraphStateController extends Eventable {
         if (graphIndex === 'top') {
             targetSeries = [];
             this._multiSeries.unshift(targetSeries);
+            this._graphIds.unshift(this._nextGraphId++);
         } else if (graphIndex === 'bottom') {
             targetSeries = [];
             this._multiSeries.push(targetSeries);
+            this._graphIds.push(this._nextGraphId++);
         } else {
             targetSeries = this._multiSeries[parseInt(graphIndex)];
             if (!targetSeries) {
                 targetSeries = [];
                 this._multiSeries.push(targetSeries);
+                this._graphIds.push(this._nextGraphId++);
             }
         }
         targetSeries.push(modifiedSeries);
@@ -303,6 +320,17 @@ export default class MultigraphStateController extends Eventable {
 
     get multiSeries() {
         return this._multiSeries.filter((series) => series.length);
+    }
+
+    /**
+     * A stable identity for the graph at the given position, usable as a react
+     * key so existing graphs don't remount when one is added above them
+     *
+     * @param {Number} graphIndex
+     * @return {Number}
+     */
+    graphKeyAt(graphIndex) {
+        return this._graphIds[graphIndex] !== undefined ? this._graphIds[graphIndex] : graphIndex;
     }
 
     get series() {
