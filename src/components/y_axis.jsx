@@ -157,7 +157,7 @@ function YAxis({ stateController, showAxes, showGrid, showSeriesKey, axis, sideI
             window.removeEventListener('mouseup', onMouseUp);
 
             let target = mouseUpEvent.target;
-            while (target && !(target.dataset || {}).axisIndex) {
+            while (target && !(target.dataset || {}).axisIndex && !(target.dataset || {}).grapherId) {
                 target = target.parentNode;
             }
 
