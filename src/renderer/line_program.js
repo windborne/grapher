@@ -32,7 +32,7 @@ export default class LineProgram {
     // draw call per distinct (shape, color); a single call when both are
     // uniform. opacityFactor < 1 dims overridden colors the same way the
     // caller dimmed the series color (cutoff rendering).
-    _drawPointSprites(points, seriesColor, pointShape, pointColor, opacityFactor = 1) {
+    _drawPointSprites(points, seriesColor, pointShape, pointColor, opacityFactor = 1, pointSize = 0) {
         const gl = this._gl;
 
         for (const { shape, color, points: stylePoints } of groupPointsByStyle(points, pointShape, pointColor)) {
@@ -47,6 +47,12 @@ export default class LineProgram {
 
             gl.uniform4f(gl.getUniformLocation(this._circleProgram, 'color'), ...colorToVector(drawColor));
             gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'shape'), SHAPE_CODES[shape]);
+            // Equal-area compensation: a diamond inscribed in the sprite has
+            // ~half a circle's area, so diamonds get a 1.25x sprite.
+            if (pointSize > 0) {
+                gl.uniform1f(gl.getUniformLocation(this._circleProgram, 'pointSize'),
+                    shape === 'diamond' ? pointSize * 1.25 : pointSize);
+            }
             gl.enableVertexAttribArray(0);
             gl.bindBuffer(gl.ARRAY_BUFFER, this._individualPointBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(stylePoints.flat()), gl.STATIC_DRAW);
@@ -241,14 +247,14 @@ export default class LineProgram {
                 }
                 
                 if (preCutoffPoints.length > 0) {
-                    this._drawPointSprites(preCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor, parameters.cutoffOpacity || 0.35);
+                    this._drawPointSprites(preCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor, parameters.cutoffOpacity || 0.35, pointSize);
                 }
                 
                 if (postCutoffPoints.length > 0) {
-                    this._drawPointSprites(postCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor);
+                    this._drawPointSprites(postCutoffPoints, parameters.color, parameters.pointShape, parameters.pointColor, 1, pointSize);
                 }
             } else {
-                this._drawPointSprites(individualPoints, parameters.color, parameters.pointShape, parameters.pointColor);
+                this._drawPointSprites(individualPoints, parameters.color, parameters.pointShape, parameters.pointColor, 1, pointSize);
             }
         }
     }

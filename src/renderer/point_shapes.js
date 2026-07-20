@@ -69,13 +69,17 @@ export function tracePointPath(context, shape, x, y, r) {
             context.lineTo(x - r, y + r);
             context.closePath();
             break;
-        case 'diamond':
-            context.moveTo(x, y - r);
-            context.lineTo(x + r, y);
-            context.lineTo(x, y + r);
-            context.lineTo(x - r, y);
+        case 'diamond': {
+            // Equal-area compensation: a diamond inscribed at r has ~half a
+            // circle's area, so draw it 1.25x to read the same size.
+            const d = r * 1.25;
+            context.moveTo(x, y - d);
+            context.lineTo(x + d, y);
+            context.lineTo(x, y + d);
+            context.lineTo(x - d, y);
             context.closePath();
             break;
+        }
         default:
             context.arc(x, y, r, 0, 2 * Math.PI, false);
     }
