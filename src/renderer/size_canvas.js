@@ -23,7 +23,7 @@ export default async function sizeCanvas(canvas, context, {reset=true}={}) {
 
     while (boundingRect.width === 0) {
         await new Promise((resolve) => requestAnimationFrame(resolve));
-        boundingRect = canvas.getBoundingClientRect();
+        boundingRect = canvas.parentNode.getBoundingClientRect();
     }
 
     const dpr = window.devicePixelRatio || 1;

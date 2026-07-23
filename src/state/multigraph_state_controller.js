@@ -1,5 +1,5 @@
 import Eventable from '../eventable.js';
-import getColor from '../helpers/colors.js';
+import getColor, {LINE_COLORS} from '../helpers/colors.js';
 import nameForSeries from '../helpers/name_for_series.js';
 
 export default class MultigraphStateController extends Eventable {
@@ -16,6 +16,9 @@ export default class MultigraphStateController extends Eventable {
         this._originalSeriesByMultigrapherIndex = new Map();
         this._stateControllers = new Set();
         this._prevSeries = [];
+        this._nextMultigrapherSeriesIndex = 0;
+        this._graphIds = [];
+        this._nextGraphId = 0;
 
         this._dataCache = new Map();
         this._subscriptions = new Map();
@@ -55,8 +58,20 @@ export default class MultigraphStateController extends Eventable {
 
         this._prevSeries = series;
 
-        const graphIndices = new Set();
         const currentSeriesSet = new Set(series);
+
+        // prune bookkeeping for series that are no longer present, freeing their colors
+        for (let [originalSeries, modifiedSeries] of [...this._modifiedSeries]) {
+            if (!currentSeriesSet.has(originalSeries)) {
+                this._modifiedSeries.delete(originalSeries);
+                this._originalSeriesByMultigrapherIndex.delete(modifiedSeries.multigrapherSeriesIndex);
+                this._seriesToGraphIndices.delete(originalSeries);
+            }
+        }
+
+        // group by graph: a graph the series was previously placed in (e.g. by dragging)
+        // wins over the graph requested in the series definition
+        const graphBuckets = new Map();
 
         for (let singleSeries of series) {
             let graphIndex = singleSeries.graph || 0;
@@ -65,65 +80,129 @@ export default class MultigraphStateController extends Eventable {
                 graphIndex = this._seriesToGraphIndices.get(singleSeries);
             }
 
-            graphIndices.add(graphIndex);
-
-            let seriesSet = this._graphIndicesToSeries.get(graphIndex);
-            if (!seriesSet) {
-                seriesSet = new Set();
-                this._graphIndicesToSeries.set(graphIndex, seriesSet);
+            graphIndex = parseInt(graphIndex);
+            if (!Number.isFinite(graphIndex) || graphIndex < 0) {
+                graphIndex = 0;
             }
 
-            seriesSet.add(singleSeries);
+            let bucket = graphBuckets.get(graphIndex);
+            if (!bucket) {
+                bucket = [];
+                graphBuckets.set(graphIndex, bucket);
+            }
+
+            bucket.push(singleSeries);
         }
 
-        const sortedGraphIndices = [...graphIndices].sort();
+        const sortedGraphIndices = [...graphBuckets.keys()].sort((a, b) => a - b);
+
+        const usedColors = new Set();
+        for (let singleSeries of series) {
+            const modifiedSeries = this._modifiedSeries.get(singleSeries);
+            if (modifiedSeries) {
+                usedColors.add(modifiedSeries.color);
+            }
+        }
 
         this._multiSeries = [];
-        let globalSeriesIndex = 0;
 
         for (let graphIndex of sortedGraphIndices) {
-            const series = [];
+            const graphSeries = [];
 
-            for (let singleSeries of this._graphIndicesToSeries.get(graphIndex)) {
-                if (!currentSeriesSet.has(singleSeries)) {
-                    this._graphIndicesToSeries.get(graphIndex).delete(singleSeries);
-                    continue;
+            for (let singleSeries of graphBuckets.get(graphIndex)) {
+                let modifiedSeries = this._modifiedSeries.get(singleSeries);
+
+                if (!modifiedSeries) {
+                    const seriesIndex = this._nextMultigrapherSeriesIndex++;
+                    const color = this._pickColor(singleSeries, seriesIndex, usedColors);
+                    usedColors.add(color);
+
+                    modifiedSeries = {
+                        ...singleSeries,
+                        multigrapherSeriesIndex: seriesIndex,
+                        color,
+                        name: nameForSeries(singleSeries, seriesIndex)
+                    };
+
+                    this._modifiedSeries.set(singleSeries, modifiedSeries);
+                    this._originalSeriesByMultigrapherIndex.set(seriesIndex, singleSeries);
                 }
 
-                if (this._modifiedSeries.has(singleSeries)) {
-                    globalSeriesIndex++;
-                    series.push(this._modifiedSeries.get(singleSeries));
-                    continue;
-                }
-
-                const color = getColor(singleSeries.color, globalSeriesIndex);
-                const name = nameForSeries(singleSeries, globalSeriesIndex);
-                const modifiedSeries = {
-                    ...singleSeries,
-                    multigrapherSeriesIndex: globalSeriesIndex,
-                    multigrapherGraphIndex: graphIndex,
-                    color,
-                    name
-                };
-
-                this._modifiedSeries.set(singleSeries, modifiedSeries);
-                this._originalSeriesByMultigrapherIndex.set(globalSeriesIndex, singleSeries);
-
-                globalSeriesIndex++;
-                series.push(modifiedSeries);
+                graphSeries.push(modifiedSeries);
             }
 
-            this._multiSeries.push(series);
+            this._multiSeries.push(graphSeries);
         }
 
-        if (this._nextMultigrapherSeriesIndex) {
-            this._nextMultigrapherSeriesIndex = this._nextMultigrapherSeriesIndex - this._multiSeriesCount + globalSeriesIndex;
-        } else {
-            this._nextMultigrapherSeriesIndex = globalSeriesIndex;
-        }
-        this._multiSeriesCount = globalSeriesIndex;
+        this._renumberGraphs();
 
         this.emit('multi_series_changed', this.multiSeries);
+    }
+
+    /**
+     * Picks a color for a new series: an explicitly requested one if present,
+     * otherwise the first line color not currently in use
+     *
+     * @param {Object} singleSeries
+     * @param {Number} seriesIndex
+     * @param {Set<String>} usedColors
+     * @return {String}
+     * @private
+     */
+    _pickColor(singleSeries, seriesIndex, usedColors) {
+        if (typeof singleSeries.color === 'string' || typeof singleSeries.color === 'number') {
+            return getColor(singleSeries.color, seriesIndex);
+        }
+
+        for (let color of LINE_COLORS) {
+            if (!usedColors.has(color)) {
+                return color;
+            }
+        }
+
+        return getColor(undefined, seriesIndex);
+    }
+
+    /**
+     * Restores the invariants after any change to _multiSeries:
+     * no empty graphs, and every series' multigrapherGraphIndex matches the
+     * position of its graph so drop targets (which are identified by rendered
+     * position) always resolve to the right graph
+     *
+     * @private
+     */
+    _renumberGraphs() {
+        const keptSeries = [];
+        const keptIds = [];
+        for (let i = 0; i < this._multiSeries.length; i++) {
+            if (!this._multiSeries[i].length) {
+                continue;
+            }
+
+            keptSeries.push(this._multiSeries[i]);
+            keptIds.push(this._graphIds[i] !== undefined ? this._graphIds[i] : this._nextGraphId++);
+        }
+        this._multiSeries = keptSeries;
+        this._graphIds = keptIds;
+
+        this._graphIndicesToSeries = new Map();
+        this._seriesToGraphIndices = new Map();
+
+        for (let graphIndex = 0; graphIndex < this._multiSeries.length; graphIndex++) {
+            const originalSeriesSet = new Set();
+
+            for (let modifiedSeries of this._multiSeries[graphIndex]) {
+                modifiedSeries.multigrapherGraphIndex = graphIndex;
+
+                const originalSeries = this._originalSeriesByMultigrapherIndex.get(modifiedSeries.multigrapherSeriesIndex);
+                if (originalSeries) {
+                    originalSeriesSet.add(originalSeries);
+                    this._seriesToGraphIndices.set(originalSeries, graphIndex);
+                }
+            }
+
+            this._graphIndicesToSeries.set(graphIndex, originalSeriesSet);
+        }
     }
 
     /**
@@ -191,111 +270,67 @@ export default class MultigraphStateController extends Eventable {
 
         const originalSeries = this._originalSeriesByMultigrapherIndex.get(draggedSeries.multigrapherSeriesIndex);
         const modifiedSeries = this._modifiedSeries.get(originalSeries);
-
-        this._multiSeries[modifiedSeries.multigrapherGraphIndex].splice(
-            this._multiSeries[modifiedSeries.multigrapherGraphIndex].indexOf(modifiedSeries), 1
-        );
-        this._multiSeries[modifiedSeries.multigrapherGraphIndex] = [...this._multiSeries[modifiedSeries.multigrapherGraphIndex]];
-
-        if (graphIndex === 'top') {
-            modifiedSeries.multigrapherGraphIndex = this._createGraphAtTop();
-        } else if (graphIndex === 'bottom') {
-            modifiedSeries.multigrapherGraphIndex = this._createGraphAtBottom();
-        } else {
-            modifiedSeries.multigrapherGraphIndex = parseInt(graphIndex);
+        if (!modifiedSeries) {
+            return;
         }
+
+        // remove it from whichever graph currently holds it
+        // (searched rather than indexed so a stale multigrapherGraphIndex can never desync us)
+        for (let graphSeries of this._multiSeries) {
+            const seriesPosition = graphSeries.indexOf(modifiedSeries);
+            if (seriesPosition !== -1) {
+                graphSeries.splice(seriesPosition, 1);
+            }
+        }
+
+        // note: the source graph may now be empty, but it must keep its position
+        // until after the target is resolved, since numeric drop targets refer to
+        // the positions that were rendered when the drag started
+        let targetSeries;
+        if (graphIndex === 'top') {
+            targetSeries = [];
+            this._multiSeries.unshift(targetSeries);
+            this._graphIds.unshift(this._nextGraphId++);
+        } else if (graphIndex === 'bottom') {
+            targetSeries = [];
+            this._multiSeries.push(targetSeries);
+            this._graphIds.push(this._nextGraphId++);
+        } else {
+            targetSeries = this._multiSeries[parseInt(graphIndex)];
+            if (!targetSeries) {
+                targetSeries = [];
+                this._multiSeries.push(targetSeries);
+                this._graphIds.push(this._nextGraphId++);
+            }
+        }
+        targetSeries.push(modifiedSeries);
 
         modifiedSeries.axisIndex = axisIndex;
         // safe because stateController operates on a copy. We could also have changed the identify of modifiedSeries,
         // but with that we might reset data when moving it back
         delete modifiedSeries.axis;
 
-        this._multiSeries[modifiedSeries.multigrapherGraphIndex] = [...this._multiSeries[modifiedSeries.multigrapherGraphIndex], modifiedSeries];
-        this._multiSeries = [...this._multiSeries];
-
-        for (let graphIndex = 0; graphIndex < this._multiSeries.length; graphIndex++) {
-            const originalSeriesAtIndex = this._multiSeries[graphIndex].map(({ multigrapherSeriesIndex  }) =>
-                this._originalSeriesByMultigrapherIndex.get(multigrapherSeriesIndex));
-            this._graphIndicesToSeries.set(graphIndex, new Set(originalSeriesAtIndex));
-
-            for (let singleSeries of originalSeriesAtIndex) {
-                this._seriesToGraphIndices.set(singleSeries, graphIndex);
-            }
-        }
+        // fresh array identities so react and the child state controllers pick up the change
+        this._multiSeries = this._multiSeries.map((graphSeries) => [...graphSeries]);
+        this._renumberGraphs();
 
         this.emit('multi_series_changed', this.multiSeries);
         this.emit('graph_count_changed', this.graphCount, prevGraphCount);
     }
 
-    /**
-     * Finds or creates an empty graph at the beginning and returns its index
-     *
-     * @return {number}
-     * @private
-     */
-    _createGraphAtTop() {
-        // check if there's anything at the beginning already
-        let emptyAtTopIndex = null;
-
-        for (let i = 0; i < this._multiSeries.length; i++) {
-            if (this._multiSeries[i].length === 0) {
-                emptyAtTopIndex = i;
-            } else {
-                break;
-            }
-        }
-
-        if (emptyAtTopIndex !== null) {
-            return emptyAtTopIndex;
-        }
-
-        // add a series at the beginning and mutate the graph index of each
-        this._multiSeries = [[], ...this._multiSeries];
-        for (let graphIndex = 0; graphIndex < this._multiSeries.length; graphIndex++) {
-            if (!this._multiSeries[graphIndex].length) {
-                continue;
-            }
-
-            this._multiSeries[graphIndex] = [...this._multiSeries[graphIndex]];
-
-            for (let modifiedSeries of this._multiSeries[graphIndex]) {
-                modifiedSeries.multigrapherGraphIndex = graphIndex;
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * Finds or creates an empty graph at the end and returns its index
-     *
-     * @return {number}
-     * @private
-     */
-    _createGraphAtBottom() {
-        // check if there's anything at the beginning already
-        let emptyAtBottomIndex = null;
-
-        for (let i = this._multiSeries.length - 1; i >= 0; i--) {
-            if (this._multiSeries[i].length === 0) {
-                emptyAtBottomIndex = i;
-            } else {
-                break;
-            }
-        }
-
-        if (emptyAtBottomIndex !== null) {
-            return emptyAtBottomIndex;
-        }
-
-        // add something at the bottom
-        this._multiSeries = [...this._multiSeries, []];
-
-        return this._multiSeries.length - 1;
-    }
-
     get multiSeries() {
         return this._multiSeries.filter((series) => series.length);
+    }
+
+    /**
+     * A stable identity for the graph at the given position, usable as a react
+     * key so existing graphs don't remount when one is added above them
+     *
+     * @param {Number} graphIndex
+     * @return {Number}
+     */
+    graphKeyAt(graphIndex) {
+        return this._graphIds[graphIndex] !== undefined ? this._graphIds[graphIndex] : graphIndex;
     }
 
     get series() {

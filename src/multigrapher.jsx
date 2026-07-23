@@ -95,7 +95,7 @@ function MultiGrapher(props) {
             {
                 multiSeries.map((series, i) =>
                     <Grapher
-                        key={`${controllerGeneration}-${i}`}
+                        key={`${controllerGeneration}-${multigraphStateController.graphKeyAt(i)}`}
                         {...props}
                         syncPool={syncPool}
                         stateControllerInitialization={multigraphStateController.stateControllerInitialization}
