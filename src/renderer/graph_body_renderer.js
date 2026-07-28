@@ -33,8 +33,7 @@ export default class GraphBodyRenderer extends Eventable {
                 this._lineProgram = new LineProgram(this._context);
                 this._shadowProgram = new ShadowProgram(this._context);
             } else {
-                console.error('❌ WebGL context creation failed');
-                alert('WebGL failed! Attempting fallback to CPU rendering');
+                console.error('WebGL context creation failed; falling back to CPU rendering');
                 this._webgl = false;
             }
         }
