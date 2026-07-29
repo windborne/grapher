@@ -259,10 +259,11 @@ function GraphBody({ stateController, webgl, bodyHeight, boundsSelectionEnabled,
                 const trueX = stateController.tooltipState.mouseX/sizing.elementWidth * (bounds.maxX - bounds.minX) + bounds.minX;
 
                 let data = singleSeries.inDataSpace;
+                if (!data) continue;
                 if (singleSeries.ignoreDiscontinuities) {
                     data = data.filter((tuple) => typeof tuple[1] === 'number');
                 }
-        
+
                 const closestIndex = binarySearch(data, trueX, { returnIndex: true });
                 const closestPoint = data[closestIndex];
 

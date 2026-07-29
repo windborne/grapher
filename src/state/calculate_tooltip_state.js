@@ -60,6 +60,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
         const trueX = mouseX/sizing.elementWidth * (bounds.maxX - bounds.minX) + bounds.minX;
 
         let data = singleSeries.inDataSpace;
+        if (!data) continue;
         if (singleSeries.ignoreDiscontinuities) {
             data = data.filter((tuple) => typeof tuple[1] === 'number');
         }

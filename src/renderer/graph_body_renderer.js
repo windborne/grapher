@@ -193,10 +193,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
 
             const individualPoints = [];
-            let data = singleSeries.inSelectedSpace.data;
+            let data = singleSeries.inSelectedSpace?.data;
             if (useDataSpace) {
                 data = singleSeries.inDataSpace;
             }
+
+            if (!data) return individualPoints;
 
             let boundsMinX = bounds.minX instanceof Date ? bounds.minX.getTime() : bounds.minX;
             let boundsMaxX = bounds.maxX instanceof Date ? bounds.maxX.getTime() : bounds.maxX;
@@ -337,7 +339,7 @@ export default class GraphBodyRenderer extends Eventable {
                 color: getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex),
                 sizing: this._sizing,
                 zero,
-                hasNegatives: !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0),
+                hasNegatives: !!singleSeries.inDataSpace?.find((tuple) => tuple[1] < 0),
                 negativeColor: singleSeries.negativeColor,
                 zeroWidth: singleSeries.zeroLineWidth,
                 zeroColor: singleSeries.zeroLineColor
@@ -473,7 +475,7 @@ export default class GraphBodyRenderer extends Eventable {
             }
             
             const shadowColor = getColor(singleSeries.color, singleSeries.index, singleSeries.multigrapherSeriesIndex);
-            const hasNegatives = !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0);
+            const hasNegatives = !!singleSeries.inDataSpace?.find((tuple) => tuple[1] < 0);
             let shadowParams = {
                 color: shadowColor,
                 gradient: singleSeries.gradient || createDefaultGradient(shadowColor),
@@ -570,7 +572,7 @@ export default class GraphBodyRenderer extends Eventable {
         } else {
             zero = this._sizing.renderHeight;
         }
-        const hasNegatives = !!singleSeries.inDataSpace.find((tuple) => tuple[1] < 0);
+        const hasNegatives = !!singleSeries.inDataSpace?.find((tuple) => tuple[1] < 0);
 
         // For WebGL shadow rendering, we need a separate 2D canvas overlay for lines/points
         // since WebGL and 2D contexts can't coexist on the same canvas
