@@ -194,6 +194,7 @@ function objectsToDataSpace(data, series, options) {
     const rangeValues = [];
     const windDirections = hasWindKeys ? [] : null;
     const windData = hasWindKeys ? [] : null;
+    let hasExpanded = false;
 
     for (let point of data) {
         if (point.buffer instanceof ArrayBuffer) {
@@ -205,6 +206,7 @@ function objectsToDataSpace(data, series, options) {
                 inDataSpace.push([readBinaryFormatValue(view, offset, xIndex), readBinaryFormatValue(view, offset, yIndex)]);
             }
         } else if (!hasWindKeys && Array.isArray(point[series.yKey])) {
+            hasExpanded = true;
             if (point[series.yKey].length && !Array.isArray(point[series.yKey][0]) && typeof point[series.yKey][0] === 'object') {
                 for (let subpoint of point[series.yKey]) {
                     let yValue = subpoint[series.yKey];
@@ -278,6 +280,24 @@ function objectsToDataSpace(data, series, options) {
                 }
             }
         }
+    }
+
+    if (hasExpanded && inDataSpace.length > 1) {
+        inDataSpace.sort((a, b) => {
+            const ax = a[0] instanceof Date ? a[0].valueOf() : a[0];
+            const bx = b[0] instanceof Date ? b[0].valueOf() : b[0];
+            return ax - bx;
+        });
+
+        let write = 1;
+        for (let read = 1; read < inDataSpace.length; read++) {
+            const px = inDataSpace[write - 1][0];
+            const cx = inDataSpace[read][0];
+            if ((px instanceof Date ? px.valueOf() : px) !== (cx instanceof Date ? cx.valueOf() : cx)) {
+                inDataSpace[write++] = inDataSpace[read];
+            }
+        }
+        inDataSpace.length = write;
     }
 
     if (rangeValues.length > 0 || windDirections) {
