@@ -193,12 +193,12 @@ export default class GraphBodyRenderer extends Eventable {
             }
 
             const individualPoints = [];
-            let data = singleSeries.inSelectedSpace.data;
+            let data = singleSeries.inSelectedSpace?.data;
             if (useDataSpace) {
                 data = singleSeries.inDataSpace;
             }
 
-            if (!data) continue;
+            if (!data) return individualPoints;
 
             let boundsMinX = bounds.minX instanceof Date ? bounds.minX.getTime() : bounds.minX;
             let boundsMaxX = bounds.maxX instanceof Date ? bounds.maxX.getTime() : bounds.maxX;
