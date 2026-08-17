@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
 
 module.exports = [
@@ -13,7 +14,7 @@ module.exports = [
             library: {
                 type: 'module'
             },
-            publicPath: '/assets/'
+            publicPath: ''
         },
         experiments: {
             outputModule: true,
@@ -50,6 +51,10 @@ module.exports = [
                 {
                     test: /\.(vert|frag|glsl)$/,
                     use: 'webpack-glsl-loader'
+                },
+                {
+                    test: /\.wasm$/,
+                    type: 'asset/inline'
                 }
             ]
         },
@@ -59,7 +64,8 @@ module.exports = [
                 outDir: path.resolve(__dirname, 'src', 'rust', 'pkg'),
                 extraArgs: '--no-typescript --target web',
                 forceMode: 'production'
-            })
+            }),
+            new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1})
         ]
     },
     // CJS build for backward compatibility
@@ -76,7 +82,7 @@ module.exports = [
                 name: 'Grapher',
                 type: 'commonjs2'
             },
-            publicPath: '/assets/'
+            publicPath: ''
         },
         externals: {
             react: 'react',
@@ -112,8 +118,15 @@ module.exports = [
                 {
                     test: /\.(vert|frag|glsl)$/,
                     use: 'webpack-glsl-loader'
+                },
+                {
+                    test: /\.wasm$/,
+                    type: 'asset/inline'
                 }
             ]
-        }
+        },
+        plugins: [
+            new webpack.optimize.LimitChunkCountPlugin({maxChunks: 1})
+        ]
     }
 ];
