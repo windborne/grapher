@@ -36,6 +36,63 @@ function calculate(options) {
 }
 
 describe('#calculateTooltipState', () => {
+    it('marks no point for an always-tooltipped series whose nearest point is a gap', () => {
+        const series = makeSeries({
+            data: [[0, 5], [5, null], [10, 5]],
+            bounds: {
+                minX: 0,
+                maxX: 10,
+                minY: -10,
+                maxY: 10
+            }
+        });
+
+        const result = calculateTooltipState({
+            mousePresent: true,
+            mouseX: 50,
+            mouseY: 50,
+            sizing: {
+                elementWidth: 100,
+                elementHeight: 100
+            },
+            series: [series],
+            alwaysTooltipped: new Set([series]),
+            savedTooltips: [],
+            closestSpacing: 10
+        });
+
+        expect(result.tooltips).to.eql([]);
+    });
+
+    it('still marks an always-tooltipped series where it has a value', () => {
+        const series = makeSeries({
+            data: [[0, 5], [5, 2], [10, 5]],
+            bounds: {
+                minX: 0,
+                maxX: 10,
+                minY: -10,
+                maxY: 10
+            }
+        });
+
+        const result = calculateTooltipState({
+            mousePresent: true,
+            mouseX: 50,
+            mouseY: 50,
+            sizing: {
+                elementWidth: 100,
+                elementHeight: 100
+            },
+            series: [series],
+            alwaysTooltipped: new Set([series]),
+            savedTooltips: [],
+            closestSpacing: 10
+        });
+
+        expect(result.tooltips).to.have.length(1);
+        expect(result.tooltips[0].y).to.equal(2);
+    });
+
     it('keeps nearest-tooltip distance filtering by default', () => {
         const series = makeSeries({
             data: [[0, 0], [10, 10]],

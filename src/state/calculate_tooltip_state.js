@@ -103,7 +103,7 @@ export default function calculateTooltipState({mousePresent, mouseX, mouseY, siz
             [x, y] = interpolatedPoint;
         }
 
-        if (x === null) {
+        if (x === null || y === null || y === undefined) {
             continue;
         }
 
