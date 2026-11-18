@@ -6,14 +6,6 @@ import CustomPropTypes from '../helpers/custom_prop_types';
 
 function getYLabelContent({ yLabel, y, fullYPrecision}) {
     if (fullYPrecision && !yLabel) {
-        if (y === undefined) {
-            return 'undefined';
-        }
-
-        if (y === null) {
-            return 'null';
-        }
-
         return y.toString();
     }
 
@@ -223,10 +215,6 @@ export default class Tooltip extends React.PureComponent {
             }
 
             if (pixelX < width + 2*caretSize + caretPadding && multiplier === -1) {
-                fixedPosition = true;
-            }
-
-            if (y === null) {
                 fixedPosition = true;
             }
 
